@@ -1,4 +1,4 @@
--- Meeting sync + activity (apply in Supabase SQL editor or via CLI)
+-- Meeting sync + activity (Catch Capital Humano Live)
 
 create table if not exists public.meeting_state (
   meeting_id text primary key,
@@ -38,12 +38,14 @@ create index if not exists idx_meeting_activity_type
 alter table public.meeting_state enable row level security;
 alter table public.meeting_activity enable row level security;
 
--- Demo policies: tighten for production (auth + meeting membership)
 create policy "meeting_state_select_anon"
   on public.meeting_state for select to anon, authenticated using (true);
 
-create policy "meeting_state_upsert_anon"
-  on public.meeting_state for all to anon, authenticated using (true) with check (true);
+create policy "meeting_state_insert_anon"
+  on public.meeting_state for insert to anon, authenticated with check (true);
+
+create policy "meeting_state_update_anon"
+  on public.meeting_state for update to anon, authenticated using (true) with check (true);
 
 create policy "meeting_activity_select_anon"
   on public.meeting_activity for select to anon, authenticated using (true);
@@ -51,5 +53,15 @@ create policy "meeting_activity_select_anon"
 create policy "meeting_activity_insert_anon"
   on public.meeting_activity for insert to anon, authenticated with check (true);
 
-alter publication supabase_realtime add table public.meeting_state;
-alter publication supabase_realtime add table public.meeting_activity;
+-- Realtime (ignore if already added)
+do $$
+begin
+  alter publication supabase_realtime add table public.meeting_state;
+exception when duplicate_object then null;
+end $$;
+
+do $$
+begin
+  alter publication supabase_realtime add table public.meeting_activity;
+exception when duplicate_object then null;
+end $$;

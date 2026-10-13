@@ -14,6 +14,7 @@ import {
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import { useActivityFeed } from "@/hooks/useActivityFeed";
 import { useMeetingSync } from "@/hooks/useMeetingSync";
+import { useSupabaseHealth } from "@/hooks/useSupabaseHealth";
 
 type Props = {
   meetingId: string;
@@ -54,6 +55,7 @@ export function LiveMeetingApp({ meetingId, role }: Props) {
   const [qOpen, setQOpen] = useState(false);
   const actorRef = useRef(getVisitorActor(meetingId));
   const activity = useActivityFeed(meetingId, isPresenter);
+  const { health: supabaseHealth, loading: supabaseLoading } = useSupabaseHealth();
 
   useEffect(() => {
     if (!isPresenter && follow) setOwnStep(liveStep);
@@ -185,10 +187,15 @@ export function LiveMeetingApp({ meetingId, role }: Props) {
     setAskOk("Pregunta enviada. Respuesta del asistente abajo.");
   };
 
-  const syncBadge = useMemo(
-    () => (isSupabaseConfigured() ? "Supabase · tiempo real" : "Modo local (sin Supabase)"),
-    [],
-  );
+  const syncBadge = useMemo(() => {
+    if (supabaseLoading) return "Comprobando Supabase…";
+    if (supabaseHealth?.ok) return "Supabase conectado · tiempo real";
+    if (supabaseHealth?.configured) {
+      return `Supabase error: ${supabaseHealth.error ?? "revisa tablas/RLS"}`;
+    }
+    if (isSupabaseConfigured()) return "Supabase configurado (sin verificar)";
+    return "Modo local (sin variables Supabase)";
+  }, [supabaseHealth, supabaseLoading]);
 
   const waitPresenter = !isPresenter && currentStep >= unlockedStep;
 

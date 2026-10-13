@@ -71,12 +71,13 @@ export function useMeetingSync(meetingId: string, isPresenter: boolean) {
       if (!cancelled && data) {
         applyStep(data.current_step ?? 0, data.unlocked_step ?? 0);
       } else if (!cancelled && isPresenter) {
-        await supabase.from("meeting_state").upsert({
+        const { error } = await supabase.from("meeting_state").upsert({
           meeting_id: meetingId,
           current_step: 0,
           unlocked_step: 0,
           updated_at: new Date().toISOString(),
         });
+        if (error) console.warn("[meeting_state init]", error.message);
       }
     })();
 
@@ -125,12 +126,13 @@ export function useMeetingSync(meetingId: string, isPresenter: boolean) {
 
         const supabase = getSupabaseBrowserClient();
         if (supabase && isPresenter) {
-          await supabase.from("meeting_state").upsert({
+          const { error } = await supabase.from("meeting_state").upsert({
             meeting_id: meetingId,
             current_step: step,
             unlocked_step: max,
             updated_at: new Date().toISOString(),
           });
+          if (error) console.warn("[meeting_state]", error.message);
           await logMeetingActivity({
             meetingId,
             eventType: "PRESENTATION_STEP",
