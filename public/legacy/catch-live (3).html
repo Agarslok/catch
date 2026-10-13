@@ -54,8 +54,10 @@ body.cliente .presenter-only{display:none!important}
 .rail-item.current{border-color:var(--blue)}
 .rail-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--display);font-weight:700;font-size:14px;border:1px solid var(--blue);color:var(--blue);background:#fff}
 .rail-item.current .rail-num{background:var(--blue);color:#fff}
+.rail-item.hidden{display:none}
 .rail-t{display:flex;flex-direction:column;gap:2px}
 .rail-t strong{font-size:15px}
+.rail-desc{font-size:12px;line-height:1.35;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .rail-t span{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
 .rail-t i{width:7px;height:7px;border-radius:50%;display:inline-block}
 .follow{background:var(--soft);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
@@ -269,16 +271,16 @@ body.cliente .ai-grip{display:none}
   </header>
 
   <div class="body">
-    <aside class="rail client-only">
+    <aside class="rail">
       <h2>Recorrido de la historia</h2>
       <div class="rail-list" id="rail"></div>
-      <div class="follow">
+      <div class="follow client-only">
         <div class="follow-row">Seguir al presentador
           <button class="switch" id="followSwitch" type="button" aria-pressed="true" aria-label="Seguir al presentador"></button>
         </div>
         <p>Activado, tu pantalla avanza con la sala. Apagado, recorres la historia y filtras a tu ritmo.</p>
       </div>
-      <section class="ai-dock" id="aiDock" aria-label="Avatar IA de Catch">
+      <section class="ai-dock client-only" id="aiDock" aria-label="Avatar IA de Catch">
         <div class="ai-dock-head">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9z"/><path d="M19 15l.9 2.6 2.6.9-2.6.9L19 22l-.9-2.6-2.6-.9 2.6-.9z" opacity=".85"/></svg>
           <span>Avatar IA</span>
@@ -392,7 +394,7 @@ body.cliente .ai-grip{display:none}
    ratio:  proporción del video: '16/9' (horizontal), '9/16' (vertical) o '1/1'
    Si src queda vacío se muestra un recuadro de ejemplo. */
 const AVATAR_VIDEO = {
-  src: './avatar_video.mp4',
+  src: '/avatar.mp4',
   poster: '',
   ratio: '16/9',
   loop: true,
@@ -492,7 +494,7 @@ function buildStatic(){
     `<button class="seg" type="button" data-ch="${i}"><span class="track"><b></b></span><span>${c.n} · ${c.t}</span></button>`).join('');
   $('steps').innerHTML = Array.from({ length: TOTAL_STEPS }, () => '<span></span>').join('');
   $('rail').innerHTML = CH.map((c, i) =>
-    `<button class="rail-item" type="button" data-ch="${i}"><span class="rail-num">${c.n}</span><span class="rail-t"><strong>${c.t}</strong><span><i></i><em style="font-style:normal"></em></span></span></button>`).join('');
+    `<button class="rail-item hidden" type="button" data-ch="${i}"><span class="rail-num">${c.n}</span><span class="rail-t"><strong>${c.t}</strong><span class="rail-desc">${c.sub}</span><span><i></i><em style="font-style:normal"></em></span></span></button>`).join('');
   $('nextTxt').textContent = isPresenter ? 'Avanzar para todos' : 'Siguiente paso';
 }
 
@@ -599,12 +601,13 @@ function update(){
 
   // Cliente: recorrido, seguir / explorar
   document.querySelectorAll('.rail-item').forEach((el, i) => {
-    el.classList.toggle('current', i === ch);
     const open = i * 2 <= unlocked;
-    el.disabled = !open;
-    el.title = open ? '' : 'Se desbloquea cuando el presentador llegue a esta sección';
-    el.querySelector('i').style.background = i === liveCh ? 'var(--live)' : (open ? 'var(--blue)' : 'var(--n)');
-    el.querySelector('em').textContent = i === liveCh ? 'En vivo ahora' : (open ? 'Ya presentado' : 'Bloqueado');
+    el.classList.toggle('hidden', !open);
+    if (!open) return;
+    el.classList.toggle('current', i === ch);
+    el.disabled = false;
+    el.querySelector('i').style.background = i === liveCh ? 'var(--live)' : 'var(--blue)';
+    el.querySelector('em').textContent = i === liveCh ? 'En vivo ahora' : 'Ya presentado';
   });
   $('followSwitch').setAttribute('aria-pressed', String(st.follow));
   $('pillFollow').setAttribute('aria-pressed', String(st.follow));

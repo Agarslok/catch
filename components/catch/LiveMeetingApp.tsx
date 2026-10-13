@@ -3,6 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AvatarDockVideo } from "@/components/catch/AvatarDockVideo";
+import { PresenterAvatarWidget } from "@/components/catch/PresenterAvatarWidget";
+import { StoryRail } from "@/components/catch/StoryRail";
 import { ChapterCharts } from "@/components/charts/ChapterCharts";
 import { logMeetingActivity } from "@/lib/activity/log";
 import {
@@ -14,6 +17,7 @@ import {
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import { useActivityFeed } from "@/hooks/useActivityFeed";
 import { useMeetingSync } from "@/hooks/useMeetingSync";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useSupabaseHealth } from "@/hooks/useSupabaseHealth";
 
 type Props = {
@@ -56,6 +60,10 @@ export function LiveMeetingApp({ meetingId, role }: Props) {
   const actorRef = useRef(getVisitorActor(meetingId));
   const activity = useActivityFeed(meetingId, isPresenter);
   const { health: supabaseHealth, loading: supabaseLoading } = useSupabaseHealth();
+  const isMobile = useMediaQuery("(max-width: 860px)");
+  const showLeftRail = !isMobile;
+  const showDockVideo = !isPresenter && !isMobile;
+  const showFloatingAvatar = isPresenter || (isMobile && !isPresenter);
 
   useEffect(() => {
     if (!isPresenter && follow) setOwnStep(liveStep);
@@ -233,15 +241,15 @@ export function LiveMeetingApp({ meetingId, role }: Props) {
       </header>
 
       <div className="body">
-        {!isPresenter && (
+        {showLeftRail && (
           <aside className="rail">
-            <section className="ai-dock" aria-label="Avatar IA">
-              <div className="ai-dock-head">
-                <span>Avatar IA</span>
-                <span className="dot" />
-              </div>
-              <video src="/avatar.mp4" playsInline loop muted autoPlay controls={false} />
-            </section>
+            <StoryRail
+              unlockedStep={unlockedStep}
+              liveStep={liveStep}
+              currentChapter={chapter}
+              onGoToChapter={(i) => goTo(i * 2)}
+            />
+            {showDockVideo && <AvatarDockVideo active />}
           </aside>
         )}
 
@@ -415,6 +423,13 @@ export function LiveMeetingApp({ meetingId, role }: Props) {
       <p className="back-link">
         <Link href="/">← Inicio</Link>
       </p>
+
+      {showFloatingAvatar &&
+        (isPresenter ? (
+          <PresenterAvatarWidget />
+        ) : (
+          <PresenterAvatarWidget mobileClient />
+        ))}
     </div>
   );
 }
