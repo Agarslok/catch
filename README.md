@@ -52,7 +52,8 @@ Esperado: `"ok": true`. En la app, el badge muestra **Supabase conectado · tiem
 ## Netlify
 
 1. Conecta el repo en Netlify.
-2. Build command: `npm run build` (ya en `netlify.toml`).
+2. Build command: `npm run build` y **Publish directory:** `.next` (definido en `netlify.toml`).  
+   Si en la UI tenías el publish en la raíz del repo, cámbialo a `.next` o déjalo vacío para que use el TOML.
 3. Variables de entorno: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 
 ## Legacy
