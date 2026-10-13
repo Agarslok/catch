@@ -36,6 +36,15 @@ Tablas:
 
 Habilita **Realtime** para ambas tablas si el `ALTER PUBLICATION` falla (Dashboard → Database → Replication).
 
+**Probar conexión:**
+
+```bash
+curl -s http://localhost:3000/api/supabase/health
+# o en Netlify: curl -s https://TU-SITIO.netlify.app/api/supabase/health
+```
+
+Esperado: `"ok": true`. En la app, el badge muestra **Supabase conectado · tiempo real**.
+
 ## Netlify
 
 1. Conecta el repo en Netlify.
