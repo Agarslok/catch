@@ -189,6 +189,17 @@ body.cliente .ai-grip{display:none}
 .seg:disabled,.rail-item:disabled{opacity:.5;cursor:not-allowed}
 .solid:disabled{opacity:.65;cursor:not-allowed}
 
+/* Cliente: sin mapa de capítulos; el contenido aparece paso a paso con el presentador */
+body.cliente .segs,
+body.cliente .rail h2,
+body.cliente .rail-list,
+body.cliente .follow{display:none!important}
+body.cliente .rail{flex:0 0 auto}
+body.cliente #liveTxt{display:none}
+
+/* Audio del avatar: siempre activo, fuera de pantalla */
+.ai-audio-master{position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px;top:0}
+
 @media (min-width: 861px){
   body.cliente .ai-widget{display:none}
   body.cliente .app{padding-bottom:32px}
@@ -377,13 +388,15 @@ body.cliente .ai-grip{display:none}
         </div>
       </div>
     </div>
-    <button class="ai-fab" id="aiFab" type="button" aria-label="Avatar IA" aria-expanded="false" aria-controls="aiPanel">
+    <button class="ai-fab" id="aiFab" type="button" aria-label="Ver video del Avatar IA" aria-expanded="false" aria-controls="aiPanel">
       <svg class="ai-grip" width="10" height="16" viewBox="0 0 10 16" fill="currentColor" aria-hidden="true"><circle cx="2" cy="3" r="1.4"/><circle cx="8" cy="3" r="1.4"/><circle cx="2" cy="8" r="1.4"/><circle cx="8" cy="8" r="1.4"/><circle cx="2" cy="13" r="1.4"/><circle cx="8" cy="13" r="1.4"/></svg>
       <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9z"/><path d="M19 15l.9 2.6 2.6.9-2.6.9L19 22l-.9-2.6-2.6-.9 2.6-.9z" opacity=".85"/></svg>
       <span>Avatar IA</span>
     </button>
   </div>
 </div>
+
+<video id="aiAudioMaster" class="ai-audio-master" playsinline loop preload="auto" aria-hidden="true"></video>
 
 <script>
 /* ===== EDITA AQUÍ: video del avatar =====
@@ -392,7 +405,7 @@ body.cliente .ai-grip{display:none}
    ratio:  proporción del video: '16/9' (horizontal), '9/16' (vertical) o '1/1'
    Si src queda vacío se muestra un recuadro de ejemplo. */
 const AVATAR_VIDEO = {
-  src: './avatar_video.mp4',
+  src: './avatar.mp4',
   poster: '',
   ratio: '16/9',
   loop: true,
@@ -611,7 +624,7 @@ function update(){
   $('pillTxt').textContent = st.follow ? 'Siguiendo en vivo' : 'Explorando';
   $('pillDot').style.background = st.follow ? 'var(--live)' : 'var(--cyan)';
   $('modeTxt').textContent = st.follow ? 'Sigues al presentador' : 'Exploras por tu cuenta';
-  $('liveTxt').textContent = `· el presentador va en ${CH[liveCh].n} · ${CH[liveCh].t}`;
+  $('liveTxt').textContent = isPresenter ? `· el presentador va en ${CH[liveCh].n} · ${CH[liveCh].t}` : '· el contenido se actualiza en vivo';
   $('backLive').classList.toggle('hidden', st.follow);
 
   // Botón principal: el cliente no puede pasar de lo que el presentador ya presentó
@@ -704,37 +717,80 @@ function init(){
 }
 init();
 
-/* ===== Avatar IA: botón flotante arrastrable (presentador) y ventana fija en la barra izquierda (cliente) ===== */
+/* ===== Avatar IA: audio continuo; el botón / dock solo muestran el video ===== */
 (function(){
   if (view !== 'presentador' && view !== 'cliente') return;
   const w = $('aiWidget'), fab = $('aiFab'), vid = $('aiVideo'), empty = $('aiEmpty'),
-        dvid = $('aiDockVideo'), dempty = $('aiDockEmpty');
+        dvid = $('aiDockVideo'), dempty = $('aiDockEmpty'), master = $('aiAudioMaster');
   const hasSrc = !!AVATAR_VIDEO.src;
   document.querySelectorAll('.ai-panel, .ai-dock').forEach(el => el.style.setProperty('--ai-ratio', AVATAR_VIDEO.ratio || '16/9'));
-  
-  [[vid, empty], [dvid, dempty]].forEach(([v, e]) => {
+
+  const visuals = [vid, dvid];
+  function setupVisual(v, e){
     if (hasSrc) {
       v.src = AVATAR_VIDEO.src;
-
-      if (AVATAR_VIDEO.poster) {
-        v.poster = AVATAR_VIDEO.poster;
-      }
-
+      if (AVATAR_VIDEO.poster) v.poster = AVATAR_VIDEO.poster;
       v.loop = true;
       v.controls = false;
-      v.muted = false;
+      v.muted = true;
       v.playsInline = true;
-
       e.classList.add('hidden');
     } else {
       v.classList.add('hidden');
     }
-  });
+  }
+  setupVisual(vid, empty);
+  setupVisual(dvid, dempty);
 
+  if (hasSrc) {
+    master.src = AVATAR_VIDEO.src;
+    master.loop = AVATAR_VIDEO.loop !== false;
+    master.muted = false;
+    master.playsInline = true;
+    if (AVATAR_VIDEO.poster) master.poster = AVATAR_VIDEO.poster;
+  }
 
   const mqMobile = window.matchMedia('(max-width: 860px)');
   const canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
-  let pinned = false, suppress = false, drag = null;
+  let pinned = false, suppress = false, drag = null, audioUnlockBound = false;
+
+  function syncVisualsFromMaster(){
+    if (!hasSrc || master.paused) return;
+    const t = master.currentTime;
+    visuals.forEach(v => {
+      if (v.paused || Math.abs(v.currentTime - t) > 0.35) {
+        try { v.currentTime = t; } catch(err){}
+      }
+      v.play().catch(() => {});
+    });
+  }
+
+  function playMasterAudio(){
+    if (!hasSrc) return;
+    const p = master.play();
+    if (p && p.catch) {
+      p.catch(() => {
+        if (!audioUnlockBound) {
+          audioUnlockBound = true;
+          const unlock = () => {
+            master.muted = false;
+            master.play().then(syncVisualsFromMaster).catch(() => {});
+          };
+          document.addEventListener('click', unlock, { once: true });
+          document.addEventListener('keydown', unlock, { once: true });
+        }
+      });
+    }
+  }
+
+  master.addEventListener('play', syncVisualsFromMaster);
+  master.addEventListener('timeupdate', () => {
+    visuals.forEach(v => {
+      if (!v.paused && Math.abs(v.currentTime - master.currentTime) > 0.5) {
+        try { v.currentTime = master.currentTime; } catch(err){}
+      }
+    });
+  });
 
   // El panel se abre hacia donde haya espacio, según dónde esté el botón
   function place(){
@@ -742,23 +798,25 @@ init();
     w.classList.toggle('below', r.top + r.height / 2 < innerHeight / 2);
     w.classList.toggle('left', r.left + r.width / 2 < innerWidth / 2);
   }
-  function playVid(v){ const p = v.play(); if (p && p.catch) p.catch(() => { v.muted = true; v.play().catch(() => {}); }); }
   function setOpen(o){
     w.classList.toggle('open', o);
     fab.setAttribute('aria-expanded', String(o));
     if (o) place();
     if (!hasSrc) return;
-    if (o) playVid(vid); else vid.pause();
+    if (o) syncVisualsFromMaster();
+    else vid.pause();
   }
 
-  // Cliente en escritorio: el avatar vive en la barra izquierda y se reproduce directo
+  // Cliente en escritorio: video en la barra izquierda (sin audio; va el master)
   function syncDock(){
     const dockOn = !isPresenter && !mqMobile.matches;
     if (dockOn && w.classList.contains('open')) { pinned = false; setOpen(false); }
     if (!hasSrc) return;
-    if (dockOn) playVid(dvid); else dvid.pause();
+    if (dockOn) syncVisualsFromMaster();
+    else dvid.pause();
   }
   mqMobile.addEventListener('change', syncDock);
+  playMasterAudio();
   syncDock();
 
   fab.addEventListener('click', () => {
