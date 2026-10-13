@@ -31,12 +31,17 @@ export async function checkSupabaseHealth(): Promise<SupabaseHealth> {
     .maybeSingle();
 
   if (readError) {
+    const missingState =
+      readError.message.includes("meeting_state") ||
+      readError.code === "PGRST205"
+        ? " Falta la tabla meeting_state: ejecuta 20260313200000_catch_cuelrmx_patch.sql."
+        : "";
     return {
       configured: true,
       ok: false,
       meetingStateReadable: false,
       meetingActivityWritable: false,
-      error: readError.message,
+      error: readError.message + missingState,
     };
   }
 
@@ -50,12 +55,17 @@ export async function checkSupabaseHealth(): Promise<SupabaseHealth> {
   });
 
   if (insertError) {
+    const rlsHint =
+      insertError.message.includes("row-level security") ||
+      insertError.code === "42501"
+        ? " Ejecuta supabase/migrations/20260313200000_catch_cuelrmx_patch.sql en el SQL Editor."
+        : "";
     return {
       configured: true,
       ok: false,
       meetingStateReadable: true,
       meetingActivityWritable: false,
-      error: insertError.message,
+      error: insertError.message + rlsHint,
     };
   }
 

@@ -27,7 +27,11 @@ Sin variables Supabase, la app usa **modo local** (`localStorage` + `BroadcastCh
 
 ## Supabase
 
-Ejecuta el SQL en `supabase/migrations/20260313180000_meeting_realtime.sql` en el SQL Editor del proyecto.
+Ejecuta en el SQL Editor del proyecto **Catch** (`cuelrmxihbjybcapscxk`):
+
+1. Si la base es nueva: `supabase/migrations/20260313180000_meeting_realtime.sql`
+2. Si ya tienes `meeting_activity` pero falla RLS o falta `meeting_state`:  
+   `supabase/migrations/20260313200000_catch_cuelrmx_patch.sql`
 
 Tablas:
 
