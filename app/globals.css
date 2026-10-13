@@ -7,9 +7,10 @@
   --soft: #eef5fa;
   --deep: #1b4f7a;
   --n: #c9d6e2;
+  --track: #f3f5f7;
   --live: #e0453a;
-  --display: "Comfortaa", "Nunito Sans", system-ui, sans-serif;
-  --body: "Nunito Sans", "Helvetica Neue", system-ui, sans-serif;
+  --display: var(--font-display), "Comfortaa", "Nunito Sans", system-ui, sans-serif;
+  --body: var(--font-body), "Nunito Sans", "Helvetica Neue", system-ui, sans-serif;
 }
 
 * {
@@ -24,8 +25,33 @@ body {
   font-family: var(--body);
 }
 
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid var(--cyan);
+  outline-offset: 2px;
+}
+
 a {
   color: var(--blue);
+}
+
+.brand-mark {
+  display: inline-flex;
+  line-height: 0;
+  text-decoration: none;
+  border-radius: 8px;
+}
+
+.brand-mark:focus-visible {
+  outline-offset: 4px;
 }
 
 .hidden {
@@ -144,6 +170,17 @@ a {
   padding: 0 14px;
   min-height: 36px;
   cursor: pointer;
+  font-family: var(--body);
+}
+
+.pill--warn {
+  color: var(--live);
+  background: #fff5f4;
+  cursor: default;
+}
+
+.live-pill {
+  cursor: default;
 }
 
 .dot {
@@ -186,7 +223,7 @@ a {
 
 .rail-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 14px;
   width: 100%;
   text-align: left;
@@ -228,7 +265,7 @@ a {
 .rail-t {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   min-width: 0;
 }
 
@@ -496,15 +533,20 @@ a {
 }
 
 .stage {
+  flex: 1;
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 40px;
+  align-items: center;
+  gap: 56px;
 }
 
 .text {
-  flex: 1 1 380px;
+  flex: 1 1 440px;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: opacity 0.35s ease;
 }
 
 .chapter {
@@ -518,15 +560,18 @@ a {
   margin: 0;
   font-family: var(--display);
   font-weight: 700;
-  font-size: clamp(24px, 4vw, 40px);
+  font-size: 40px;
   line-height: 1.15;
+  letter-spacing: -0.01em;
+  max-width: 620px;
 }
 
 .big {
   font-family: var(--display);
   font-weight: 700;
-  font-size: clamp(48px, 8vw, 96px);
+  font-size: clamp(72px, 9vw, 128px);
   line-height: 1;
+  letter-spacing: -0.04em;
   color: var(--blue);
 }
 
@@ -535,19 +580,26 @@ a {
   font-size: 17px;
   line-height: 1.5;
   color: var(--muted);
+  max-width: 520px;
 }
 
 .stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 32px;
+  gap: 40px;
   border-top: 1px solid var(--line);
-  margin-top: 12px;
-  padding-top: 12px;
+}
+
+.stats div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 14px;
 }
 
 .stats strong {
-  font-size: 22px;
+  font-size: 26px;
+  font-weight: 700;
 }
 
 .stats span {
@@ -588,7 +640,7 @@ a {
 }
 
 .chart-tabs button {
-  min-height: 36px;
+  min-height: 40px;
   border: 0;
   border-radius: 9px;
   background: transparent;
@@ -612,6 +664,15 @@ a {
   color: #fff;
   border-radius: 22px;
   padding: 16px 18px;
+  position: relative;
+}
+
+.cap-text {
+  flex: 1 1 380px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .cap-text small {
@@ -621,8 +682,8 @@ a {
 }
 
 .cap-text p {
-  margin: 4px 0 0;
-  font-size: 17px;
+  margin: 0;
+  font-size: 19px;
   line-height: 1.45;
 }
 
@@ -652,6 +713,9 @@ a {
   border: 1px solid #6e97ba;
   background: transparent;
   color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .ghost.round {
@@ -663,6 +727,9 @@ a {
   border: 0;
   background: #fff;
   color: var(--deep);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .solid:disabled {
@@ -711,6 +778,12 @@ a {
   color: var(--muted);
 }
 
+.ask {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .ask label {
   font-size: 13px;
   font-weight: 600;
@@ -746,11 +819,7 @@ a {
 .ask-ok {
   font-size: 13px;
   color: var(--blue);
-}
-
-.back-link {
-  font-size: 14px;
-  margin: 0;
+  min-height: 1.2em;
 }
 
 @media (min-width: 861px) {
@@ -761,14 +830,68 @@ a {
 
 @media (max-width: 860px) {
   .app-shell {
-    padding: 16px;
+    padding: 16px 18px 20px;
     padding-bottom: 84px;
+    gap: 14px;
+  }
+  .brand img {
+    height: 30px;
+    width: auto;
+  }
+  .brand .sep,
+  .edition,
+  .step-label,
+  .pill--warn {
+    display: none;
   }
   .rail {
     display: none;
   }
   .segs {
     display: none;
+  }
+  .body {
+    gap: 0;
+  }
+  .main {
+    gap: 14px;
+  }
+  .stage {
+    gap: 16px;
+  }
+  .text {
+    flex-basis: 100%;
+    gap: 10px;
+  }
+  .headline {
+    font-size: 24px;
+    line-height: 1.2;
+  }
+  .big {
+    font-size: 60px;
+  }
+  .sub {
+    font-size: 14px;
+  }
+  .stats {
+    display: none;
+  }
+  .chart-wrap {
+    flex-basis: 100%;
+  }
+  .caption {
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 16px;
+  }
+  .cap-text small {
+    display: none;
+  }
+  .cap-text p {
+    font-size: 14px;
+  }
+  .controls {
+    width: 100%;
   }
   .ai-widget.mobile-client {
     right: 16px;

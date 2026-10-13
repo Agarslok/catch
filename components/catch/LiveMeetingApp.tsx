@@ -211,20 +211,26 @@ export function LiveMeetingApp({ meetingId, role }: Props) {
     <div className={`app-shell ${isPresenter ? "presentador" : "cliente"}`}>
       <header className="top">
         <div className="brand">
-          <Image src="/favicon.png" alt="Catch Consulting" width={44} height={44} />
+          <Link href="/" className="brand-mark" aria-label="Capital Humano Live">
+            <Image src="/favicon.png" alt="" width={44} height={44} />
+          </Link>
           <span className="sep" />
           <span className="edition">
-            Monitor de Mercado Laboral · Guanajuato · Ene–Feb 2026 · {meetingId}
+            Monitor de Mercado Laboral · Guanajuato · Ene–Feb 2026
           </span>
         </div>
         <div className="top-right">
           <span className="step-label">
             Paso {currentStep + 1} de {TOTAL_STEPS}
           </span>
-          <span className="pill">{syncBadge}</span>
+          {!supabaseLoading && supabaseHealth && !supabaseHealth.ok && (
+            <span className="pill pill--warn" title={syncBadge}>
+              Sin sync
+            </span>
+          )}
           {isPresenter ? (
             <span className="pill live-pill">
-              <span className="dot" /> En vivo · presentador
+              <span className="dot" /> En vivo · vista del presentador
             </span>
           ) : (
             <button
@@ -419,10 +425,6 @@ export function LiveMeetingApp({ meetingId, role }: Props) {
           )}
         </main>
       </div>
-
-      <p className="back-link">
-        <Link href="/">← Inicio</Link>
-      </p>
 
       {showFloatingAvatar &&
         (isPresenter ? (
