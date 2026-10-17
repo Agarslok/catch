@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\"",
-    "dev": "next dev",
+    "dev": "node scripts/dev-session.mjs && node scripts/dev-reset-supabase.mjs && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "tsx --test lib/monitor-data/parity.test.ts lib/monitor-ai/run-with-tools.test.ts lib/monitor-ai/validate-highlight.test.ts lib/monitor-ai/view-context.test.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.8",
@@ -25,6 +26,7 @@
     "@types/react-dom": "^19.0.0",
     "eslint": "^9.16.0",
     "eslint-config-next": "^15.1.0",
+    "tsx": "^4.19.4",
     "typescript": "^5.7.2"
   }
 }

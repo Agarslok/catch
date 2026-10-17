@@ -7,26 +7,38 @@ export default function HomePage() {
   return (
     <div className="landing">
       <Image src="/favicon.png" alt="Catch Consulting" width={64} height={64} />
-      <h1>Capital Humano Live</h1>
-      <p>
-        Presentación sincronizada con Supabase (tiempo real) y despliegue en Netlify. Abre el
-        presentador en un equipo y los visitantes en móviles u otras pestañas.
+      <p className="landing-eyebrow">Capital Humano Live</p>
+      <h1 className="landing-hero">Monitor en vivo</h1>
+      <p className="landing-lead">
+        Presentación sincronizada con Supabase Realtime. Abra el moderador en una pestaña y el
+        cliente en otra para seguir la misma sesión.
       </p>
-      <div className="choices">
-        <Link
-          className="link-btn primary"
-          href={`/meeting/${DEFAULT_MEETING}/presenter`}
-        >
-          Vista presentador
+      <div className="choices choices--hero">
+        <Link className="link-btn link-btn--hero primary" href={`/monitor/${DEFAULT_MEETING}/presenter`}>
+          Moderador · Monitor
         </Link>
-        <Link className="link-btn outline" href={`/meeting/${DEFAULT_MEETING}/visitor`}>
-          Vista visitante
+        <Link className="link-btn link-btn--hero outline" href={`/monitor/${DEFAULT_MEETING}/visitor`}>
+          Cliente · Monitor
         </Link>
       </div>
-      <p style={{ fontSize: 13 }}>
-        Reunión demo: <code>{DEFAULT_MEETING}</code> ·{" "}
-        <Link href="/legacy/catch-live%20(3).html">versión HTML estática</Link>
+      <p className="landing-meta">
+        Reunión demo: <code>{DEFAULT_MEETING}</code>
       </p>
+
+      <details className="landing-legacy">
+        <summary>Vistas clásicas (solo referencia)</summary>
+        <div className="choices choices--legacy">
+          <Link className="link-btn link-btn--tiny" href={`/meeting/${DEFAULT_MEETING}/presenter`}>
+            Presentador clásico
+          </Link>
+          <Link className="link-btn link-btn--tiny outline" href={`/meeting/${DEFAULT_MEETING}/visitor`}>
+            Visitante clásico
+          </Link>
+          <Link className="link-btn link-btn--tiny outline" href="/legacy/catch-live%20(3).html">
+            HTML estático
+          </Link>
+        </div>
+      </details>
     </div>
   );
 }

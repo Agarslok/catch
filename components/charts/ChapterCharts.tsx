@@ -52,6 +52,8 @@ type Props = {
   munFilter: MunFilter;
   chartKind: ChartKind;
   isPresenter: boolean;
+  compact?: boolean;
+  height?: number;
   onMunFilterChange?: (k: MunFilter) => void;
   onChartKindChange?: (k: ChartKind) => void;
   events?: ChartEvents;
@@ -75,11 +77,14 @@ export function ChapterCharts({
   munFilter,
   chartKind,
   isPresenter,
+  compact = false,
+  height,
   onMunFilterChange,
   onChartKindChange,
   events,
   trackAnalytics,
 }: Props) {
+  const chartHeight = height ?? (compact ? 200 : 280);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [detailPointId, setDetailPointId] = useState<string | null>(null);
 
@@ -416,11 +421,17 @@ export function ChapterCharts({
     />
   );
 
+  const wrapClass = `chart-wrap${compact ? " chart-wrap--compact" : ""}`;
+
   if (chapter === 0) {
     return (
-      <div className="chart-wrap">
+      <div className={wrapClass}>
         <span className="chart-title">Rotación bimestral total (%) · 2025 y 2026</span>
-        <EChartPanel option={turnoverOption} onEvents={{ click: onChartClick }} />
+        <EChartPanel
+          option={turnoverOption}
+          height={chartHeight}
+          onEvents={{ click: onChartClick }}
+        />
         {detail}
       </div>
     );
@@ -428,11 +439,15 @@ export function ChapterCharts({
 
   if (chapter === 1) {
     return (
-      <div className="chart-wrap">
-        {!isPresenter && tabs}
-        {kindToggle}
+      <div className={wrapClass}>
+        {!isPresenter && !compact && tabs}
+        {!compact && kindToggle}
         <span className="chart-title">Rotación por municipio (%) · Ene–Feb 2026</span>
-        <EChartPanel option={municipalityOption} onEvents={{ click: onChartClick }} />
+        <EChartPanel
+          option={municipalityOption}
+          height={chartHeight}
+          onEvents={{ click: onChartClick }}
+        />
         {detail}
       </div>
     );
@@ -440,14 +455,15 @@ export function ChapterCharts({
 
   if (chapter === 2) {
     return (
-      <div className="chart-wrap">
-        {kindToggle}
+      <div className={wrapClass}>
+        {!compact && kindToggle}
         <span className="chart-title">Bajas por antigüedad (% del total de bajas)</span>
         <EChartPanel
           option={chartKind === "pie" ? tenurePieOption : tenureBarOption}
+          height={chartHeight}
           onEvents={{ click: onChartClick }}
         />
-        {beat === 1 && (
+        {beat === 1 && !compact && (
           <p className="chart-note">Menos de un año: 60% de las bajas (acumulado 0–12 meses).</p>
         )}
         {detail}
@@ -456,10 +472,16 @@ export function ChapterCharts({
   }
 
   return (
-    <div className="chart-wrap">
+    <div className={wrapClass}>
       <span className="chart-title">Contrataciones Ene–Feb 2026</span>
-      <EChartPanel option={hiringPieOption} onEvents={{ click: onChartClick }} />
-      <p className="chart-note">Gráfica de torta: 8 de 10 contrataciones repusieron bajas.</p>
+      <EChartPanel
+        option={hiringPieOption}
+        height={chartHeight}
+        onEvents={{ click: onChartClick }}
+      />
+      {!compact && (
+        <p className="chart-note">Gráfica de torta: 8 de 10 contrataciones repusieron bajas.</p>
+      )}
       {detail}
     </div>
   );

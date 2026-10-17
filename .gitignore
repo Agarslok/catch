@@ -4,5 +4,6 @@ out
 .env
 .env.local
 .env*.local
+.catch-dev-session
 npm-debug.log*
 .DS_Store
