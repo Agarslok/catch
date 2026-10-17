@@ -11,7 +11,25 @@ import {
   verifyPresenterToken,
 } from "@/lib/meeting/presenter-auth";
 import type { MeetingQueueRequestKind } from "@/lib/meeting/session-types";
-import { getSupabaseServiceClient } from "@/lib/supabase/server";
+import {
+  getSupabaseServiceClient,
+  supabaseServiceConfigErrorCode,
+  supabaseServiceEnvStatus,
+} from "@/lib/supabase/server";
+
+function serviceClientUnavailableResponse(route: string) {
+  const checks = supabaseServiceEnvStatus();
+  const code = supabaseServiceConfigErrorCode(checks);
+  return NextResponse.json(
+    {
+      error: "Supabase service client unavailable",
+      code,
+      checks,
+      route,
+    },
+    { status: 503 },
+  );
+}
 
 type PostBody = {
   text?: string;
@@ -60,12 +78,9 @@ export async function POST(
     return NextResponse.json({ error: "Invalid participant token" }, { status: 401 });
   }
 
-  const supabase = getSupabaseServiceClient();
+  const supabase = getSupabaseServiceClient("meeting/questions POST");
   if (!supabase) {
-    return NextResponse.json(
-      { error: "SUPABASE_SERVICE_ROLE_KEY required" },
-      { status: 503 },
-    );
+    return serviceClientUnavailableResponse("meeting/questions POST");
   }
 
   const idempotencyKey = (body.idempotencyKey ?? "").trim() || null;
@@ -142,12 +157,9 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabase = getSupabaseServiceClient();
+  const supabase = getSupabaseServiceClient("meeting/questions GET");
   if (!supabase) {
-    return NextResponse.json(
-      { error: "SUPABASE_SERVICE_ROLE_KEY required" },
-      { status: 503 },
-    );
+    return serviceClientUnavailableResponse("meeting/questions GET");
   }
 
   let query = supabase
