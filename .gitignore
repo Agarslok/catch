@@ -6,5 +6,7 @@ out
 .env.local
 .env*.local
 .catch-dev-session
+supabase/.temp
+tsconfig.tsbuildinfo
 npm-debug.log*
 .DS_Store

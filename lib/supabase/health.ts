@@ -5,6 +5,8 @@ export type SupabaseHealth = {
   ok: boolean;
   meetingStateReadable: boolean;
   meetingActivityWritable: boolean;
+  /** false si faltan meeting_questions o columnas extendidas de meeting_state */
+  schemaExtended?: boolean;
   error?: string;
 };
 
@@ -86,10 +88,37 @@ export async function checkSupabaseHealth(): Promise<SupabaseHealth> {
     };
   }
 
+  const serviceUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  let schemaExtended = true;
+  let schemaHint: string | undefined;
+
+  if (serviceUrl && serviceKey) {
+    const admin = createClient(serviceUrl, serviceKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { error: stateExtError } = await admin
+      .from("meeting_state")
+      .select("event_seq, script, presentation_status")
+      .limit(1);
+    const { error: questionsError } = await admin
+      .from("meeting_questions")
+      .select("id")
+      .limit(1);
+
+    if (stateExtError || questionsError) {
+      schemaExtended = false;
+      schemaHint =
+        "Faltan migraciones de sesión (meeting_questions / columnas de meeting_state). Ejecuta: npm run db:push";
+    }
+  }
+
   return {
     configured: true,
-    ok: true,
+    ok: schemaExtended,
     meetingStateReadable: true,
     meetingActivityWritable: true,
+    schemaExtended,
+    ...(schemaHint ? { error: schemaHint } : {}),
   };
 }

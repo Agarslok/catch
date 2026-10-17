@@ -41,7 +41,6 @@ export function createGeminiProvider(): MonitorAiProvider | null {
         },
         contents: [{ role: "user", parts: [{ text: input.userText }] }],
         generationConfig: {
-          temperature: 0.2,
           maxOutputTokens: 256,
         },
       };

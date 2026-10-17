@@ -1,0 +1,6 @@
+# Proyecto Catch (producción). Para aplicar migraciones:
+#   set SUPABASE_DB_PASSWORD=<postgres password> && npm run db:push
+project_id = "cuelrmxihbjybcapscxk"
+
+[db]
+major_version = 15

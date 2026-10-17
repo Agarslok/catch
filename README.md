@@ -32,6 +32,17 @@ Ejecuta en el SQL Editor de tu proyecto Supabase (**Catch**):
 1. Si la base es nueva: `supabase/migrations/20260313180000_meeting_realtime.sql`
 2. Si ya tienes `meeting_activity` pero falla RLS o falta `meeting_state`:  
    `supabase/migrations/20260313200000_catch_cuelrmx_patch.sql`
+3. **Reunión / moderador / monitor (obligatorio en producción):** aplica el resto de `supabase/migrations/` en orden de fecha, o desde la raíz del repo:
+
+   ```bash
+   # Contraseña: Supabase → Project Settings → Database
+   set SUPABASE_DB_PASSWORD=tu_password
+   npm run db:push
+   ```
+
+   Incluye `meeting_questions`, `meeting_participants`, columnas `event_seq` / `script` en `meeting_state`, etc.
+
+   Alternativa manual: pegar y ejecutar **`supabase/catch_production_catchup.sql`** en el SQL Editor.
 
 Tablas:
 
@@ -54,7 +65,7 @@ Esperado: `"ok": true`. En la app, el badge muestra **Supabase conectado · tiem
 1. Conecta el repo en Netlify.
 2. Build command: `npm run build` y **Publish directory:** `.next` (definido en `netlify.toml`).  
    Si en la UI tenías el publish en la raíz del repo, cámbialo a `.next` o déjalo vacío para que use el TOML.
-3. Variables de entorno: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+3. Variables de entorno (scope **Build** y **Functions**): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `MEETING_PRESENTER_SECRET`, `GEMINI_API_KEY`, y opcionalmente `GEMINI_MODEL_ID` (p. ej. `gemini-3.5-flash-lite`).
 
 ## Legacy
 
