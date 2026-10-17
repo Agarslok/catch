@@ -7,3 +7,5 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  # GEMINI_TIMEOUT_MS es configuración (ms), no un secreto; @netlify/plugin-nextjs la copia a run-config.json si está en el entorno de build.
+  SECRETS_SCAN_OMIT_KEYS = "GEMINI_TIMEOUT_MS"

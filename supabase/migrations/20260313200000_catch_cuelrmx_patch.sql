@@ -1,4 +1,4 @@
--- Proyecto Catch: https://cuelrmxihbjybcapscxk.supabase.co
+-- Patch reunión Catch: meeting_state + RLS (ejecutar en el proyecto Supabase de producción)
 -- Ejecutar en SQL Editor si meeting_state falta o RLS bloquea inserts.
 
 create table if not exists public.meeting_state (
