@@ -28,6 +28,7 @@ button{cursor:pointer}
 :focus-visible{outline:3px solid var(--cyan); outline-offset:2px}
 @media (prefers-reduced-motion: reduce){ *{animation:none!important; transition:none!important} }
 .oculto{display:none!important}
+html.catch-embed .demo{display:none!important}
 h1,h2,h3{font-family:var(--display); letter-spacing:-.01em}
 
 /* barra de demo para elegir la vista */
@@ -4670,7 +4671,12 @@ async function descargarPdfParaCliente() {
 }
 
 // ======================= render general y eventos =======================
-function vistaDesdeHash() { const h = location.hash.replace('#', ''); return ['moderador', 'cliente', 'movil'].includes(h) ? h : 'moderador'; }
+function vistaDesdeHash() {
+  const cfg = window.__CATCH_MONITOR_SYNC__;
+  if (cfg?.embed && cfg.role && ['moderador', 'cliente', 'movil'].includes(cfg.role)) return cfg.role;
+  const h = location.hash.replace('#', '');
+  return ['moderador', 'cliente', 'movil'].includes(h) ? h : 'moderador';
+}
 let ultimaVista = '';
 const AVATAR_VOL_KEY = 'catch-avatar-volume';
 function leerVolAvatar() {
@@ -4763,7 +4769,19 @@ function enlazarAudioAvatar(raiz) {
 }
 function leerIdentidadVisitante() {
   const api = window.__CATCH_MONITOR_API__;
-  return api && typeof api.readActor === 'function' ? api.readActor() : null;
+  if (api && typeof api.readActor === 'function') {
+    const fromApi = api.readActor();
+    if (fromApi) return fromApi;
+  }
+  try {
+    const mid = window.__CATCH_MONITOR_SYNC__?.meetingId;
+    if (!mid) return null;
+    const raw = localStorage.getItem('catch:' + mid + ':actor');
+    if (!raw) return null;
+    const o = JSON.parse(raw);
+    if (o && o.id && o.name && String(o.name).trim()) return { id: o.id, name: String(o.name).trim() };
+  } catch { /* ignore */ }
+  return null;
 }
 function visitanteRequiereIngreso() {
   return (S.rol === 'cliente' || S.rol === 'movil') && !leerIdentidadVisitante();
@@ -4789,8 +4807,15 @@ function enlazarIngresoVisitante(root) {
   if (!btn || !input) return;
   const submit = async () => {
     if (visitorJoinBusy) return;
-    const api = window.__CATCH_MONITOR_API__;
-    if (!api?.registerVisitor) return;
+    let api = window.__CATCH_MONITOR_API__;
+    for (let i = 0; i < 8 && !api?.registerVisitor; i++) {
+      await new Promise(r => setTimeout(r, 150));
+      api = window.__CATCH_MONITOR_API__;
+    }
+    if (!api?.registerVisitor) {
+      if (err) { err.hidden = false; err.textContent = 'El registro aún no está listo. Recargue la página e intente de nuevo.'; }
+      return;
+    }
     const name = String(input.value || '').trim();
     if (!name) {
       if (err) { err.hidden = false; err.textContent = 'Escriba su nombre para continuar.'; }
@@ -4857,7 +4882,10 @@ document.addEventListener('input', e => {
 document.addEventListener('click', e => {
   const b = e.target.closest('button, [data-tocar], [data-volver-anterior]'); if (!b) return;
   const d = b.dataset;
-  if (d.v) { S.rol = d.v; history.replaceState(null, '', '#' + d.v); $('#capaModal').innerHTML = ''; render(); return; }
+  if (d.v) {
+    if (window.__CATCH_MONITOR_SYNC__?.embed) return;
+    S.rol = d.v; history.replaceState(null, '', '#' + d.v); $('#capaModal').innerHTML = ''; render(); return;
+  }
   if (d.prepSiguiente !== undefined) return void iniciarGeneracionInformeSimulada();
   if (d.iniciarReunion !== undefined) return void iniciarReunionDesdeListo();
   if (d.descargarGuionPdf !== undefined) return void descargarPdfGuionAvatar();

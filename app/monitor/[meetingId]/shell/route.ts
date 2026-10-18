@@ -16,7 +16,10 @@ function readDevSessionId(): string {
 function monitorScriptTag(filename: string): string {
   const filePath = path.join(process.cwd(), "public", "monitor-v3", filename);
   try {
-    const src = readFileSync(filePath, "utf8").replace(/</g, "\\u003c");
+    const src = readFileSync(filePath, "utf8").replace(
+      /<\/script/gi,
+      "<\\/script",
+    );
     return `<script data-catch-inline="${filename}">${src}</script>`;
   } catch {
     return `<script src="/monitor-v3/${filename}"></script>`;
@@ -78,12 +81,18 @@ export async function GET(
   const narrationProbe =
     role === "moderador" ? scriptPlanMonitorNarration() : "";
 
+  const headBoot = `<script>window.__CATCH_MONITOR_SYNC__=${syncConfig};document.documentElement.classList.add("catch-embed");</script>
+${monitorScriptTag("monitor-participant-bridge.js")}`;
+  if (html.includes("<head>")) {
+    html = html.replace("<head>", `<head>\n${headBoot}`);
+  } else {
+    html = headBoot + html;
+  }
+
   const inject = `
-<script>window.__CATCH_MONITOR_SYNC__=${syncConfig};</script>
 ${narrationProbe}
 ${monitorScriptTag("monitor-dev-reset.js")}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-${monitorScriptTag("monitor-participant-bridge.js")}
 ${monitorScriptTag("monitor-queue-sync.js")}
 ${monitorScriptTag("monitor-presentation-effects.js")}
 ${monitorScriptTag("monitor-section-close.js")}
