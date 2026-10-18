@@ -25,6 +25,7 @@ import {
   ConceptReviewView,
   FullSheetView,
   IntroductionView,
+  PresentationHandoffBanner,
   PresenterGeneratingView,
   PresenterPreparationView,
   VisitorWaitingView,
@@ -37,9 +38,11 @@ import {
 } from "@/lib/meeting/monitor-session-phase";
 import { useSupabaseHealth } from "@/hooks/useSupabaseHealth";
 import { useInteractionAnalytics } from "@/hooks/useInteractionAnalytics";
-import { MeetingAnalyticsPanel } from "@/components/catch/MeetingAnalyticsPanel";
+import { excerptText, presentationNavMetadata } from "@/lib/analytics/track-presentation";
 import { MeetingVisitorTools } from "@/components/catch/MeetingVisitorTools";
-import { PresenterEngagementPanel } from "@/components/catch/PresenterEngagementPanel";
+import { PresenterVisitorRoster } from "@/components/catch/PresenterVisitorRoster";
+import type { PresenterPrepFaqItem } from "@/components/catch/PresenterFaqPrepSection";
+import { PresenterRightPanel } from "@/components/catch/PresenterRightPanel";
 import { PrivateQuestionPanel } from "@/components/catch/PrivateQuestionPanel";
 import { applyChartActionToGlobalView } from "@/lib/meeting/global-view";
 import {
@@ -59,9 +62,20 @@ import {
   shouldBlockDuplicateContinue,
 } from "@/lib/meeting/section-flow";
 import {
+  isPresentationHandoffPoint,
+  PRESENTATION_HANDOFF_NARRATIVE,
+} from "@/lib/meeting/presentation-handoff";
+import {
   recoveryNotice,
   type RecoveryNotice,
 } from "@/lib/meeting/presentation-recovery";
+import {
+  applyPresenterHistoryPop,
+  historyStepFromPhase,
+  nextHistoryPushes,
+  type PresenterHistoryStep,
+} from "@/lib/meeting/presenter-session-ui";
+import type { PresenterVisualTemplateId } from "@/lib/meeting/presenter-visual-templates";
 import type { LocalExploreMode } from "@/lib/meeting/script-types";
 import type { ClarityVote } from "@/lib/meeting/session-types";
 import { validateChartAction } from "@/lib/visualization/actions";
@@ -75,27 +89,17 @@ type Props = {
   meetingId: string;
   role: "presenter" | "visitor";
   presenterToken?: string;
+  visitorIdentity?: { id: string; name: string };
+  initialParticipantToken?: string;
 };
 
-function getVisitorActor(meetingId: string) {
-  if (typeof window === "undefined") {
-    return { id: "visitor", name: "Visitante" };
-  }
-  const key = `catch:${meetingId}:actor`;
-  try {
-    const raw = localStorage.getItem(key);
-    if (raw) return JSON.parse(raw) as { id: string; name: string };
-    const id = `v-${Math.random().toString(36).slice(2, 9)}`;
-    const name = `Visitante ${id.slice(-4)}`;
-    const actor = { id, name };
-    localStorage.setItem(key, JSON.stringify(actor));
-    return actor;
-  } catch {
-    return { id: "visitor", name: "Visitante" };
-  }
-}
-
-export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
+export function LiveMeetingApp({
+  meetingId,
+  role,
+  presenterToken,
+  visitorIdentity,
+  initialParticipantToken,
+}: Props) {
   const isPresenter = role === "presenter";
   const {
     script,
@@ -130,7 +134,7 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
   const [chartHighlight, setChartHighlight] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [privateAskOpen, setPrivateAskOpen] = useState(false);
-  const [participantToken, setParticipantToken] = useState("");
+  const [participantToken, setParticipantToken] = useState(initialParticipantToken ?? "");
   const [munFilter, setMunFilter] = useState<MunFilter>("total");
   const [chartKind, setChartKind] = useState<ChartKind>("bar");
   const [question, setQuestion] = useState("");
@@ -139,7 +143,13 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
   const [aiReplySeq, setAiReplySeq] = useState(0);
   const [clarityVote, setClarityVote] = useState<ClarityVote | null>(null);
   const [clarityPromptDismissed, setClarityPromptDismissed] = useState(false);
-  const [qOpen, setQOpen] = useState(false);
+  const [presenterRightTab, setPresenterRightTab] = useState<"participacion">("participacion");
+  const [prepFaqs, setPrepFaqs] = useState<PresenterPrepFaqItem[]>([]);
+  const [presenterVisualTemplate, setPresenterVisualTemplate] =
+    useState<PresenterVisualTemplateId>("mml");
+  const prepGenAbortRef = useRef(false);
+  const presenterHistStepRef = useRef<PresenterHistoryStep | null>(null);
+  const presenterHistApplyingRef = useRef(false);
   const [recovery, setRecovery] = useState<RecoveryNotice | null>(null);
   const isMobile = useMediaQuery("(max-width: 860px)");
   const showLeftRail = !isMobile || isPresenter;
@@ -158,13 +168,38 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
   const actorRef = useRef(
     isPresenter
       ? { id: "presenter", name: "Presentador" }
-      : getVisitorActor(meetingId),
+      : visitorIdentity ?? { id: "visitor", name: "Visitante" },
   );
-  const { track: trackAnalytics } = useInteractionAnalytics({
+  const { track: trackAnalyticsRaw } = useInteractionAnalytics({
     meetingId,
     role,
     participantId: actorRef.current.id,
+    participantToken: isPresenter ? undefined : participantToken,
+    displayName: isPresenter ? undefined : actorRef.current.name,
+    enabled: isPresenter || Boolean(participantToken),
   });
+  const analyticsContextRef = useRef({
+    sectionName: null as string | null,
+    sectionId: null as string | null,
+    pointId: "",
+  });
+  const trackAnalytics = useCallback(
+    (
+      eventType: Parameters<typeof trackAnalyticsRaw>[0],
+      fields: Parameters<typeof trackAnalyticsRaw>[1] = {},
+    ) => {
+      trackAnalyticsRaw(eventType, {
+        ...fields,
+        metadata: {
+          section_name: analyticsContextRef.current.sectionName,
+          section_id: analyticsContextRef.current.sectionId,
+          point_id: analyticsContextRef.current.pointId,
+          ...(fields.metadata ?? {}),
+        },
+      });
+    },
+    [trackAnalyticsRaw],
+  );
   const activity = useActivityFeed(meetingId, isPresenter);
   const { health: supabaseHealth, loading: supabaseLoading } = useSupabaseHealth();
 
@@ -179,6 +214,10 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
 
   useEffect(() => {
     if (isPresenter) return;
+    if (initialParticipantToken) {
+      setParticipantToken(initialParticipantToken);
+      return;
+    }
     const id = actorRef.current.id;
     const storedKey = `catch:${meetingId}:pt`;
     let existing = "";
@@ -203,14 +242,25 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
         }
       })
       .catch(() => {});
-  }, [isPresenter, meetingId]);
+  }, [isPresenter, meetingId, initialParticipantToken]);
 
   useEffect(() => {
     if (isPresenter) setPeekPointId(null);
   }, [livePointId, isPresenter]);
 
+  const inPresenterLoadView =
+    isPresenter &&
+    (prepBusy || sessionPhase === "preparacion" || sessionPhase === "generando_informe");
+
   const presenterPreMeetingReview =
-    isPresenter && presenterInPreMeetingReview(sessionPhase);
+    isPresenter && presenterInPreMeetingReview(sessionPhase) && !inPresenterLoadView;
+
+  const presenterRightSessionPhase =
+    inPresenterLoadView
+      ? sessionPhase === "preparacion" && !prepBusy
+        ? "preparacion"
+        : "generando_informe"
+      : sessionPhase;
 
   useEffect(() => {
     if (presenterPreMeetingReview) {
@@ -240,13 +290,20 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
   const currentIndex = getPointIndex(script, currentPoint.id);
   const totalPoints = script.points.length;
   const section = sectionForPoint(script, currentPoint);
+  analyticsContextRef.current = {
+    sectionName: section?.name ?? null,
+    sectionId: section?.id ?? null,
+    pointId: currentPoint.id,
+  };
   const chartRef = currentPoint.chartRefs[0];
   const chapterIndex = chartRef?.chapterIndex ?? 0;
   const beat = chartRef?.beat ?? 0;
   const c = chapterMeta(chapterIndex) ?? CHAPTERS[0];
   const alignedWithGlobal = follow || currentPoint.id === livePointId;
-  const groupAwaitingModerator = globalView.awaitingModerator === true;
   const livePoint = getPointById(script, livePointId);
+  const liveAtHandoff =
+    visitorSeesMeeting(sessionPhase) && isPresentationHandoffPoint(livePoint);
+  const groupAwaitingModerator = globalView.awaitingModerator === true;
   const clarityAwaitSectionId =
     globalView.sectionAwaitSectionId ??
     (livePoint?.sectionId &&
@@ -284,6 +341,7 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
 
   const runSimulatedReportGeneration = useCallback(async () => {
     if (prepBusy || sessionPhase !== "preparacion" || !isPresenter) return;
+    prepGenAbortRef.current = false;
     setPrepBusy(true);
     const messages = [
       "Preparando la información",
@@ -293,15 +351,69 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
     await publishSessionPhase("generando_informe");
     const t0 = Date.now();
     for (const m of messages) {
+      if (prepGenAbortRef.current) {
+        setGenMessage("");
+        setPrepBusy(false);
+        return;
+      }
       setGenMessage(m);
       await new Promise((r) => setTimeout(r, 750));
     }
     const rest = 2200 - (Date.now() - t0);
     if (rest > 0) await new Promise((r) => setTimeout(r, rest));
+    if (prepGenAbortRef.current) {
+      setGenMessage("");
+      setPrepBusy(false);
+      return;
+    }
     setGenMessage("");
     await publishSessionPhase("revision_previa");
     setPrepBusy(false);
   }, [isPresenter, prepBusy, publishSessionPhase, sessionPhase]);
+
+  useEffect(() => {
+    if (!isPresenter || typeof window === "undefined") return;
+    const KEY = "catchPresenterPrep";
+    const desired = historyStepFromPhase(sessionPhase, { generating: prepBusy });
+    if (presenterHistApplyingRef.current) {
+      if (desired === presenterHistStepRef.current) presenterHistApplyingRef.current = false;
+      else return;
+    }
+    const plan = nextHistoryPushes(presenterHistStepRef.current, desired);
+    const write = (step: PresenterHistoryStep, mode: "replace" | "push") => {
+      const prev = (window.history.state as Record<string, unknown> | null) ?? {};
+      const next = { ...prev, [KEY]: step };
+      if (mode === "replace") window.history.replaceState(next, "");
+      else window.history.pushState(next, "");
+      presenterHistStepRef.current = step;
+    };
+    if (plan.replaceBase) write(plan.replaceBase, "replace");
+    for (const step of plan.push) write(step, "push");
+  }, [isPresenter, prepBusy, sessionPhase]);
+
+  useEffect(() => {
+    if (!isPresenter) return;
+    const KEY = "catchPresenterPrep";
+    const onPop = (e: PopStateEvent) => {
+      const popped = (e.state as Record<string, unknown> | null)?.[KEY];
+      const result = applyPresenterHistoryPop(popped, sessionPhase);
+      if (!result.applied) return;
+      presenterHistApplyingRef.current = true;
+      presenterHistStepRef.current =
+        popped === "carga" || popped === "revision" || popped === "en_vivo"
+          ? popped
+          : "carga";
+      if (result.abortGeneration) {
+        prepGenAbortRef.current = true;
+        setPrepBusy(false);
+        setGenMessage("");
+      }
+      if (result.phase !== sessionPhase) void publishSessionPhase(result.phase);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [isPresenter, publishSessionPhase, sessionPhase]);
+
 
   const startMeetingFromReady = useCallback(async () => {
     if (!presenterInPreMeetingReview(sessionPhase) || !isPresenter) return;
@@ -313,21 +425,26 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
     downloadAvatarScriptPdf(script, pdfMeta);
   }, [script, pdfMeta]);
 
-  const returnToPresentation = useCallback(() => {
-    void refreshGlobalState().then((row) => {
-      const pointId = row?.current_point_id ?? livePointId;
-      setFollow(true);
-      setOwnPointId(pointId);
-      setExploreMode("follow");
-      setSheetReturnId(null);
-      setPeekPointId(null);
-      setReviewOpen(false);
-      trackAnalytics("explore.returned_to_presentation", {
-        chart_id: c.chartFocus,
-        metadata: { pointId },
+  const returnToPresentation = useCallback(
+    (userInitiated = true) => {
+      void refreshGlobalState().then((row) => {
+        const pointId = row?.current_point_id ?? livePointId;
+        setFollow(true);
+        setOwnPointId(pointId);
+        setExploreMode("follow");
+        setSheetReturnId(null);
+        setPeekPointId(null);
+        setReviewOpen(false);
+        if (userInitiated) {
+          trackAnalytics("explore.returned_to_presentation", {
+            chart_id: c.chartFocus,
+            metadata: { pointId, user_initiated: true },
+          });
+        }
       });
-    });
-  }, [livePointId, refreshGlobalState, trackAnalytics, c.chartFocus]);
+    },
+    [livePointId, refreshGlobalState, trackAnalytics, c.chartFocus],
+  );
 
   const liveSectionOrder = useMemo(() => {
     const point = getPointById(script, livePointId);
@@ -343,25 +460,64 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
     }
     const prev = prevLiveSectionOrderRef.current;
     if (prev !== null && liveSectionOrder > prev) {
-      returnToPresentation();
+      returnToPresentation(false);
     }
     prevLiveSectionOrderRef.current = liveSectionOrder;
   }, [liveSectionOrder, isPresenter, returnToPresentation]);
 
+  const trackVisitorNavigation = useCallback(
+    (
+      eventType:
+        | "presentation.navigated_forward"
+        | "presentation.navigated_back"
+        | "presentation.section_selected",
+      fromPointId: string,
+      toPointId: string,
+      extra?: Record<string, unknown>,
+    ) => {
+      if (isPresenter) return;
+      const fromIdx = getPointIndex(script, fromPointId);
+      const toIdx = getPointIndex(script, toPointId);
+      const toPoint = getPointById(script, toPointId);
+      const sec = toPoint ? sectionForPoint(script, toPoint) : undefined;
+      trackAnalytics(eventType, {
+        chart_id: c.chartFocus,
+        metadata: {
+          ...presentationNavMetadata({
+            fromPointId,
+            toPointId,
+            fromIndex: fromIdx,
+            toIndex: toIdx,
+            sectionId: sec?.id ?? null,
+            sectionName: sec?.name ?? null,
+            follow: false,
+          }),
+          ...extra,
+        },
+      });
+    },
+    [isPresenter, script, trackAnalytics, c.chartFocus],
+  );
+
   const goLocal = useCallback(
-    (pointId: string, mode: LocalExploreMode) => {
+    (pointId: string, mode: LocalExploreMode, nav?: "forward" | "back" | "section") => {
       const idx = getPointIndex(script, pointId);
       if (idx < 0 || idx > unlockedStep) return;
+      const fromId = currentPoint.id;
       setFollow(false);
       setOwnPointId(pointId);
       setExploreMode(mode);
       if (mode !== "summary_origin") setSheetReturnId(null);
       trackAnalytics("explore.started", {
         chart_id: c.chartFocus,
-        metadata: { pointId, mode },
+        metadata: { pointId, mode, from_point_id: fromId },
       });
+      if (nav === "forward") trackVisitorNavigation("presentation.navigated_forward", fromId, pointId);
+      else if (nav === "back") trackVisitorNavigation("presentation.navigated_back", fromId, pointId);
+      else if (nav === "section")
+        trackVisitorNavigation("presentation.section_selected", fromId, pointId);
     },
-    [script, unlockedStep, trackAnalytics, c.chartFocus],
+    [script, unlockedStep, trackAnalytics, c.chartFocus, currentPoint.id, trackVisitorNavigation],
   );
 
   useEffect(() => {
@@ -466,7 +622,7 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
       return;
     }
     const nxt = adjacentNavigableIndex(script, currentIndex, 1);
-    if (nxt <= unlockedStep) goLocal(getPointAt(script, nxt).id, "explore");
+    if (nxt <= unlockedStep) goLocal(getPointAt(script, nxt).id, "explore", "forward");
   };
 
   const prev = () => {
@@ -483,6 +639,7 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
     goLocal(
       getPointAt(script, adjacentNavigableIndex(script, currentIndex, -1)).id,
       "explore",
+      "back",
     );
   };
 
@@ -521,6 +678,14 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
   }, [ready, currentPoint.id, chartKind, munFilter, logView]);
 
   const onChartSelect = (extra: Record<string, unknown>) => {
+    if (!isPresenter) {
+      trackAnalytics("element.clicked", {
+        chart_id: c.chartFocus,
+        element_id: typeof extra.category === "string" ? extra.category : undefined,
+        element_label: typeof extra.label === "string" ? extra.label : undefined,
+        metadata: extra,
+      });
+    }
     void logMeetingActivity({
       meetingId,
       eventType: "CHART_SELECTED",
@@ -591,7 +756,9 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
       chart_id: c.chartFocus,
       metadata: {
         question_length: text.length,
+        question_text: excerptText(text),
         chartFocus: c.chartFocus,
+        point_id: currentPoint.id,
       },
     });
     await logMeetingActivity({
@@ -638,6 +805,14 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
     if (data.answer) {
       setAiReply(data.answer);
       setAiReplySeq((n) => n + 1);
+      trackAnalytics("question.answered", {
+        chart_id: c.chartFocus,
+        metadata: {
+          answer_text: excerptText(String(data.answer)),
+          point_id: currentPoint.id,
+          has_chart_action: Boolean(data.action),
+        },
+      });
       await logMeetingActivity({
         meetingId,
         eventType: "AI_RESPONSE",
@@ -734,7 +909,7 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
           return;
         }
         if (isPresenter) void publishPoint(id);
-        else goLocal(id, "explore");
+        else goLocal(id, "explore", "section");
       }}
       onGenerateScript={
         presenterToken
@@ -767,7 +942,7 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
         />
       );
     }
-    if (isPresenter && sessionPhase === "generando_informe") {
+    if (isPresenter && (sessionPhase === "generando_informe" || prepBusy)) {
       return <PresenterGeneratingView message={genMessage || "Generando informe…"} />;
     }
     if (reviewOpen) {
@@ -784,12 +959,22 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
     }
     if (currentPoint.kind === "closing") {
       return (
-        <ClosingView
-          script={script}
-          isPresenter={isPresenter}
-          onDownloadCatch={isPresenter ? onDownloadCatchPdf : undefined}
-          onDownloadClient={onDownloadClientPdf}
-        />
+        <>
+          <ClosingView
+            script={script}
+            isPresenter={isPresenter}
+            onDownloadCatch={isPresenter ? onDownloadCatchPdf : undefined}
+            onDownloadClient={onDownloadClientPdf}
+          />
+          {isPresenter && presenterToken ? (
+            <PresenterVisitorRoster
+              meetingId={meetingId}
+              presenterToken={presenterToken}
+              active={true}
+              variant="closing"
+            />
+          ) : null}
+        </>
       );
     }
     if (visitorClarityPrompt) {
@@ -885,11 +1070,15 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
   const atLastNavigable =
     adjacentNavigableIndex(script, isPresenter ? liveStep : currentIndex, 1) ===
     (isPresenter ? liveStep : currentIndex);
+  const avatarCaptionText =
+    liveAtHandoff && (follow || isPresenter)
+      ? PRESENTATION_HANDOFF_NARRATIVE
+      : currentPoint.narrative || (beat === 0 ? c.capA : c.capB);
 
   const shellClass = `app-shell ${isPresenter ? "presentador" : "cliente"}`;
   const presenterLiveDashboard = isPresenter && presenterDashboardReady(sessionPhase);
   const showRailContent = isPresenter
-    ? presenterSeesDashboard(sessionPhase)
+    ? presenterSeesDashboard(sessionPhase) && !inPresenterLoadView
     : visitorSeesMeeting(sessionPhase);
 
   return (
@@ -1083,7 +1272,7 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
                   </button>
                 )}
                 {!follow && (
-                  <button type="button" className="btn-small" onClick={returnToPresentation}>
+                  <button type="button" className="btn-small" onClick={() => returnToPresentation()}>
                     Volver a la presentación
                   </button>
                 )}
@@ -1091,45 +1280,32 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
             </div>
           )}
 
-          {renderStage()}
+          {liveAtHandoff && currentPoint.kind !== "closing" ? (
+            <PresentationHandoffBanner />
+          ) : null}
 
-          {isPresenter && (
-            <div className={`qpanel ${qOpen ? "" : "hidden"}`}>
-              {presenterToken && (
-                <PresenterEngagementPanel
-                  meetingId={meetingId}
-                  presenterToken={presenterToken}
-                  active={qOpen}
-                />
-              )}
-              <MeetingAnalyticsPanel meetingId={meetingId} active={qOpen} />
-              <h4 className="analytics-subhead">Eventos en vivo</h4>
-              <ul className="activity-feed">
-                {activity.length === 0 && (
-                  <li className="muted">Sin eventos aún. Conecta visitantes con Supabase.</li>
-                )}
-                {activity.map((row) => (
-                  <li key={row.id}>
-                    <strong>{row.event_type}</strong> · {row.actor_name ?? "—"}{" "}
-                    <span className="muted">{new Date(row.created_at).toLocaleTimeString()}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {renderStage()}
 
           <div className="caption">
             <div className="cap-text">
-              <small>Avatar Catch narrando</small>
-              <p>{currentPoint.narrative || (beat === 0 ? c.capA : c.capB)}</p>
+              <small>
+                {liveAtHandoff ? "Espacio de preguntas" : "Avatar Catch narrando"}
+              </small>
+              <p>{avatarCaptionText}</p>
               {!isPresenter && aiReply && <p className="ai-inline">{aiReply}</p>}
             </div>
             <div className="controls">
               {isPresenter && (
                 <>
-                  <button type="button" className="ghost" onClick={() => setQOpen((o) => !o)}>
-                    Participación <span className="badge">{activity.length}</span>
-                  </button>
+                  {visitorSeesMeeting(sessionPhase) && (
+                    <button
+                      type="button"
+                      className="ghost"
+                      onClick={() => setPresenterRightTab("participacion")}
+                    >
+                      Participación <span className="badge">{activity.length}</span>
+                    </button>
+                  )}
                   {section && (
                     <>
                       {peekPointId && (
@@ -1171,7 +1347,9 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
                   ? groupAwaitingModerator
                     ? "Esperando autorización"
                     : atLastNavigable
-                      ? "Reiniciar para todos"
+                      ? liveAtHandoff
+                        ? "Reiniciar presentación"
+                        : "Reiniciar para todos"
                       : "Siguiente para todos"
                   : waitingOnPresenter
                     ? presentationStatus === "paused"
@@ -1194,7 +1372,13 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
                 chartFocus={c.chartFocus}
                 participantToken={participantToken}
                 showClarityButton={false}
-                onAskPrivate={() => setPrivateAskOpen(true)}
+                onAskPrivate={() => {
+                  setPrivateAskOpen(true);
+                  trackAnalytics("question.private_opened", {
+                    chart_id: c.chartFocus,
+                    metadata: { point_id: currentPoint.id },
+                  });
+                }}
                 onReviewConcepts={() => setReviewOpen(true)}
                 onClarityVote={setClarityVote}
               />
@@ -1225,6 +1409,21 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
             </>
           )}
         </main>
+
+        {isPresenter && (
+          <PresenterRightPanel
+            meetingId={meetingId}
+            presenterToken={presenterToken}
+            sessionPhase={presenterRightSessionPhase}
+            activity={activity}
+            activeTab={presenterRightTab}
+            onTabChange={setPresenterRightTab}
+            prepFaqs={prepFaqs}
+            onPrepFaqsChange={setPrepFaqs}
+            visualTemplate={presenterVisualTemplate}
+            onVisualTemplateChange={setPresenterVisualTemplate}
+          />
+        )}
       </div>
 
       {showFloatingAvatar && (

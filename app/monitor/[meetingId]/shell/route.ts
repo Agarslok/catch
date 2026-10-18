@@ -13,6 +13,16 @@ function readDevSessionId(): string {
   }
 }
 
+function monitorScriptTag(filename: string): string {
+  const filePath = path.join(process.cwd(), "public", "monitor-v3", filename);
+  try {
+    const src = readFileSync(filePath, "utf8").replace(/</g, "\\u003c");
+    return `<script data-catch-inline="${filename}">${src}</script>`;
+  } catch {
+    return `<script src="/monitor-v3/${filename}"></script>`;
+  }
+}
+
 /** Expone planMonitorNarration(S.pos) en el HTML del presentador (modo prueba). */
 function scriptPlanMonitorNarration(): string {
   const payload = JSON.stringify(snapshotMonitorNarrationPlans()).replace(
@@ -71,16 +81,16 @@ export async function GET(
   const inject = `
 <script>window.__CATCH_MONITOR_SYNC__=${syncConfig};</script>
 ${narrationProbe}
-<script src="/monitor-v3/monitor-dev-reset.js"></script>
+${monitorScriptTag("monitor-dev-reset.js")}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="/monitor-v3/monitor-participant-bridge.js"></script>
-<script src="/monitor-v3/monitor-queue-sync.js"></script>
-<script src="/monitor-v3/monitor-presentation-effects.js"></script>
-<script src="/monitor-v3/monitor-section-close.js"></script>
-<script src="/monitor-v3/monitor-narration-cues.js"></script>
-<script src="/monitor-v3/monitor-supabase-sync.js"></script>
+${monitorScriptTag("monitor-participant-bridge.js")}
+${monitorScriptTag("monitor-queue-sync.js")}
+${monitorScriptTag("monitor-presentation-effects.js")}
+${monitorScriptTag("monitor-section-close.js")}
+${monitorScriptTag("monitor-narration-cues.js")}
+${monitorScriptTag("monitor-supabase-sync.js")}
 <script src="https://cdn.jsdelivr.net/npm/@daily-co/daily-js@0.83.1/dist/daily-iframe.min.js"></script>
-<script src="/monitor-v3/monitor-tavus-cvi.js"></script>
+${monitorScriptTag("monitor-tavus-cvi.js")}
 `;
 
   html = html.replace("</body>", `${inject}</body>`);

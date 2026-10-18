@@ -330,6 +330,30 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .narracion-bar{display:flex; align-items:center; gap:16px; background:var(--profundo); color:#fff; border-radius:16px; padding:14px 18px}
 .narracion-bar small{display:block; font-size:12.5px; font-weight:700; opacity:.85}
 .narracion-bar p{margin:2px 0 0; font-size:18px; line-height:1.4}
+.presentation-handoff-banner{margin:0 0 16px;padding:14px 18px;border-radius:14px;border:1px solid rgba(37,99,235,.35);background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(14,165,233,.06))}
+.presentation-handoff-banner__labels{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:6px}
+.presentation-handoff-banner__labels strong{font-size:15px;color:var(--tinta)}
+.presentation-handoff-banner__labels span{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--azul)}
+.presentation-handoff-banner p{margin:0;font-size:15px;line-height:1.45;color:var(--sub)}
+.visitor-join-shell{min-height:calc(100vh - 46px);display:grid;place-items:center;padding:24px;background:linear-gradient(165deg,#f0f6fc 0%,#e8f0fa 45%,#f7fafc 100%)}
+.visitor-join-card{width:min(440px,100%);padding:32px 28px;border-radius:20px;border:1px solid rgba(39,120,177,.18);background:#fff;box-shadow:0 18px 48px rgba(15,45,82,.08);text-align:center}
+.visitor-join-eyebrow{margin:12px 0 0;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--azul)}
+.visitor-join-title{margin:8px 0 0;font-size:1.65rem;color:var(--tinta)}
+.visitor-join-lead{margin:10px 0 0;font-size:15px;line-height:1.45;color:var(--sub)}
+.visitor-join-field{display:block;margin-top:22px;text-align:left}
+.visitor-join-field span{display:block;margin-bottom:6px;font-size:13px;font-weight:700;color:var(--tinta)}
+.visitor-join-field input{width:100%;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid rgba(39,120,177,.28);font-size:16px;font-family:inherit}
+.visitor-join-error{margin:12px 0 0;font-size:14px;font-weight:600;color:#b42318;text-align:left}
+.visitor-join-submit{margin-top:18px;width:100%;min-height:48px;border:0;border-radius:999px;background:var(--azul);color:#fff;font-size:15px;font-weight:700;cursor:pointer}
+.visitor-join-submit:disabled{opacity:.65;cursor:wait}
+.visitor-join-meta{margin:16px 0 0;font-size:12px;color:var(--sub)}
+.visitor-roster{margin:0 0 16px}
+.visitor-roster__heading{margin:0 0 10px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--sub)}
+.visitor-roster__list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.visitor-roster__card{padding:12px 14px;border-radius:14px;border:1px solid rgba(39,120,177,.18);background:#fff}
+.visitor-roster__name{margin:0;font-size:1.05rem;font-weight:700;color:var(--tinta)}
+.visitor-roster__duration{margin:4px 0 0;font-size:1.45rem;font-weight:700;color:var(--azul)}
+.visitor-roster__times,.visitor-roster__sections,.visitor-roster__meta{margin:6px 0 0;font-size:13px;line-height:1.4}
 .narracion-bar .ctrl{margin-left:auto; display:flex; gap:10px; align-items:center; flex:none}
 .narracion-bar .redondo{width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.45); background:transparent; color:#fff; font-size:18px}
 .narracion-bar .estado{background:var(--gris-azul); color:var(--profundo); border-radius:999px; padding:11px 18px; font-weight:700; border:0}
@@ -414,6 +438,7 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .avatar-rail .audio-ctrl button{border:0; background:transparent; font-size:18px; cursor:pointer; padding:4px 8px; line-height:1}
 .avatar-rail .audio-ctrl input[type=range]{flex:1; min-width:0; accent-color:var(--azul)}
 .avatar-tavus-bar{display:flex; flex-direction:column; gap:8px; padding:10px 12px; background:var(--superficie); border-bottom:1px solid var(--borde); position:relative; z-index:5; flex-shrink:0}
+.avatar-tavus-bar[hidden],.avatar-tavus-actions button[hidden]{display:none !important}
 .avatar-tavus-status{font-size:12px; font-weight:700; color:var(--azul); line-height:1.35}
 .avatar-tavus-actions{display:flex; flex-wrap:wrap; gap:8px}
 .avatar-tavus-actions button{appearance:none; cursor:pointer; border:0; border-radius:999px; padding:8px 14px; font-weight:700; font-size:12px; color:#fff; background:linear-gradient(135deg,var(--azul),var(--cyan)); box-shadow:0 2px 8px rgba(39,120,177,.25); pointer-events:auto; position:relative; z-index:2}
@@ -452,6 +477,51 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .prep-gen .sub{font-weight:400; color:var(--suave)}
 .prep-vacio{padding:24px 16px; color:var(--suave); font-size:14px; line-height:1.45}
 .prep-vacio p{margin:0}
+.plantilla-lead{margin:0 0 14px; font-size:13px; line-height:1.45; color:var(--suave)}
+.plantilla-pila{display:flex; flex-direction:column; gap:12px}
+.plantilla-card{display:flex; flex-direction:column; gap:8px; width:100%; padding:12px; border:2px solid var(--borde); border-radius:12px; background:var(--superficie); cursor:pointer; text-align:left; font:inherit; color:inherit; transition:background-color .55s ease,border-color .45s ease,box-shadow .45s ease,transform .35s ease}
+.plantilla-card:hover{border-color:color-mix(in srgb,var(--azul) 45%,var(--borde)); background:color-mix(in srgb,var(--cielo) 55%,var(--superficie))}
+.plantilla-card--sel{border-color:var(--azul); box-shadow:0 0 0 1px color-mix(in srgb,var(--azul) 35%,transparent); background:color-mix(in srgb,var(--cielo) 88%,var(--superficie))}
+.plantilla-card--sel:hover{background:color-mix(in srgb,var(--cielo) 95%,var(--superficie))}
+.plantilla-card--exp{transform:scale(1.01)}
+.plantilla-detalles-shell{display:grid; grid-template-rows:0fr; transition:grid-template-rows .65s cubic-bezier(.33,1,.45,1)}
+.plantilla-card--exp .plantilla-detalles-shell{grid-template-rows:1fr}
+.plantilla-detalles-inner{overflow:hidden; min-height:0}
+.plantilla-detalles{display:flex; flex-direction:column; gap:8px; margin-top:4px; padding-top:10px; border-top:1px solid color-mix(in srgb,var(--azul) 18%,var(--borde)); opacity:0; transform:translateY(-8px); transition:opacity .55s ease .12s,transform .6s cubic-bezier(.33,1,.45,1) .1s}
+.plantilla-card--exp .plantilla-detalles{opacity:1; transform:translateY(0)}
+.plantilla-colores{max-height:0; overflow:hidden; opacity:0; transform:translateY(4px); transition:opacity .4s ease,transform .4s ease,max-height .45s ease}
+.plantilla-colores--in{max-height:220px; opacity:1; transform:translateY(0)}
+.plantilla-type-caret{display:inline-block; width:2px; height:.95em; margin-left:2px; vertical-align:text-bottom; background:var(--azul); animation:plantillaCaret 1s step-end infinite}
+@keyframes plantillaCaret{50%{opacity:0}}
+.plantilla-card-cabeza{display:flex; flex-wrap:wrap; align-items:center; gap:8px}
+.plantilla-card-desc{margin:6px 0 0; font-size:12px; line-height:1.4; color:var(--suave)}
+.plantilla-tag{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--suave)}
+.plantilla-tag--sel{color:var(--azul); margin-left:auto}
+.plantilla-colores{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px}
+.plantilla-colores li{display:grid; grid-template-columns:28px 1fr auto; gap:8px; align-items:center; font-size:12px}
+.plantilla-swatch{width:28px; height:28px; border-radius:6px; border:1px solid rgba(0,0,0,.1)}
+.plantilla-color-nombre{font-weight:600; color:var(--profundo)}
+.plantilla-color-hex{font-family:ui-monospace,monospace; font-size:11px; color:var(--suave)}
+.plantilla-estado{margin:14px 0 0; font-size:13px; color:var(--profundo)}
+.plantilla-titulo{margin:4px 0 0; font-family:var(--display); font-size:clamp(15px,2.2vw,17px); font-weight:600; line-height:1.3; color:var(--profundo)}
+.plantilla-utilidad{margin:0; font-size:12px; line-height:1.45; color:var(--suave)}
+.plantilla-guion{margin:0; padding:8px 10px; border-radius:8px; background:var(--cielo); font-size:12px; line-height:1.45; color:var(--profundo); font-style:italic}
+.plantilla-guion-etq{display:block; font-style:normal; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--azul); margin-bottom:4px}
+.mod-col .tabs--solo{padding:12px 16px; border-bottom:1px solid var(--borde)}
+.mod-col .tabs--solo .tabs-titulo{font-size:13px; font-weight:700; color:var(--profundo)}
+.prep-faq-lead{margin:0 0 10px; font-size:13px; line-height:1.45; color:var(--suave)}
+.prep-faq-tips{margin:0 0 14px; padding-left:18px; font-size:12px; line-height:1.45; color:var(--suave)}
+.prep-faq-tips li{margin-bottom:4px}
+.prep-faq-vacio{padding:14px 12px; margin-bottom:12px; border-radius:12px; border:1px dashed var(--borde); background:var(--cielo); font-size:13px; line-height:1.45}
+.prep-faq-vacio p{margin:0 0 6px}
+.prep-faq-lista{list-style:none; margin:0 0 12px; padding:0; display:flex; flex-direction:column; gap:10px; max-height:min(42vh,360px); overflow-y:auto}
+.prep-faq-item{border:1px solid var(--borde); border-radius:12px; padding:12px; background:var(--superficie)}
+.prep-faq-item-cabeza{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px}
+.prep-faq-item-cabeza strong{font-size:12px; color:var(--azul); text-transform:uppercase; letter-spacing:.04em}
+.prep-faq-campo{display:flex; flex-direction:column; gap:4px; margin-bottom:8px; font-size:12px; font-weight:600}
+.prep-faq-campo input,.prep-faq-campo textarea{width:100%; border:1px solid var(--borde); border-radius:8px; padding:8px 10px; font:inherit; font-weight:400}
+.prep-faq-campo textarea{min-height:64px; resize:vertical; line-height:1.45}
+.prep-faq-add{width:100%}
 .banner-iniciar-reunion{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; margin:0 0 12px; padding:12px 16px; border-radius:12px; border:1px solid var(--borde); background:var(--cielo)}
 .banner-iniciar-reunion p{margin:0; font-size:14px; color:var(--tinta)}
 .revision-previa-mod{display:flex; flex-direction:column; gap:16px; width:100%}
@@ -855,8 +925,157 @@ const DETALLE = {
 
 // ======================= pasos de la sesión =======================
 const PASOS = [{tipo: 'inicio'}];
+/** Adaptadores del controlador: viven en este HTML para que Netlify no dependa de JS estáticos 404. */
+function asegurarRuntimeCatchMonitor() {
+  if (!window.CatchPresentationEffects) {
+    window.CatchPresentationEffects = {
+      normalizePresentationEffects(raw) {
+        if (!Array.isArray(raw)) return [];
+        const out = [];
+        for (const item of raw) {
+          if (!item || typeof item !== 'object') continue;
+          switch (item.kind) {
+            case 'monitor_highlight': {
+              const action = item.action;
+              if (!action || typeof action !== 'object') continue;
+              if (action.type !== 'highlight' && action.type !== 'clear_highlight') continue;
+              out.push({ kind: 'monitor_highlight', action });
+              break;
+            }
+            case 'navigate':
+              if (Number.isInteger(item.targetStep)) out.push({ kind: 'navigate', targetStep: item.targetStep });
+              break;
+            case 'set_presentation_status':
+              if (item.status === 'live' || item.status === 'paused') out.push({ kind: 'set_presentation_status', status: item.status });
+              break;
+            case 'narration':
+              if (item.intent === 'explain' || item.intent === 'repeat' || item.intent === 'ask_questions') out.push({ kind: 'narration', intent: item.intent });
+              break;
+            case 'section_continue':
+              out.push({ kind: 'section_continue' });
+              break;
+            default:
+              break;
+          }
+        }
+        return out;
+      },
+      applyPresentationEffects(effects, ctx, dispatch) {
+        const moderator = ctx.role === 'moderador';
+        const paused = ctx.presentationStatus === 'paused';
+        const posBefore = typeof ctx.stepIndex === 'number' ? ctx.stepIndex : 0;
+        const stepCount = typeof ctx.stepCount === 'number' && ctx.stepCount > 0 ? ctx.stepCount : Math.max(1, PASOS.length);
+        let posAfter = posBefore;
+        let navigated = false;
+        let highlight = null;
+        const narrationIntents = [];
+        const skipped = [];
+        const hasNavigate = effects.some(e => e.kind === 'navigate');
+        const clampStep = (target) => {
+          const max = Math.max(0, stepCount - 1);
+          return Math.max(0, Math.min(max, Math.trunc(target)));
+        };
+        for (const effect of effects) {
+          switch (effect.kind) {
+            case 'monitor_highlight':
+              highlight = effect.action;
+              break;
+            case 'narration':
+              if (hasNavigate && moderator) break;
+              narrationIntents.push(effect.intent);
+              if (dispatch.onNarration) dispatch.onNarration(effect.intent);
+              break;
+            case 'section_continue':
+              if (!moderator) { skipped.push({ effect, reason: 'visitor_forbidden' }); continue; }
+              if (paused) { skipped.push({ effect, reason: 'navigate_rejected' }); continue; }
+              if (dispatch.afterSectionContinue) dispatch.afterSectionContinue();
+              break;
+            case 'set_presentation_status':
+              skipped.push({ effect, reason: 'presentation_status_not_wired' });
+              break;
+            case 'navigate': {
+              if (!moderator) { skipped.push({ effect, reason: 'visitor_forbidden' }); continue; }
+              if (paused) { skipped.push({ effect, reason: 'navigate_rejected' }); continue; }
+              const target = clampStep(effect.targetStep);
+              if (navigated || target === posAfter) { skipped.push({ effect, reason: 'navigate_rejected' }); continue; }
+              if (dispatch.moveModerator(target)) { navigated = true; posAfter = target; }
+              else skipped.push({ effect, reason: 'navigate_rejected' });
+              break;
+            }
+            default:
+              skipped.push({ effect, reason: 'unsupported_kind' });
+          }
+        }
+        return { posBefore, posAfter, navigated, highlight, narrationIntents, skipped };
+      },
+    };
+  }
+  if (!window.CatchNarrationCues) {
+    window.CatchNarrationCues = {
+      createPlayback(execId, stepIndex, segments) {
+        return { execId, stepIndex, segments: Array.isArray(segments) ? segments : [], cursor: -1, status: 'idle', heardStart: false, highlightAppliedFor: -1 };
+      },
+      start(playback) {
+        if (!playback || playback.cursor >= 0 || playback.status === 'cancelled') return null;
+        return this.dispatchNext(playback);
+      },
+      dispatchNext(playback) {
+        if (!playback || playback.status === 'cancelled' || playback.status === 'done') return null;
+        const next = playback.cursor + 1;
+        if (next >= playback.segments.length) { playback.status = 'done'; return null; }
+        const segment = playback.segments[next];
+        const text = segment && typeof segment.text === 'string' ? segment.text.trim() : '';
+        if (!text) { playback.status = 'done'; return null; }
+        playback.cursor = next;
+        playback.status = 'speaking';
+        playback.heardStart = false;
+        return { echoId: playback.execId + '-seg-' + next, text, segmentIndex: next };
+      },
+      onReplicaStopped(playback) {
+        if (!playback || playback.status !== 'speaking' || !playback.heardStart) return null;
+        return this.dispatchNext(playback);
+      },
+      onReplicaStarted(playback) {
+        if (!playback || playback.status !== 'speaking' || playback.cursor < 0) return null;
+        playback.heardStart = true;
+        if (playback.highlightAppliedFor === playback.cursor) return null;
+        const segment = playback.segments[playback.cursor];
+        if (!segment || !segment.highlight) return null;
+        playback.highlightAppliedFor = playback.cursor;
+        return segment.highlight;
+      },
+      cancel(playback) { if (playback) playback.status = 'cancelled'; },
+    };
+  }
+  if (!window.CatchSectionClose) {
+    window.CatchSectionClose = {
+      estimateNarrationDurationMs(text) {
+        const t = String(text || '').trim();
+        if (!t) return 0;
+        return Math.min(45000, Math.max(1200, t.split(/\s+/).length * 380));
+      },
+      continueTarget(stepIndex) {
+        const paso = PASOS[stepIndex];
+        if (!paso || paso.tipo !== 'hoja') return null;
+        const next = PASOS.findIndex(p => p.tipo === 'explica' && p.s === paso.s + 1);
+        if (next >= 0) return next;
+        const cierre = PASOS.findIndex(p => p.tipo === 'cierre');
+        return cierre >= 0 ? cierre : null;
+      },
+      shouldBlockDuplicateContinue(lastAt, now) {
+        if (lastAt == null) return false;
+        return (now == null ? Date.now() : now) - lastAt < 2500;
+      },
+      evaluateNarrationEnd() { return { kind: 'ignore', reason: 'adapter_minimal' }; },
+    };
+  }
+}
+asegurarRuntimeCatchMonitor();
 SECCIONES.forEach((s, si) => { s.graficos.forEach((g, gi) => PASOS.push({tipo: 'explica', s: si, g: gi})); PASOS.push({tipo: 'hoja', s: si}); });
 PASOS.push({tipo: 'cierre'});
+const PRESENTATION_HANDOFF_HEADLINE = 'Presentación finalizada';
+const PRESENTATION_HANDOFF_SUBLABEL = 'Espacio de preguntas';
+const PRESENTATION_HANDOFF_NARRATIVE = 'La presentación ha finalizado. Este es el momento para resolver sus dudas con el presentador y conversar sobre los hallazgos del informe.';
 const tituloPaso = p => p.tipo === 'inicio' ? 'Bienvenida y agenda' : p.tipo === 'cierre' ? 'Cierre y preguntas'
   : p.tipo === 'explica' ? SECCIONES[p.s].graficos[p.g].titulo : 'Hoja completa de ' + SECCIONES[p.s].nombre;
 // Cabecera del cliente: arriba la sección (y en qué parte va), abajo el foco de la pantalla
@@ -877,9 +1096,15 @@ function migrarColaDesdeLegacy(g) {
     status: q.respondida ? 'attended' : 'pending', respuesta: q.respuesta || '',
   }));
 }
-const S = {pos: 0, unlockedStep: 0, rol: 'moderador', faseSesion: 'preparacion', generacionInformeEnCurso: false, mensajeGeneracionInforme: '', prepArchivoNombre: '', monitorHighlight: null, fuenteClave: null, avatarVideoPaused: false, narracionEsperaAutorizacion: false, sectionCloseDedup: null, sectionNarracionTimer: null, sectionClaridadLista: false, lastSectionContinueAt: null, advanceInFlight: false, narracionSinConfirmar: false, narracionRuntime: { execId: null, status: 'idle', stepIndex: -1, echoId: null, startedAt: null, paused: false, errorReason: null }, cola: migrarColaDesdeLegacy(guardado), toques: guardado.toques || {}, claridad: guardado.claridad || {},
-  vistas: {cliente: {live: true, pos: 0, resp: {}, exploreSection: null, exploreClaritySource: null, peekExplica: null}, movil: {live: true, pos: 0, resp: {}, exploreSection: null, exploreClaritySource: null, peekExplica: null}}, peekPreview: null, tabMod: 'preguntas', sala: null, conectados: 0, modoEdicionPreviewSim: false};
-const persistir = () => guardar('catch-live-v1', {cola: S.cola, toques: S.toques, claridad: S.claridad});
+const PLANTILLAS_VISUALES = [
+  {id: 'mml', nombre: 'MML', desc: 'Blanco y azules del Monitor de Mercado Laboral.', especialidad: 'Informes de rotación y benchmark de mercado', utilidad: 'Especializada para comparar su empresa con la muestra del Monitor: rotación por Tier, edad y salario. Ayuda a explicar brechas frente al referente y tendencias del bimestre.', guion: '«Hoy revisamos cómo se mueve la rotación frente al mercado de referencia y qué factores explican la diferencia con su empresa.»', colores: [{hex: '#2778b1', etiqueta: 'Primario'}, {hex: '#38aecb', etiqueta: 'Acento'}, {hex: '#eef5fa', etiqueta: 'Fondo suave'}, {hex: '#232222', etiqueta: 'Texto'}]},
+  {id: 'nexo', nombre: 'Nexo', desc: 'Verdes corporativos, tono sobrio y legible.', especialidad: 'Informes de gestión humana y desarrollo de personas', utilidad: 'Pensada para mesas con RH y líderes: retención, capacitación, equidad y políticas internas. Lectura sobria para comités y planes de acción sobre el capital humano.', guion: '«Ubiquemos estos indicadores en su estrategia de personas: qué retener, dónde capacitar y qué decisiones de política interna se desprenden de los datos.»', colores: [{hex: '#2d5a4a', etiqueta: 'Primario'}, {hex: '#6b9e78', etiqueta: 'Acento'}, {hex: '#eef4f0', etiqueta: 'Fondo suave'}, {hex: '#1a2e28', etiqueta: 'Texto'}]},
+  {id: 'pulso', nombre: 'Pulso', desc: 'Púrpuras y rosas para un contraste distinto.', especialidad: 'Informes operativos: plantilla, ausentismo y alertas', utilidad: 'Enfatiza tamaño de plantilla, ausentismo y señales de riesgo operativo del bimestre. Útil cuando el público necesita priorizar urgencias y variaciones que requieren respuesta rápida.', guion: '«Veamos dónde late el riesgo operativo: ausentismo, concentración por área y los puntos que conviene atender antes del próximo corte.»', colores: [{hex: '#5c3d7a', etiqueta: 'Primario'}, {hex: '#c45c8a', etiqueta: 'Acento'}, {hex: '#f5eef3', etiqueta: 'Fondo suave'}, {hex: '#2a2030', etiqueta: 'Texto'}]}
+];
+const plantillaVisualInicial = (id) => (PLANTILLAS_VISUALES.some(p => p.id === id) ? id : 'mml');
+const S = {pos: 0, unlockedStep: 0, rol: 'moderador', faseSesion: 'preparacion', generacionInformeEnCurso: false, mensajeGeneracionInforme: '', prepArchivoNombre: '', plantillaVisual: plantillaVisualInicial(guardado.plantillaVisual), plantillaVisualExpandida: null, monitorHighlight: null, fuenteClave: null, avatarVideoPaused: false, narracionEsperaAutorizacion: false, sectionCloseDedup: null, sectionNarracionTimer: null, sectionClaridadLista: false, lastSectionContinueAt: null, advanceInFlight: false, narracionSinConfirmar: false, narracionRuntime: { execId: null, status: 'idle', stepIndex: -1, echoId: null, startedAt: null, paused: false, errorReason: null }, cola: migrarColaDesdeLegacy(guardado), toques: guardado.toques || {}, claridad: guardado.claridad || {},
+  vistas: {cliente: {live: true, pos: 0, resp: {}, exploreSection: null, exploreClaritySource: null, peekExplica: null}, movil: {live: true, pos: 0, resp: {}, exploreSection: null, exploreClaritySource: null, peekExplica: null}}, peekPreview: null, tabMod: 'plantillas', prepFaqs: [], sala: null, conectados: 0, modoEdicionPreviewSim: false, histPrepPaso: null, histPrepAplicando: false};
+const persistir = () => guardar('catch-live-v1', {cola: S.cola, toques: S.toques, claridad: S.claridad, plantillaVisual: S.plantillaVisual});
 const FASES_SESION = ['preparacion', 'generando_informe', 'revision_previa', 'listo_para_iniciar', 'reunion_activa', 'cierre'];
 function faseSesionValida(f) { return FASES_SESION.includes(f); }
 function visitanteVeReunion() { return S.faseSesion === 'reunion_activa' || S.faseSesion === 'cierre'; }
@@ -892,19 +1117,82 @@ function resolverFaseInicial(stored, step, unlocked) {
   if ((step ?? 0) > 0 || (unlocked ?? 0) > 0) return 'reunion_activa';
   return 'preparacion';
 }
+const PREP_HIST_KEY = 'catchPresenterPrep';
+const PREP_HIST_ORDEN = { carga: 0, revision: 1, en_vivo: 2 };
+function pasoHistoriaDesdeFase() {
+  if (S.generacionInformeEnCurso || S.faseSesion === 'preparacion' || S.faseSesion === 'generando_informe') return 'carga';
+  if (presentadorEnRevisionPrevia()) return 'revision';
+  if (S.faseSesion === 'reunion_activa' || S.faseSesion === 'cierre') return 'en_vivo';
+  return 'carga';
+}
+function faseDesdePasoHistoria(step) {
+  if (step === 'carga') return 'preparacion';
+  if (step === 'revision') return 'revision_previa';
+  return 'reunion_activa';
+}
+function planPushesHistoria(current, desired) {
+  if (current === desired) return { replaceBase: null, push: [] };
+  if (!current) {
+    if (desired === 'carga') return { replaceBase: 'carga', push: [] };
+    if (desired === 'revision') return { replaceBase: 'carga', push: ['revision'] };
+    return { replaceBase: 'carga', push: ['revision', 'en_vivo'] };
+  }
+  if (PREP_HIST_ORDEN[desired] <= PREP_HIST_ORDEN[current]) return { replaceBase: null, push: [] };
+  const push = [];
+  ['carga', 'revision', 'en_vivo'].forEach(step => {
+    if (PREP_HIST_ORDEN[step] > PREP_HIST_ORDEN[current] && PREP_HIST_ORDEN[step] <= PREP_HIST_ORDEN[desired]) push.push(step);
+  });
+  return { replaceBase: null, push };
+}
+function escribirPasoHistoria(step, mode) {
+  const prev = history.state && typeof history.state === 'object' ? history.state : {};
+  const next = Object.assign({}, prev, { [PREP_HIST_KEY]: step });
+  if (mode === 'replace') history.replaceState(next, '');
+  else history.pushState(next, '');
+  S.histPrepPaso = step;
+}
+function sincronizarHistoriaPrep() {
+  if (S.rol !== 'moderador') return;
+  const desired = pasoHistoriaDesdeFase();
+  if (S.histPrepAplicando) {
+    if (desired === S.histPrepPaso) S.histPrepAplicando = false;
+    else return;
+  }
+  const plan = planPushesHistoria(S.histPrepPaso || null, desired);
+  if (plan.replaceBase) escribirPasoHistoria(plan.replaceBase, 'replace');
+  (plan.push || []).forEach(step => escribirPasoHistoria(step, 'push'));
+}
 async function publicarFaseSesion(fase) {
   if (!faseSesionValida(fase) || S.faseSesion === fase) return;
+  if (S.generacionInformeEnCurso && fase !== 'preparacion' && fase !== 'generando_informe') return;
   S.faseSesion = fase;
   enviar('faseSesion', { fase });
   const api = window.__CATCH_MONITOR_SYNC_API__;
   if (api?.publishSessionPhase) await api.publishSessionPhase(fase);
   if (fase === 'cierre' || fase === 'reunion_activa') actualizarFasePorPaso();
+  sincronizarHistoriaPrep();
   programarRender();
+}
+function vistaCargaPresentador() {
+  return S.faseSesion === 'preparacion' || S.faseSesion === 'generando_informe' || S.generacionInformeEnCurso;
+}
+function vistaPrepPresentador() {
+  return presentadorEnRevisionPrevia() && !vistaCargaPresentador();
+}
+function panelModeradorDerecho(pendientes) {
+  if (vistaCargaPresentador()) return panelPlantillas();
+  if (vistaPrepPresentador()) return panelPrepFaqs();
+  if (S.tabMod === 'participantes') return panelParticipantes();
+  if (S.tabMod === 'preguntas') return panelPreguntas();
+  if (S.tabMod === 'intereses') return panelIntereses();
+  return panelClaridad();
 }
 function aplicarFaseSesion(fase) {
   if (!faseSesionValida(fase) || S.faseSesion === fase) return;
+  if (S.generacionInformeEnCurso && fase !== 'preparacion' && fase !== 'generando_informe') return;
   S.faseSesion = fase;
   if (!presentadorEnRevisionPrevia()) S.modoEdicionPreviewSim = false;
+  sincronizarHistoriaPrep();
   programarRender();
 }
 function htmlBarraLoQueVeCliente() {
@@ -930,19 +1218,50 @@ function actualizarFasePorPaso() {
   else if (!enCierre && S.faseSesion === 'cierre') void publicarFaseSesion('reunion_activa');
 }
 const MENSAJES_GEN_INFORME = ['Preparando la información', 'Organizando las secciones del informe', 'Preparando el guion del avatar'];
+let genInformeAbortado = false;
+async function aplicarPasoHistoriaPresentador(step) {
+  if (step !== 'carga' && step !== 'revision' && step !== 'en_vivo') return;
+  const fase = faseDesdePasoHistoria(step);
+  S.histPrepAplicando = true;
+  S.histPrepPaso = step;
+  if (step === 'carga') {
+    genInformeAbortado = true;
+    S.generacionInformeEnCurso = false;
+    S.mensajeGeneracionInforme = '';
+  }
+  if (S.faseSesion !== fase) await publicarFaseSesion(fase);
+  else {
+    S.histPrepAplicando = false;
+    programarRender();
+  }
+}
+async function volverAVistaCarga() {
+  await aplicarPasoHistoriaPresentador('carga');
+}
 async function iniciarGeneracionInformeSimulada() {
   if (S.generacionInformeEnCurso || S.faseSesion !== 'preparacion') return;
+  genInformeAbortado = false;
   S.generacionInformeEnCurso = true;
   await publicarFaseSesion('generando_informe');
   const t0 = Date.now();
   const minMs = 2200;
   for (let i = 0; i < MENSAJES_GEN_INFORME.length; i++) {
+    if (genInformeAbortado || S.faseSesion !== 'generando_informe') {
+      S.generacionInformeEnCurso = false;
+      S.mensajeGeneracionInforme = '';
+      return;
+    }
     S.mensajeGeneracionInforme = MENSAJES_GEN_INFORME[i];
     programarRender();
     await new Promise(r => setTimeout(r, 750));
   }
   const rest = minMs - (Date.now() - t0);
   if (rest > 0) await new Promise(r => setTimeout(r, rest));
+  if (genInformeAbortado || S.faseSesion !== 'generando_informe') {
+    S.generacionInformeEnCurso = false;
+    S.mensajeGeneracionInforme = '';
+    return;
+  }
   S.mensajeGeneracionInforme = '';
   S.generacionInformeEnCurso = false;
   await publicarFaseSesion('revision_previa');
@@ -1465,6 +1784,11 @@ function solicitarAvanceTrasFinDeDiapositiva(pb) {
 }
 window.__CATCH_NARRATION_ON_REPLICA_STARTED__ = onNarracionReplicaStarted;
 window.__CATCH_NARRATION_ON_REPLICA_IDLE__ = onNarracionReplicaStopped;
+window.__CATCH_ON_TAVUS_CONNECTED__ = function () {
+  if (S.rol !== 'moderador') return;
+  orquestacionPasoAplicada = { stepIndex: -1, generation: -1, fase: '' };
+  programarOrquestacionPasoActivo();
+};
 function programarOrquestacionPasoActivo() {
   if (S.rol !== 'moderador') return;
   if (!presentadorDashboardListo() || presentadorEnRevisionPrevia()) return;
@@ -1507,8 +1831,19 @@ async function ejecutarOrquestacionPasoActivo(step, seq) {
   const segments = Array.isArray(plan.segments) && plan.segments.length
     ? plan.segments
     : [{ id: 'lead', text: texto, highlight: null }];
+  asegurarRuntimeCatchMonitor();
   const first = comenzarNarracionPorSegmentos(step, execId, segments);
-  const sent = first ? presentarGeminiEnFrida(first.text, first.echoId) : false;
+  const payload = first || (texto ? { text: texto, echoId } : null);
+  const sent = payload ? presentarGeminiEnFrida(payload.text, payload.echoId) : false;
+  try {
+    console.info('[Catch presentación]', 'narration.step_enter', {
+      step,
+      sent: !!sent,
+      tavus: window.__CATCH_TAVUS_CVI__?.getStatus?.() || 'no_api',
+      hadCues: !!first,
+      textChars: payload && payload.text ? payload.text.length : 0,
+    });
+  } catch { /* ignore */ }
   if (seq !== orquestacionPasoSeq || S.narracionRuntime?.execId !== execId) return;
   if (!sent) {
     S.narracionRuntime.status = 'error';
@@ -1653,6 +1988,10 @@ function posVista(rol) { if (rol === 'moderador') return S.pos; const v = S.vist
 function registrar(tipo, detalle, seccion) {   // "toques": qué consulta el cliente, para adaptar la siguiente sesión
   const sec = seccion ?? (PASOS[posVista(S.rol)].s ?? -1);
   const payload = {k: `${sec}|${tipo}|${detalle}`, seccion: sec, tipo, detalle};
+  try {
+    const sectionName = sec >= 0 && SECCIONES[sec] ? SECCIONES[sec].nombre : (sec === -1 ? 'Inicio' : null);
+    window.__CATCH_MONITOR_API__?.trackFromTouch?.(tipo, detalle, sec, sectionName);
+  } catch { /* ignore */ }
   // Preguntas al asistente IA del visitante: solo en este dispositivo (no BroadcastChannel / sala).
   if (tipo === 'ia' && S.rol !== 'moderador') return;
   enviar('toque', payload);
@@ -1784,7 +2123,118 @@ function actualizarPanelModeradorParcial() {
   if (S.rol !== 'moderador') return;
   const lista = document.querySelector('.moderador .mod-col .lista');
   if (!lista) return;
-  lista.innerHTML = S.tabMod === 'preguntas' ? panelPreguntas() : S.tabMod === 'intereses' ? panelIntereses() : panelClaridad();
+  const pendientes = S.cola.filter(q => q.status === 'pending').length;
+  lista.innerHTML = panelModeradorDerecho(pendientes);
+}
+function nuevaPrepFaqId() { return 'faq-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9); }
+function refrescarPanelPrepFaqs() {
+  const lista = document.querySelector('.moderador .mod-col .lista');
+  if (lista && vistaPrepPresentador()) {
+    lista.innerHTML = panelPrepFaqs();
+    return true;
+  }
+  return false;
+}
+function panelPrepFaqs() {
+  const items = S.prepFaqs || [];
+  const lista = items.length === 0
+    ? '<div class="prep-faq-vacio"><p>Aún no hay preguntas frecuentes.</p><p>Pulse el botón inferior para crear la primera.</p></div>'
+    : `<ul class="prep-faq-lista">${items.map((row, i) => `<li class="prep-faq-item">
+      <div class="prep-faq-item-cabeza"><strong>Pregunta ${i + 1}</strong><button type="button" class="btn suave" data-remove-prep-faq="${esc(row.id)}">Eliminar</button></div>
+      <label class="prep-faq-campo"><span>Pregunta</span><input type="text" data-faq-field="pregunta" data-faq-id="${esc(row.id)}" value="${esc(row.pregunta || '')}" placeholder="Ej. ¿Cómo se calcula la rotación del bimestre?"></label>
+      <label class="prep-faq-campo"><span>Respuesta</span><textarea data-faq-field="respuesta" data-faq-id="${esc(row.id)}" placeholder="Redacte la respuesta que dará en la reunión.">${esc(row.respuesta || '')}</textarea></label>
+    </li>`).join('')}</ul>`;
+  return `<p class="prep-faq-lead">Prepara preguntas y respuestas para facilitar la resolución de dudas durante la reunión.</p>
+    <ul class="prep-faq-tips"><li>Use lenguaje claro y respuestas breves.</li><li>Puede añadir tantas entradas como necesite.</li><li>No se guardan al recargar la página.</li></ul>
+    ${lista}
+    <button type="button" class="btn prim prep-faq-add" data-add-prep-faq>+ Añadir pregunta frecuente</button>`;
+}
+let plantillaEscrituraGen = 0;
+function cancelarEscrituraPlantilla() { plantillaEscrituraGen += 1; }
+function planEscrituraPlantilla(utilFull, guionFull) {
+  const total = (utilFull.length + guionFull.length) || 1;
+  const ticks = Math.min(48, Math.max(14, Math.ceil(total / 3)));
+  const tickMs = Math.max(8, Math.floor(1400 / ticks));
+  const utilShare = utilFull.length / total;
+  const utilTicks = Math.max(1, Math.round(ticks * utilShare));
+  const scriptTicks = Math.max(1, ticks - utilTicks);
+  return {
+    tickMs,
+    utilChunk: Math.max(1, Math.ceil(utilFull.length / utilTicks)),
+    scriptChunk: Math.max(1, Math.ceil(guionFull.length / scriptTicks)),
+  };
+}
+function escribirPlantillaRapido(el, texto, tickMs, chunk, gen, done) {
+  let i = 0;
+  el.textContent = '';
+  const step = () => {
+    if (gen !== plantillaEscrituraGen) return;
+    if (i >= texto.length) { if (done) done(); return; }
+    i = Math.min(texto.length, i + chunk);
+    el.textContent = texto.slice(0, i);
+    setTimeout(step, tickMs);
+  };
+  setTimeout(step, 50);
+}
+function mostrarColoresPlantilla(colores, gen) {
+  if (gen !== plantillaEscrituraGen) return;
+  colores.classList.add('plantilla-colores--in');
+}
+function animarPlantillaExpandida(contenedor) {
+  const gen = ++plantillaEscrituraGen;
+  const card = contenedor.querySelector('.plantilla-card--exp');
+  if (!card) return;
+  const util = card.querySelector('[data-typing-util]');
+  const guion = card.querySelector('[data-typing-guion]');
+  const colores = card.querySelector('.plantilla-colores');
+  if (!util || !guion || !colores) return;
+  const utilFull = util.getAttribute('data-full') || '';
+  const guionFull = guion.getAttribute('data-full') || '';
+  colores.classList.remove('plantilla-colores--in');
+  const terminar = () => {
+    if (gen !== plantillaEscrituraGen) return;
+    util.textContent = utilFull;
+    guion.textContent = guionFull;
+    setTimeout(() => mostrarColoresPlantilla(colores, gen), 60);
+  };
+  setTimeout(() => terminar(), 2000);
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) { terminar(); return; }
+  const plan = planEscrituraPlantilla(utilFull, guionFull);
+  escribirPlantillaRapido(util, utilFull, plan.tickMs, plan.utilChunk, gen, () => {
+    escribirPlantillaRapido(guion, guionFull, plan.tickMs, plan.scriptChunk, gen, () => terminar());
+  });
+}
+function refrescarPanelPlantillasConAnimacion() {
+  const lista = document.querySelector('.moderador .mod-col .lista');
+  if (!lista) return;
+  lista.innerHTML = panelPlantillas();
+  requestAnimationFrame(() => requestAnimationFrame(() => animarPlantillaExpandida(lista)));
+}
+function panelPlantillas() {
+  const activa = PLANTILLAS_VISUALES.find(p => p.id === S.plantillaVisual) || PLANTILLAS_VISUALES[0];
+  const cards = PLANTILLAS_VISUALES.map(p => {
+    const sel = S.plantillaVisual === p.id;
+    const exp = S.plantillaVisualExpandida === p.id;
+    const filas = p.colores.map(c => `<li><span class="plantilla-swatch" style="background:${c.hex}" aria-hidden="true"></span><span class="plantilla-color-nombre">${esc(c.etiqueta)}</span><span class="plantilla-color-hex">${esc(c.hex)}</span></li>`).join('');
+    return `<button type="button" class="plantilla-card${sel ? ' plantilla-card--sel' : ''}${exp ? ' plantilla-card--exp' : ''}" data-plantilla-visual="${p.id}" aria-pressed="${sel}" aria-expanded="${exp}">
+      <div class="plantilla-card-cabeza"><strong>${esc(p.nombre)}</strong>${p.id === 'mml' ? '<span class="plantilla-tag">Predeterminada</span>' : ''}${sel ? '<span class="plantilla-tag plantilla-tag--sel">Seleccionada</span>' : ''}</div>
+      <p class="plantilla-titulo">${esc(p.especialidad)}</p>
+      <p class="plantilla-card-desc">${esc(p.desc)}</p>
+      <div class="plantilla-detalles-shell">
+        <div class="plantilla-detalles-inner">
+          <div class="plantilla-detalles">
+            <p class="plantilla-utilidad" data-typing-util data-full="${esc(p.utilidad)}"></p>
+            <p class="plantilla-guion"><span class="plantilla-guion-etq">Guión sugerido</span><span data-typing-guion data-full="${esc(p.guion)}"></span></p>
+            <ul class="plantilla-colores">${filas}</ul>
+          </div>
+        </div>
+      </div>
+    </button>`;
+  }).join('');
+  return `<p class="plantilla-lead">MML viene seleccionada por defecto. Pulse una plantilla para ver utilidad, guión y colores.</p>
+    <div class="plantilla-pila">${cards}</div>
+    <p class="plantilla-estado">Plantilla activa: <strong>${esc(activa.nombre)}</strong></p>`;
 }
 function opacificarColor(color, alpha) {
   if (color == null) return color;
@@ -2328,8 +2778,11 @@ function pintarGraficos(raiz, compacto) {
 }
 function textoNarracion(p) {
   // la barra de narración presenta el gráfico; la explicación completa está en la columna izquierda
-  return p.tipo === 'explica' ? `${SECCIONES[p.s].graficos[p.g].titulo}: ${SECCIONES[p.s].graficos[p.g].sub.toLowerCase()}. Toque cualquier dato para ver de dónde sale.` : p.tipo === 'hoja' ? 'Hoja completa: gráficos en tamaño resumido. «Ver más detalles» abre la explicación de cada uno. Confirme si esta sección quedó clara.'
-    : p.tipo === 'cierre' ? 'Gracias. Aquí están las respuestas a las preguntas de la sala.' : 'Hola, soy el avatar de Catch. Le acompaño durante la presentación.';
+  return p.tipo === 'explica' ? `${SECCIONES[p.s].graficos[p.g].titulo}: ${SECCIONES[p.s].graficos[p.g].sub.toLowerCase()}. Toque cualquier dato para ver de dónde sale.` : p.tipo === 'hoja' ? 'Este es el resumen de la sección. Confirma si esta quedó clara. De lo contrario este es el momento para resolver las duda con el presentador'
+    : p.tipo === 'cierre' ? PRESENTATION_HANDOFF_NARRATIVE : 'Hola, soy el avatar de Catch. Le acompaño durante la presentación.';
+}
+function htmlPresentationHandoffBanner() {
+  return `<div class="presentation-handoff-banner" role="status" aria-live="polite"><div class="presentation-handoff-banner__labels"><strong>${esc(PRESENTATION_HANDOFF_HEADLINE)}</strong><span>${esc(PRESENTATION_HANDOFF_SUBLABEL)}</span></div><p>${esc(PRESENTATION_HANDOFF_NARRATIVE)}</p></div>`;
 }
 function htmlAvatarAudioCtrl(withPause) {
   const pauseBtn = withPause
@@ -2419,7 +2872,7 @@ function renderCliente(raiz, opciones = {}) {
       <div class="cuerpo" id="cl-cuerpo">
         <div class="livebar">${v.live ? '<b>Sigues al presentador</b> · sincronizado con la sesión en vivo' : mensajeLivebarExploracion('cliente')}</div>
         <div class="central">${cuerpo}</div>
-        <div class="narracion-bar"><div><small>Contexto de la sección</small><p>${esc(textoNarracion(p))}</p></div>
+        <div class="narracion-bar"><div><small>${p.tipo === 'cierre' ? esc(PRESENTATION_HANDOFF_SUBLABEL) : 'Contexto de la sección'}</small><p>${esc(textoNarracion(p))}</p></div>
           <div class="ctrl"><button class="redondo" data-flecha="-1" aria-label="Paso anterior">←</button>${v.live ? '<span class="estado">Esperando al presentador</span>' : '<button type="button" class="estado" data-flecha="1">Siguiente en la sección</button>'}</div></div>
         ${htmlBloquePreguntaIA()}
       </div></section></div>`;
@@ -2468,6 +2921,12 @@ async function enviarIAPregunta(pregunta, opts) {
   const caja = prepararEntradaHistorialIA(texto);
   try {
     await renderRespuestaAsistente(caja, texto, s);
+    try {
+      const sectionName = s >= 0 && SECCIONES[s] ? SECCIONES[s].nombre : null;
+      window.__CATCH_MONITOR_API__?.track?.('question.answered', {
+        metadata: { question_text: texto.slice(0, 240), section_name: sectionName, section_index: s },
+      });
+    } catch { /* ignore */ }
     const hist = cajaHistorialIA();
     if (hist) hist.scrollTop = hist.scrollHeight;
   } finally {
@@ -2879,7 +3338,7 @@ function renderMovil(raiz, real) {
   const peek = v.peekExplica;
   const pMostrar = peek ? { tipo: 'explica', s: peek.s, g: peek.g } : p;
   if (p.tipo === 'inicio') cont = `<p class="lede">Bienvenido. Desde aquí sigue la presentación, hace preguntas anónimas y consulta al asistente.</p>`;
-  else if (p.tipo === 'cierre') cont = `<p class="lede">Gracias por participar. Estas son las respuestas a las preguntas de la sala.</p>${listaRespuestas()}${htmlCierreDescargasCliente()}`;
+  else if (p.tipo === 'cierre') cont = `${htmlPresentationHandoffBanner()}${listaRespuestas()}${htmlCierreDescargasCliente()}`;
   else cont = (peek ? `<div class="hoja-detalle-nav"><button type="button" class="btn prim" data-volver-hoja>← Volver a hoja completa</button></div>` : '') + contenidoPaso(pMostrar, 'mv', !explorando && !peek, explorando, !!peek);
   raiz.innerHTML = `<div class="${real ? '' : 'movil-marco'}"><div class="movil ${real ? 'real' : ''}"><header><div class="linea"><span>Catch · Monitor ${esc(DATOS.edicion)}</span><span>${v.live ? '● En vivo' : 'Explorando'}</span></div>
     <h2>${esc(p.s !== undefined ? SECCIONES[p.s].nombre : p.tipo === 'cierre' ? 'Cierre' : 'Inicio')}</h2><p>${esc(tituloPaso(p))}</p></header>
@@ -2893,11 +3352,21 @@ function renderMovil(raiz, real) {
 
 // ======================= vista del moderador =======================
 function htmlModeradorTabs(pendientes, vacio) {
-  const tabs = [['preguntas', 'Preguntas', vacio ? 0 : pendientes], ['intereses', 'Intereses', 0], ['claridad', 'Claridad', 0]];
-  const lista = vacio
-    ? '<p class="vacio">Las preguntas, intereses y claridad estarán disponibles cuando comience la reunión.</p>'
-    : (S.tabMod === 'preguntas' ? panelPreguntas() : S.tabMod === 'intereses' ? panelIntereses() : panelClaridad());
-  return `<aside class="mod-col"><div class="tabs" role="tablist">${tabs.map(([k, l, b]) => `<button role="tab" data-tab="${k}" aria-selected="${S.tabMod === k}" ${vacio ? 'disabled' : ''}>${l}${b ? `<span class="badge">${b}</span>` : ''}</button>`).join('')}</div>
+  const vistaCarga = vistaCargaPresentador();
+  const vistaPrep = vistaPrepPresentador();
+  if (vistaCarga) S.tabMod = 'plantillas';
+  else if (vistaPrep) S.tabMod = 'prepFaqs';
+  const tabs = visitanteVeReunion()
+    ? [['participantes', 'Participantes', (S.visitorRoster || []).length], ['preguntas', 'Preguntas', pendientes], ['intereses', 'Intereses', 0], ['claridad', 'Claridad', 0]]
+    : null;
+  if (tabs && !tabs.some(t => t[0] === S.tabMod)) S.tabMod = 'participantes';
+  const lista = panelModeradorDerecho(pendientes);
+  const cabecera = vistaCarga
+    ? '<div class="tabs tabs--solo"><span class="tabs-titulo">Plantillas</span></div>'
+    : vistaPrep
+      ? '<div class="tabs tabs--solo"><span class="tabs-titulo">Preguntas frecuentes</span></div>'
+      : `<div class="tabs" role="tablist">${tabs.map(([k, l, b]) => `<button role="tab" data-tab="${k}" aria-selected="${S.tabMod === k}">${l}${b ? `<span class="badge">${b}</span>` : ''}</button>`).join('')}</div>`;
+  return `<aside class="mod-col">${cabecera}
      <div class="lista">${lista}</div></aside>`;
 }
 function renderModeradorPreparacion(raiz) {
@@ -2909,6 +3378,7 @@ function renderModeradorPreparacion(raiz) {
       <div class="dentro prep-centro">
         <h2>Bienvenido a Catch</h2>
         <p class="sub">Prepara la información para iniciar tu reunión. Puedes continuar sin subir archivos; se usará el informe de demostración.</p>
+        <p class="sub">En la columna derecha elija la <strong>plantilla visual</strong> del informe. Las preguntas frecuentes se preparan en el siguiente paso.</p>
         <label class="prep-upload"><input type="file" data-prep-archivo accept=".csv,.xlsx,.xls,.json,.pdf,.txt"><strong>Subir base de datos o información</strong><span>Arrastre un archivo o haga clic para seleccionar (opcional)</span></label>
         ${archivo}
         <button type="button" class="btn prim" data-prep-siguiente ${S.generacionInformeEnCurso ? 'disabled' : ''}>Siguiente</button>
@@ -3045,8 +3515,10 @@ function probarNarracionPlanEnTavus() {
   }
 }
 function renderModerador(raiz) {
-  if (S.faseSesion === 'preparacion') return renderModeradorPreparacion(raiz);
-  if (S.faseSesion === 'generando_informe') return renderModeradorGenerando(raiz);
+  if (vistaCargaPresentador()) {
+    if (S.faseSesion === 'preparacion' && !S.generacionInformeEnCurso) return renderModeradorPreparacion(raiz);
+    return renderModeradorGenerando(raiz);
+  }
   renderModeradorActivo(raiz);
 }
 function renderModeradorActivo(raiz) {
@@ -3068,15 +3540,17 @@ function renderModeradorActivo(raiz) {
       <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center"><button type="button" class="btn" data-descargar-guion-pdf>Descargar guion en PDF</button>
       <button type="button" class="btn prim" data-iniciar-reunion>Iniciar reunión</button></div></div>` : ''}
     <div class="${clasePantallaClientePreview()}">${htmlBarraLoQueVeCliente()}<div class="dentro" id="mod-preview"></div></div>
-    <div class="controles"><button class="btn" data-mod="-1">Anterior</button><button class="btn prim" data-mod="1" ${S.narracionEsperaAutorizacion ? 'disabled' : ''}>Siguiente</button>
+    <div class="controles"><button class="btn" data-mod="-1">Anterior</button>${p.tipo === 'cierre'
+      ? `<button type="button" class="btn prim" data-saltar="0">Reiniciar presentación</button><span class="siguiente">${esc(PRESENTATION_HANDOFF_SUBLABEL)} · sin más secciones</span>`
+      : `<button class="btn prim" data-mod="1" ${S.narracionEsperaAutorizacion ? 'disabled' : ''}>Siguiente</button>
       ${p.tipo === 'hoja' && S.narracionEsperaAutorizacion ? `<button type="button" class="btn prim" data-continuar-seccion>Continuar sección</button>` : ''}
       ${p.s !== undefined ? `<button class="btn suave" data-saltar="${PASOS.findIndex(q => q.tipo === 'hoja' && q.s === p.s)}">Mostrar hoja completa</button>` : ''}
-      <span class="siguiente">${sig ? 'Sigue: ' + esc(tituloPaso(sig)) : 'Fin de la sesión'}</span></div>
+      <span class="siguiente">${sig ? 'Sigue: ' + esc(tituloPaso(sig)) : 'Fin de la sesión'}</span>`}</div>
     ${htmlEstadoNarracionPaso()}
     ${htmlDiagNarracionPrueba()}
     <div class="notas"><h4>Notas para el moderador</h4>${g ? `<p style="margin:0 0 6px">${esc(g.nota)}</p><p class="sub" style="margin:0">Términos que conviene aclarar: ${g.glos.map(esc).join(', ')}.</p>`
       : p.tipo === 'hoja' ? '<p style="margin:0">Al mostrar la hoja, el cliente ve los gráficos en miniatura y se abre la ventana «¿Quedó claro?» (si aún no respondió). Revise la pestaña «Claridad» antes de pasar a la siguiente sección.</p>'
-      : p.tipo === 'cierre' ? '<p style="margin:0">Responda las preguntas anónimas (pestaña «Preguntas»). Al cierre, use los informes PDF debajo (feedback interno Catch y versión para el cliente).</p>' : '<p style="margin:0">Presente la agenda y explique que las preguntas son anónimas y se responden al final.</p>'}</div>
+      : p.tipo === 'cierre' ? `<p style="margin:0">${esc(PRESENTATION_HANDOFF_NARRATIVE)} Use la pestaña «Preguntas» para la conversación con la sala y los PDF debajo si corresponde.</p>` : '<p style="margin:0">Presente la agenda y explique que las preguntas son anónimas y se responden al final.</p>'}</div>
     ${p.tipo === 'cierre' ? `<div class="cierre-pdf-moderador">${htmlCierreDescargasModerador()}</div>` : ''}
     ${visitanteVeReunion() ? htmlBloquePreguntaIA() : ''}
    </section>
@@ -3113,6 +3587,44 @@ function panelPreguntas() {
     ${q.respuesta ? `<div class="resp">${esc(q.respuesta)}</div>` : ''}<div class="acc">${accPend}</div></div>`;
   }).join('');
 }
+function fmtHoraRoster(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '—';
+  return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+function cargarRosterVisitantes() {
+  const cfg = window.__CATCH_MONITOR_SYNC__;
+  if (!cfg?.meetingId || !cfg.presenterToken) return;
+  const now = Date.now();
+  if (S.visitorRosterLoading) return;
+  if (S.visitorRosterAt && now - S.visitorRosterAt < 7000) return;
+  S.visitorRosterLoading = true;
+  fetch('/api/meeting/' + encodeURIComponent(cfg.meetingId) + '/analytics/participants', {
+    headers: { 'x-presenter-token': cfg.presenterToken },
+  }).then(r => r.json().then(data => ({ ok: r.ok, data }))).then(({ ok, data }) => {
+    S.visitorRosterLoading = false;
+    S.visitorRosterAt = Date.now();
+    if (!ok) {
+      S.visitorRosterError = data.error || 'No se pudo cargar participantes';
+      S.visitorRoster = S.visitorRoster || [];
+    } else {
+      S.visitorRosterError = '';
+      S.visitorRoster = data.visitors || [];
+    }
+    if (S.tabMod === 'participantes') programarRender();
+  }).catch(() => {
+    S.visitorRosterLoading = false;
+    S.visitorRosterError = 'Error de conexión al cargar participantes';
+  });
+}
+function panelParticipantes() {
+  cargarRosterVisitantes();
+  const items = S.visitorRoster || [];
+  if (S.visitorRosterError) return `<p class="vacio">${esc(S.visitorRosterError)}</p>`;
+  if (!items.length) return '<p class="vacio">Aún no hay visitantes con actividad registrada. Cuando un cliente ingrese y explore, aparecerán aquí el nombre y el tiempo en sesión.</p>';
+  return `<section class="visitor-roster" aria-label="Participantes de la sesión"><h4 class="visitor-roster__heading">Participantes</h4><ul class="visitor-roster__list">${items.map(v => `<li class="visitor-roster__card"><p class="visitor-roster__name">${esc(v.display_name)}</p><p class="visitor-roster__duration">${esc(v.duration_label)}</p><p class="visitor-roster__times">Ingreso ${esc(fmtHoraRoster(v.joined_at))}${v.left_at ? ' · Salida ' + esc(fmtHoraRoster(v.left_at)) : ' · En sesión'}</p><p class="visitor-roster__sections">${v.sections && v.sections.length ? esc(v.sections.slice(0, 3).join(' · ')) : 'Sin secciones exploradas aún'}</p><p class="visitor-roster__meta">${v.questions_asked || 0} preguntas · ${v.clicks || 0} clics</p></li>`).join('')}</ul></section>`;
+}
 function panelIntereses() {
   const t = Object.values(S.toques); if (!t.length) return '<p class="vacio">Aquí aparece lo que el cliente consulta: filtros, gráficos que toca, términos del glosario y preguntas al asistente.</p>';
   const porSec = {}; t.forEach(x => { const n = x.seccion >= 0 ? SECCIONES[x.seccion].nombre : 'General'; porSec[n] = (porSec[n] || 0) + x.n; });
@@ -3146,7 +3658,7 @@ function htmlCierreDescargasModerador() {
 }
 function htmlCierre() {
   const filas = SECCIONES.map((s, i) => { const c = S.claridad[i]; return `<div><b>${esc(s.nombre)}</b><span>${c ? `${c.claro} «quedó claro» · ${c.duda} con dudas` : 'Sin respuesta de claridad'}</span></div>`; }).join('');
-  return `<div class="portada"><h2 class="grande">Gracias. Así quedó la sesión</h2><div class="agenda">${filas}</div><h3 style="margin-top:32px">Preguntas de la sala</h3>${listaRespuestas()}
+  return `${htmlPresentationHandoffBanner()}<div class="portada"><h2 class="grande">Gracias. Así quedó la sesión</h2><div class="agenda">${filas}</div><h3 style="margin-top:32px">Preguntas de la sala</h3>${listaRespuestas()}
     ${htmlCierreDescargasCliente()}</div>`;
 }
 
@@ -3498,9 +4010,13 @@ function anexarNotasInterpretModerador(caja, r) {
   const apply = r.effectApply;
   if (!apply) return;
   const notas = [];
-  if (apply.navigated) notas.push('Paso actualizado en la presentación.');
+  if (apply.adapterMissing) notas.push('No se aplicó el avance: el adaptador de efectos no estaba cargado.');
+  else if (apply.navigated) notas.push('Paso actualizado en la presentación.');
   else if (Array.isArray(r.effects) && r.effects.some(e => e && e.kind === 'navigate')) {
-    notas.push('No se cambió de punto (restricción del controlador o estado actual).');
+    const reasons = (apply.skipped || []).map(s => s && s.reason).filter(Boolean);
+    if (reasons.includes('visitor_forbidden')) notas.push('Acción global no permitida en esta vista.');
+    else if (reasons.includes('navigate_rejected')) notas.push('No se cambió de punto (restricción del controlador o estado actual).');
+    else notas.push('No se cambió de punto (el efecto de navegación no se ejecutó).');
   }
   (apply.skipped || []).forEach(s => {
     const t = textoEfectoOmitido(s.reason);
@@ -3789,14 +4305,16 @@ function instruccionNavegacionModerador(texto) {
 }
 /** Efectos validados en servidor → funciones del controlador (nunca S.pos directo). */
 function aplicarEfectosPresentacionValidados(rawEffects, opts) {
+  asegurarRuntimeCatchMonitor();
   const api = window.CatchPresentationEffects;
   if (!api?.normalizePresentationEffects || !api?.applyPresentationEffects) {
-    return { highlight: null, navigated: false, skipped: [], narrationIntents: [] };
+    try { console.warn('[Catch presentación]', 'effects.adapter_missing'); } catch { /* ignore */ }
+    return { highlight: null, navigated: false, skipped: [], narrationIntents: [], adapterMissing: true, posBefore: S.pos, posAfter: S.pos };
   }
   const effects = api.normalizePresentationEffects(rawEffects);
   const result = api.applyPresentationEffects(
     effects,
-    { role: S.rol, stepIndex: S.pos },
+    { role: S.rol, stepIndex: S.pos, stepCount: PASOS.length, presentationStatus: 'live' },
     {
       moveModerator(target) {
         const before = S.pos;
@@ -3868,6 +4386,18 @@ async function preguntarIAInterpretModerador(texto, s, alTexto, seq, safeAlTexto
   if (seq !== iaRequestSeq) throw new Error('sin-ia');
   const effects = Array.isArray(data.effects) ? data.effects : [];
   const applied = aplicarEfectosPresentacionValidados(effects);
+  try {
+    console.info('[Catch presentación]', 'interpret.apply', {
+      source: 'interpret',
+      effectKinds: effects.map(e => e && e.kind).filter(Boolean),
+      navigated: !!applied.navigated,
+      posBefore: applied.posBefore,
+      posAfter: applied.posAfter,
+      skipped: (applied.skipped || []).map(s => s && s.reason).filter(Boolean),
+      narrationIntents: applied.narrationIntents || [],
+      tavus: window.__CATCH_TAVUS_CVI__?.getStatus?.() || 'no_api',
+    });
+  } catch { /* ignore */ }
   return {
     message: answer,
     action: applied.highlight,
@@ -4231,13 +4761,71 @@ function enlazarAudioAvatar(raiz) {
   });
   sincronizarPausaAvatarVideo();
 }
+function leerIdentidadVisitante() {
+  const api = window.__CATCH_MONITOR_API__;
+  return api && typeof api.readActor === 'function' ? api.readActor() : null;
+}
+function visitanteRequiereIngreso() {
+  return (S.rol === 'cliente' || S.rol === 'movil') && !leerIdentidadVisitante();
+}
+function htmlPantallaIngresoVisitante() {
+  const mid = esc(window.__CATCH_MONITOR_SYNC__?.meetingId || '');
+  return `<div class="visitor-join-shell"><div class="visitor-join-card">
+    <p class="visitor-join-eyebrow">Capital Humano Live</p>
+    <h1 class="visitor-join-title">Ingresa a la reunión</h1>
+    <p class="visitor-join-lead">Escribe tu nombre para participar en esta sesión</p>
+    <label class="visitor-join-field"><span>Tu nombre</span>
+      <input type="text" id="visitorJoinName" autocomplete="name" placeholder="Ej. María López" maxlength="120"></label>
+    <p class="visitor-join-error" id="visitorJoinError" hidden role="alert"></p>
+    <button type="button" class="visitor-join-submit" data-visitor-join>Ingresar a la reunión</button>
+    <p class="visitor-join-meta">Reunión <code>${mid}</code></p>
+  </div></div>`;
+}
+let visitorJoinBusy = false;
+function enlazarIngresoVisitante(root) {
+  const btn = root.querySelector('[data-visitor-join]');
+  const input = root.querySelector('#visitorJoinName');
+  const err = root.querySelector('#visitorJoinError');
+  if (!btn || !input) return;
+  const submit = async () => {
+    if (visitorJoinBusy) return;
+    const api = window.__CATCH_MONITOR_API__;
+    if (!api?.registerVisitor) return;
+    const name = String(input.value || '').trim();
+    if (!name) {
+      if (err) { err.hidden = false; err.textContent = 'Escriba su nombre para continuar.'; }
+      return;
+    }
+    visitorJoinBusy = true;
+    btn.disabled = true;
+    btn.textContent = 'Registrando…';
+    if (err) err.hidden = true;
+    const res = await api.registerVisitor(name);
+    visitorJoinBusy = false;
+    if (!res.ok) {
+      btn.disabled = false;
+      btn.textContent = 'Ingresar a la reunión';
+      if (err) { err.hidden = false; err.textContent = res.error || 'No se pudo registrar su ingreso.'; }
+      return;
+    }
+    render({ force: true });
+  };
+  btn.addEventListener('click', () => void submit());
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') void submit(); });
+}
 function render(opts) {
   if (iaRespuestaActiva > 0 && !opts?.force) {
     renderPendienteTrasIA = true;
     return;
   }
   sincronizarEsperaNarracion();
-  const app = $('#app'); detenerVozIA(); detenerHablaNavegador(); limpiarGraficos();
+  const app = $('#app');
+  if (visitanteRequiereIngreso()) {
+    app.innerHTML = htmlPantallaIngresoVisitante();
+    enlazarIngresoVisitante(app);
+    return;
+  }
+  detenerVozIA(); detenerHablaNavegador(); limpiarGraficos();
   cerrarPopoverSeleccionIA();
   const vista = S.rol + '|' + posVista(S.rol); if (vista !== ultimaVista) cerrarFuente(); ultimaVista = vista;
   document.querySelectorAll('#selVista button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === S.rol));
@@ -4255,6 +4843,17 @@ function render(opts) {
   } catch { /* ignore */ }
   programarOrquestacionPasoActivo();
 }
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (!t || S.rol !== 'moderador') return;
+  const field = t.dataset && t.dataset.faqField;
+  const id = t.dataset && t.dataset.faqId;
+  if (!field || !id) return;
+  const row = (S.prepFaqs || []).find(r => r.id === id);
+  if (!row) return;
+  if (field === 'pregunta') row.pregunta = t.value;
+  if (field === 'respuesta') row.respuesta = t.value;
+});
 document.addEventListener('click', e => {
   const b = e.target.closest('button, [data-tocar], [data-volver-anterior]'); if (!b) return;
   const d = b.dataset;
@@ -4303,6 +4902,36 @@ document.addEventListener('click', e => {
   }
   if (d.saltar !== undefined) return moverModerador(+d.saltar);
   if (d.tab) { S.tabMod = d.tab; return render(); }
+  if (d.addPrepFaq !== undefined) {
+    if (!S.prepFaqs) S.prepFaqs = [];
+    S.prepFaqs.push({ id: nuevaPrepFaqId(), pregunta: '', respuesta: '' });
+    if (refrescarPanelPrepFaqs()) return;
+    return render();
+  }
+  if (d.removePrepFaq) {
+    S.prepFaqs = (S.prepFaqs || []).filter(r => r.id !== d.removePrepFaq);
+    if (refrescarPanelPrepFaqs()) return;
+    return render();
+  }
+  if (d.plantillaVisual) {
+    const id = plantillaVisualInicial(d.plantillaVisual);
+    if (S.plantillaVisual === id && S.plantillaVisualExpandida === id) S.plantillaVisualExpandida = null;
+    else {
+      S.plantillaVisual = id;
+      S.plantillaVisualExpandida = id;
+    }
+    persistir();
+    if (vistaCargaPresentador()) {
+      if (S.plantillaVisualExpandida) refrescarPanelPlantillasConAnimacion();
+      else {
+        cancelarEscrituraPlantilla();
+        const lista = document.querySelector('.moderador .mod-col .lista');
+        if (lista) lista.innerHTML = panelPlantillas();
+      }
+      return;
+    }
+    return render();
+  }
   if (d.ir !== undefined) {
     if (S.rol !== 'cliente' || S.vistas.cliente.live) return;
     const sec = d.ir === 'inicio' ? -1 : +d.ir;
@@ -4560,7 +5189,15 @@ function pasoFlecha(d) {
   const rol = S.rol === 'movil' ? 'movil' : 'cliente';
   const v = vistaParticipante(rol);
   if (v.live) return;
+  const from = v.pos;
   v.pos = acotarPosExploracion(rol, v.pos + d);
+  const p = PASOS[v.pos];
+  const sectionName = p && p.s !== undefined && SECCIONES[p.s] ? SECCIONES[p.s].nombre : null;
+  try {
+    window.__CATCH_MONITOR_API__?.track?.(d > 0 ? 'presentation.navigated_forward' : 'presentation.navigated_back', {
+      metadata: { from_index: from, to_index: v.pos, section_name: sectionName, follow: false },
+    });
+  } catch { /* ignore */ }
   render();
 }
 document.addEventListener('change', e => {
@@ -4589,9 +5226,22 @@ document.addEventListener('keydown', e => {
   e.preventDefault(); pasoFlecha(e.key === 'ArrowRight' ? 1 : -1);
 });
 window.addEventListener('hashchange', () => { S.rol = vistaDesdeHash(); render(); });
+window.addEventListener('popstate', e => {
+  const step = e.state && e.state[PREP_HIST_KEY];
+  if (S.rol !== 'moderador') return;
+  if (step === 'carga' || step === 'revision' || step === 'en_vivo') void aplicarPasoHistoriaPresentador(step);
+});
 Chart.defaults.font.family = 'Urbanist, "Segoe UI", system-ui, sans-serif';
 hidratarRespuestasClaridad();
+window.addEventListener('catch-monitor-api-ready', () => {
+  if (!visitanteRequiereIngreso()) programarRender();
+  else {
+    const app = $('#app');
+    if (app && app.querySelector('[data-visitor-join]')) enlazarIngresoVisitante(app);
+  }
+});
 S.rol = vistaDesdeHash(); render(); pintarSync(); conectarSala();
+sincronizarHistoriaPrep();
 
 </script>
 </body>

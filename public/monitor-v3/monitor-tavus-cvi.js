@@ -252,6 +252,13 @@
     scheduleRefreshBars();
     applyVolumeToRemoteAudio();
     tryPlayRemoteMedia();
+    try {
+      if (typeof window.__CATCH_ON_TAVUS_CONNECTED__ === "function") {
+        window.__CATCH_ON_TAVUS_CONNECTED__();
+      }
+    } catch {
+      /* ignore */
+    }
     if (canControl) {
       if (presenterPublishTimer) clearInterval(presenterPublishTimer);
       presenterPublishTimer = setInterval(() => {
