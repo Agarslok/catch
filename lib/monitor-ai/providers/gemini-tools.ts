@@ -79,10 +79,16 @@ function logGeminiFailure(
   });
 }
 
+export type GeminiGenerateOptions = {
+  responseJson?: boolean;
+  maxOutputTokens?: number;
+};
+
 export async function geminiGenerate(
   systemInstruction: string,
   contents: Content[],
   withTools: boolean,
+  options?: GeminiGenerateOptions,
 ): Promise<
   | { ok: true; round: GeminiToolRound }
   | { ok: false; code: "AI_TIMEOUT" | "AI_PROVIDER_ERROR" | "AI_EMPTY_RESPONSE" | "RATE_LIMITED" }
@@ -95,12 +101,17 @@ export async function geminiGenerate(
   const model = getModelId();
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
 
+  const generationConfig: Record<string, unknown> = {
+    maxOutputTokens: options?.maxOutputTokens ?? 512,
+  };
+  if (options?.responseJson) {
+    generationConfig.responseMimeType = "application/json";
+  }
+
   const body: Record<string, unknown> = {
     systemInstruction: { parts: [{ text: systemInstruction }] },
     contents,
-    generationConfig: {
-      maxOutputTokens: 512,
-    },
+    generationConfig,
   };
   if (withTools) {
     body.tools = [{ functionDeclarations: MONITOR_AI_TOOL_DECLARATIONS }];

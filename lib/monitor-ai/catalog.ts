@@ -84,6 +84,10 @@ export function isMonitorSectionIndex(n: number): n is MonitorSectionIndex {
   return Number.isInteger(n) && n >= 0 && n <= 4;
 }
 
+export function sectionIndexForChart(chartId: MonitorChartId): MonitorSectionIndex {
+  return CHART_TO_SECTION[chartId];
+}
+
 export function chartBelongsToSection(
   chartId: MonitorChartId,
   sectionIndex: MonitorSectionIndex,

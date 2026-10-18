@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { verifyPresenterToken } from "@/lib/meeting/presenter-auth";
+import {
+  isMonitorSessionPhase,
+  resolveInitialMonitorSessionPhase,
+} from "@/lib/meeting/monitor-session-phase";
+import { readMonitorTavusSessionFromGlobalView } from "@/lib/meeting/tavus-viewer-session";
 import { readMeetingState } from "@/lib/meeting/state-server";
 import {
   getSupabaseServerClient,
@@ -19,13 +24,25 @@ export async function GET(
   try {
     const data = await readMeetingState(supabase, meetingId);
     const globalView = (data?.global_view ?? {}) as Record<string, unknown>;
+    const step = data?.current_step ?? 0;
+    const unlockedStep = data?.unlocked_step ?? data?.current_step ?? 0;
+    const sessionPhase = resolveInitialMonitorSessionPhase(
+      globalView.monitorSessionPhase,
+      step,
+      unlockedStep,
+    );
     return NextResponse.json({
       configured: true,
-      step: data?.current_step ?? 0,
-      unlockedStep: data?.unlocked_step ?? data?.current_step ?? 0,
+      step,
+      unlockedStep,
       presentationStatus: data?.presentation_status ?? "live",
+      sessionPhase,
       eventSeq: data?.event_seq ?? 0,
       monitorHighlight: globalView.monitorHighlight ?? null,
+      monitorTavusSession: readMonitorTavusSessionFromGlobalView(globalView),
+      awaitingModerator: globalView.awaitingModerator === true,
+      sectionAwaitSectionId: globalView.sectionAwaitSectionId ?? null,
+      sectionAwaitSectionLabel: globalView.sectionAwaitSectionLabel ?? null,
     });
   } catch (e) {
     const message = e instanceof Error ? e.message : "read failed";
@@ -53,9 +70,33 @@ export async function POST(
     unlockedStep?: number;
     reset?: boolean;
     highlight?: Record<string, unknown> | null;
+    sessionPhase?: string;
   };
   const existing = await readMeetingState(supabase, meetingId);
   const prevGlobal = (existing?.global_view ?? {}) as Record<string, unknown>;
+  const nextEventSeq = (existing?.event_seq ?? 0) + 1;
+
+  if (body.sessionPhase !== undefined) {
+    if (!isMonitorSessionPhase(body.sessionPhase)) {
+      return NextResponse.json({ error: "invalid sessionPhase" }, { status: 400 });
+    }
+    const globalView = {
+      ...prevGlobal,
+      monitorSessionPhase: body.sessionPhase,
+    };
+    const { error: phaseError } = await supabase.from("meeting_state").upsert({
+      meeting_id: meetingId,
+      current_step: existing?.current_step ?? 0,
+      unlocked_step: existing?.unlocked_step ?? 0,
+      global_view: globalView,
+      event_seq: nextEventSeq,
+      updated_at: new Date().toISOString(),
+    });
+    if (phaseError) {
+      return NextResponse.json({ error: phaseError.message }, { status: 500 });
+    }
+    return NextResponse.json({ ok: true, sessionPhase: body.sessionPhase });
+  }
 
   if (body.highlight !== undefined) {
     const globalView = {
@@ -67,6 +108,7 @@ export async function POST(
       current_step: existing?.current_step ?? 0,
       unlocked_step: existing?.unlocked_step ?? 0,
       global_view: globalView,
+      event_seq: nextEventSeq,
       updated_at: new Date().toISOString(),
     });
     if (hlError) {
@@ -97,6 +139,7 @@ export async function POST(
     current_step: step,
     unlocked_step: unlockedStep,
     global_view: prevGlobal,
+    event_seq: nextEventSeq,
     updated_at: new Date().toISOString(),
   });
 

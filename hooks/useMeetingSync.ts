@@ -17,11 +17,32 @@ import {
   validateSessionScript,
 } from "@/lib/meeting/script";
 import type { PresentedChart, SessionScript } from "@/lib/meeting/script-types";
+import {
+  type MonitorSessionPhase,
+  presenterDashboardReady,
+  resolveInitialMonitorSessionPhase,
+} from "@/lib/meeting/monitor-session-phase";
 import type {
   MeetingGlobalView,
   MeetingPresentationStatus,
 } from "@/lib/meeting/session-types";
 import { syncDevSessionStorage } from "@/lib/meeting/dev-session-client";
+import {
+  mergeIncomingGlobalView,
+  nextAppliedEventSeq,
+  shouldApplyMeetingStateRow,
+  sortMeetingStateRowsBySeq,
+} from "@/lib/meeting/meeting-state-sync";
+import {
+  abortAdvance,
+  beginAdvance,
+  commitAdvance,
+  emptyAdvanceLock,
+  invalidatePendingOnPause,
+  pendingMatchesGeneration,
+  shouldSkipRetryAfterPersist,
+  type AdvanceLockState,
+} from "@/lib/meeting/presentation-recovery";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { ChartAction } from "@/lib/visualization/types";
 
@@ -50,6 +71,8 @@ export function useMeetingSync(
   const [presentationStatus, setPresentationStatus] =
     useState<MeetingPresentationStatus>("live");
   const [globalView, setGlobalView] = useState<MeetingGlobalView>({});
+  const [sessionPhase, setSessionPhase] =
+    useState<MonitorSessionPhase>("preparacion");
   const [presentedCharts, setPresentedCharts] = useState<PresentedChart[]>([]);
   const [eventSeq, setEventSeq] = useState(0);
   const [ready, setReady] = useState(false);
@@ -57,6 +80,15 @@ export function useMeetingSync(
   const devFreshRef = useRef<boolean | null>(null);
   const scriptRef = useRef(script);
   scriptRef.current = script;
+  const sessionPhaseRef = useRef(sessionPhase);
+  sessionPhaseRef.current = sessionPhase;
+  const appliedEventSeqRef = useRef(-1);
+  const hydratedRef = useRef(false);
+  const presentationStatusRef = useRef(presentationStatus);
+  presentationStatusRef.current = presentationStatus;
+  const liveStepRef = useRef(liveStep);
+  liveStepRef.current = liveStep;
+  const advanceLockRef = useRef<AdvanceLockState>(emptyAdvanceLock(0));
 
   const devSessionFresh = useCallback(() => {
     if (devFreshRef.current === null) {
@@ -65,7 +97,15 @@ export function useMeetingSync(
     return devFreshRef.current;
   }, []);
 
-  const applyRemoteState = useCallback((row: StateRow) => {
+  const applyRemoteState = useCallback((row: StateRow, options?: { force?: boolean }) => {
+    if (
+      !options?.force &&
+      !shouldApplyMeetingStateRow(appliedEventSeqRef.current, row)
+    ) {
+      return false;
+    }
+    appliedEventSeqRef.current = nextAppliedEventSeq(appliedEventSeqRef.current, row);
+
     const incoming = row.script ? validateSessionScript(row.script) : null;
     const nextScript =
       incoming && incoming.ok ? incoming.script : scriptRef.current;
@@ -77,18 +117,63 @@ export function useMeetingSync(
         : clampScriptIndex(nextScript, row.current_step ?? 0);
     const safeIdx = idx >= 0 ? idx : 0;
     const point = getPointAt(nextScript, safeIdx);
-    setLiveStep(safeIdx);
-    setLivePointId(point.id);
-    if (row.unlocked_step != null) {
-      setUnlockedStep(clampScriptIndex(nextScript, row.unlocked_step));
-    } else {
-      setUnlockedStep((prev) => Math.max(prev, safeIdx));
-    }
+    const unlocked =
+      row.unlocked_step != null
+        ? clampScriptIndex(nextScript, row.unlocked_step)
+        : safeIdx;
+    const phase = resolveInitialMonitorSessionPhase(
+      row.global_view?.monitorSessionPhase,
+      safeIdx,
+      unlocked,
+    );
+    setSessionPhase(phase);
     if (row.presentation_status) setPresentationStatus(row.presentation_status);
-    if (row.global_view) setGlobalView(row.global_view);
+    if (row.global_view) {
+      setGlobalView((prev) => mergeIncomingGlobalView(prev, row.global_view));
+    }
+    const visitorWaiting =
+      !isPresenter && phase !== "reunion_activa" && phase !== "cierre";
+    if (!visitorWaiting) {
+      setLiveStep(safeIdx);
+      setLivePointId(point.id);
+      if (row.unlocked_step != null) {
+        setUnlockedStep(clampScriptIndex(nextScript, row.unlocked_step));
+      } else {
+        setUnlockedStep((prev) => Math.max(prev, safeIdx));
+      }
+    }
     if (row.presented_charts) setPresentedCharts(row.presented_charts);
     if (typeof row.event_seq === "number") setEventSeq(row.event_seq);
-  }, []);
+    return true;
+  }, [isPresenter]);
+
+  const fetchPersistedState = useCallback(async (): Promise<StateRow | null> => {
+    const supabase = getSupabaseBrowserClient();
+    if (supabase) {
+      const { data, error } = await supabase
+        .from("meeting_state")
+        .select(
+          "current_step, unlocked_step, current_point_id, presentation_status, global_view, event_seq, script, presented_charts",
+        )
+        .eq("meeting_id", meetingId)
+        .maybeSingle();
+      if (!error && data) return data as StateRow;
+    }
+    try {
+      const res = await fetch(`/api/meeting/${meetingId}/state`);
+      if (!res.ok) return null;
+      const json = (await res.json()) as { state?: StateRow };
+      return json.state ?? null;
+    } catch {
+      return null;
+    }
+  }, [meetingId]);
+
+  const refreshGlobalState = useCallback(async () => {
+    const row = await fetchPersistedState();
+    if (row) applyRemoteState(row, { force: true });
+    return row;
+  }, [fetchPersistedState, applyRemoteState]);
 
   useEffect(() => {
     devSessionFresh();
@@ -127,20 +212,24 @@ export function useMeetingSync(
     }
 
     let cancelled = false;
+    const pendingRealtime: StateRow[] = [];
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    const flushRow = (row: StateRow) => {
+      applyRemoteState(row);
+    };
+
+    const onRealtime = (payload: { new: Record<string, unknown> }) => {
+      const row = payload.new as StateRow;
+      if (!hydratedRef.current) {
+        pendingRealtime.push(row);
+        return;
+      }
+      flushRow(row);
+    };
 
     (async () => {
       const devFresh = devSessionFresh();
-      const { data, error } = await supabase
-        .from("meeting_state")
-        .select(
-          "current_step, unlocked_step, current_point_id, presentation_status, global_view, event_seq, script, presented_charts",
-        )
-        .eq("meeting_id", meetingId)
-        .maybeSingle();
-
-      if (error) {
-        console.warn("[meeting_state load]", error.message);
-      }
 
       if (!cancelled && devFresh && isPresenter && presenterToken) {
         await fetch(`/api/meeting/${meetingId}/state`, {
@@ -158,8 +247,10 @@ export function useMeetingSync(
         });
       }
 
+      const data = await fetchPersistedState();
+
       if (!cancelled && data) {
-        applyRemoteState(data as StateRow);
+        applyRemoteState(data, { force: true });
       } else if (!cancelled && isPresenter && presenterToken) {
         await fetch(`/api/meeting/${meetingId}/state`, {
           method: "POST",
@@ -174,30 +265,47 @@ export function useMeetingSync(
             reset: true,
           }),
         });
+        const seeded = await fetchPersistedState();
+        if (!cancelled && seeded) applyRemoteState(seeded, { force: true });
       }
-    })();
 
-    const channel = supabase
-      .channel(`meeting-state:${meetingId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "meeting_state",
-          filter: `meeting_id=eq.${meetingId}`,
-        },
-        (payload) => {
-          applyRemoteState((payload.new ?? {}) as StateRow);
-        },
-      )
-      .subscribe();
+      if (cancelled) return;
+
+      hydratedRef.current = true;
+      for (const row of sortMeetingStateRowsBySeq(pendingRealtime) as StateRow[]) {
+        flushRow(row);
+      }
+      pendingRealtime.length = 0;
+
+      channel = supabase
+        .channel(`meeting-state:${meetingId}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "meeting_state",
+            filter: `meeting_id=eq.${meetingId}`,
+          },
+          onRealtime,
+        )
+        .subscribe();
+    })();
 
     return () => {
       cancelled = true;
-      supabase.removeChannel(channel);
+      hydratedRef.current = false;
+      appliedEventSeqRef.current = -1;
+      if (channel) supabase.removeChannel(channel);
     };
-  }, [meetingId, isPresenter, presenterToken, applyRemoteState, devSessionFresh]);
+  }, [
+    meetingId,
+    isPresenter,
+    presenterToken,
+    applyRemoteState,
+    devSessionFresh,
+    fetchPersistedState,
+  ]);
 
   const pushRemote = useCallback(
     async (body: Record<string, unknown>) => {
@@ -215,7 +323,9 @@ export function useMeetingSync(
         presentation_status:
           (body.presentationStatus as MeetingPresentationStatus) ??
           presentationStatus,
-        global_view: (body.globalView as MeetingGlobalView) ?? globalView,
+        global_view: body.globalView
+          ? { ...globalView, ...(body.globalView as MeetingGlobalView) }
+          : globalView,
         script: (body.script as SessionScript) ?? scriptRef.current,
         presented_charts: presentedCharts,
       };
@@ -233,6 +343,9 @@ export function useMeetingSync(
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));
           console.warn("[meeting_state API]", err.error ?? res.status);
+        } else {
+          const json = (await res.json().catch(() => ({}))) as { state?: StateRow };
+          if (json.state) applyRemoteState(json.state);
         }
         return;
       }
@@ -258,15 +371,43 @@ export function useMeetingSync(
       presentationStatus,
       globalView,
       presentedCharts,
+      applyRemoteState,
     ],
   );
 
   const publishStep = useCallback(
     async (step: number, reset?: boolean) => {
       if (!isPresenter || publishing.current) return;
+      if (!presenterDashboardReady(sessionPhaseRef.current)) return;
+      if (presentationStatusRef.current === "paused") return;
+      const s = clampScriptIndex(scriptRef.current, step);
+      if (
+        shouldSkipRetryAfterPersist({
+          persistedStep: liveStepRef.current,
+          intendedStep: s,
+        }) &&
+        !reset
+      ) {
+        return;
+      }
+      const started = beginAdvance(advanceLockRef.current, s);
+      if (!started.ok) return;
+      advanceLockRef.current = started.lock;
       publishing.current = true;
       try {
-        const s = clampScriptIndex(scriptRef.current, step);
+        if (
+          !pendingMatchesGeneration(
+            advanceLockRef.current,
+            started.generation,
+            presentationStatusRef.current,
+          )
+        ) {
+          advanceLockRef.current = abortAdvance(
+            advanceLockRef.current,
+            started.generation,
+          );
+          return;
+        }
         const max = reset ? s : Math.max(unlockedStep, s);
         const point = getPointAt(scriptRef.current, s);
         setLiveStep(s);
@@ -292,6 +433,19 @@ export function useMeetingSync(
             return next;
           });
         }
+        if (
+          !pendingMatchesGeneration(
+            advanceLockRef.current,
+            started.generation,
+            presentationStatusRef.current,
+          )
+        ) {
+          advanceLockRef.current = abortAdvance(
+            advanceLockRef.current,
+            started.generation,
+          );
+          return;
+        }
         await pushRemote({
           currentStep: s,
           currentPointId: point.id,
@@ -299,6 +453,11 @@ export function useMeetingSync(
           reset: Boolean(reset),
           script: scriptRef.current,
         });
+        advanceLockRef.current = commitAdvance(
+          advanceLockRef.current,
+          started.generation,
+          s,
+        );
         await logMeetingActivity({
           meetingId,
           eventType: "PRESENTATION_STEP",
@@ -326,8 +485,21 @@ export function useMeetingSync(
     async (paused: boolean) => {
       if (!isPresenter) return;
       const status: MeetingPresentationStatus = paused ? "paused" : "live";
+      if (paused) {
+        advanceLockRef.current = invalidatePendingOnPause(advanceLockRef.current);
+      }
       setPresentationStatus(status);
+      presentationStatusRef.current = status;
       await pushRemote({ presentationStatus: status });
+    },
+    [isPresenter, pushRemote],
+  );
+
+  const setAvatarVideoPaused = useCallback(
+    async (paused: boolean) => {
+      if (!isPresenter) return;
+      setGlobalView((prev) => ({ ...prev, avatarVideoPaused: paused }));
+      await pushRemote({ globalView: { avatarVideoPaused: paused } });
     },
     [isPresenter, pushRemote],
   );
@@ -336,6 +508,25 @@ export function useMeetingSync(
     async (action: ChartAction) => {
       if (!isPresenter) return;
       await pushRemote({ action });
+    },
+    [isPresenter, pushRemote],
+  );
+
+  const publishSessionPhase = useCallback(
+    async (phase: MonitorSessionPhase) => {
+      if (!isPresenter) return;
+      setSessionPhase(phase);
+      setGlobalView((prev) => ({ ...prev, monitorSessionPhase: phase }));
+      await pushRemote({ globalView: { monitorSessionPhase: phase } });
+    },
+    [isPresenter, pushRemote],
+  );
+
+  const publishGlobalViewPatch = useCallback(
+    async (patch: Partial<MeetingGlobalView>) => {
+      if (!isPresenter) return;
+      setGlobalView((prev) => ({ ...prev, ...patch }));
+      await pushRemote({ globalView: patch });
     },
     [isPresenter, pushRemote],
   );
@@ -352,7 +543,12 @@ export function useMeetingSync(
     publishStep,
     publishPoint,
     setPresentationPaused,
+    setAvatarVideoPaused,
     publishGlobalAction,
+    sessionPhase,
+    publishSessionPhase,
+    publishGlobalViewPatch,
+    refreshGlobalState,
     ready,
   };
 }

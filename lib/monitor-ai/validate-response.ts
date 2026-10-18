@@ -43,8 +43,37 @@ export function validateMonitorAiAction(raw: unknown): MonitorAiActionValidation
     return { ok: false, errors: ["action must be an object"] };
   }
   const a = raw as Record<string, unknown>;
+  if (a.type === "clear_highlight") {
+    const target = a.target;
+    if (target === undefined) {
+      const reason =
+        typeof a.reason === "string" ? a.reason.trim().slice(0, 200) : undefined;
+      return { ok: true, action: { type: "clear_highlight", reason } };
+    }
+    if (!target || typeof target !== "object") {
+      return { ok: false, errors: ["invalid clear target"] };
+    }
+    const t = target as Record<string, unknown>;
+    const chartId =
+      typeof t.chartId === "string" && isMonitorChartId(t.chartId) ? t.chartId : undefined;
+    const category =
+      typeof t.category === "string" && t.category.trim() ? t.category.trim() : undefined;
+    if (!chartId && !category) {
+      return { ok: false, errors: ["clear target needs chartId or category"] };
+    }
+    const reason =
+      typeof a.reason === "string" ? a.reason.trim().slice(0, 200) : undefined;
+    return {
+      ok: true,
+      action: {
+        type: "clear_highlight",
+        target: { chartId, category },
+        reason,
+      },
+    };
+  }
   if (a.type !== "highlight") {
-    return { ok: false, errors: ["only highlight is supported"] };
+    return { ok: false, errors: ["unsupported action type"] };
   }
   const target = a.target;
   if (!validateMonitorAiHighlightTarget(target)) {

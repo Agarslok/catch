@@ -1,7 +1,11 @@
 import { highlightAllowedForView, type MonitorAiViewContext } from "./view-context";
 import type { MonitorAiCallerRole, MonitorAiAction, MonitorChartElementRef } from "./types";
 import type { MonitorAiHighlightStatus } from "./types";
-import { resolveMonitorHighlightTarget, parseChartId } from "./highlight-catalog";
+import {
+  parseChartId,
+  resolveMonitorHighlightProbeDetailed,
+} from "./highlight-catalog";
+import type { HighlightResolveError } from "./highlight-elements";
 import { validateMonitorAiAction, type MonitorAiActionValidation } from "./validate-response";
 
 const PROPOSE_HIGHLIGHT_KEYS = new Set([
@@ -12,6 +16,8 @@ const PROPOSE_HIGHLIGHT_KEYS = new Set([
   "index",
   "reason",
 ]);
+
+const CLEAR_HIGHLIGHT_KEYS = new Set(["chartId", "category", "reason"]);
 
 export function hasOnlyAllowedHighlightKeys(args: Record<string, unknown>): boolean {
   return Object.keys(args).every((k) => PROPOSE_HIGHLIGHT_KEYS.has(k));
@@ -29,8 +35,24 @@ export function authorizeHighlightRequest(
   return { ok: true };
 }
 
+function highlightResolveErrorMessage(reason: HighlightResolveError): string {
+  switch (reason) {
+    case "no_options":
+      return "La gráfica no tiene elementos resaltables en esta visualización.";
+    case "ambiguous":
+      return "La instrucción es ambigua: hay varias coincidencias. Indique categoría y serie con más precisión.";
+    case "not_found":
+      return "No se encontró ese elemento en la gráfica indicada.";
+    case "invalid_chart":
+      return "Gráfica no válida.";
+    default:
+      return "No se pudo resolver el elemento a resaltar.";
+  }
+}
+
 export function buildHighlightActionFromProposal(
   args: Record<string, unknown>,
+  view?: MonitorAiViewContext,
 ): MonitorAiActionValidation {
   if (!hasOnlyAllowedHighlightKeys(args)) {
     return { ok: false, errors: ["unexpected highlight fields"] };
@@ -38,6 +60,12 @@ export function buildHighlightActionFromProposal(
   const chartId = parseChartId(args.chartId);
   if (!chartId) {
     return { ok: false, errors: ["invalid chartId"] };
+  }
+  if (view && !highlightAllowedForView(chartId, view)) {
+    return {
+      ok: false,
+      errors: ["chart not visible on current slide (contexto desactualizado o diapositiva distinta)"],
+    };
   }
   const probe = {
     category: typeof args.category === "string" ? args.category.trim() : undefined,
@@ -51,15 +79,37 @@ export function buildHighlightActionFromProposal(
     return { ok: false, errors: ["category or index required"] };
   }
 
-  const target = resolveMonitorHighlightTarget(chartId, probe);
-  if (!target) {
-    return { ok: false, errors: ["element not found in chart"] };
+  const resolved = resolveMonitorHighlightProbeDetailed(chartId, probe);
+  if (!resolved.ok) {
+    return { ok: false, errors: [highlightResolveErrorMessage(resolved.reason)] };
   }
 
   const reason = typeof args.reason === "string" ? args.reason.trim().slice(0, 200) : undefined;
   return validateMonitorAiAction({
     type: "highlight",
-    target,
+    target: resolved.target,
+    reason,
+  });
+}
+
+export function buildClearActionFromProposal(
+  args: Record<string, unknown>,
+): MonitorAiActionValidation {
+  if (!Object.keys(args).every((k) => CLEAR_HIGHLIGHT_KEYS.has(k))) {
+    return { ok: false, errors: ["unexpected clear highlight fields"] };
+  }
+  const chartId = args.chartId != null ? parseChartId(args.chartId) : undefined;
+  if (args.chartId != null && !chartId) {
+    return { ok: false, errors: ["invalid chartId"] };
+  }
+  const category =
+    typeof args.category === "string" && args.category.trim()
+      ? args.category.trim()
+      : undefined;
+  const reason = typeof args.reason === "string" ? args.reason.trim().slice(0, 200) : undefined;
+  return validateMonitorAiAction({
+    type: "clear_highlight",
+    target: chartId || category ? { chartId, category } : undefined,
     reason,
   });
 }
@@ -69,6 +119,8 @@ export function mergeHighlightAction(
   next: MonitorAiAction | null,
 ): MonitorAiAction | null {
   if (!next) return current;
+  if (next.type === "clear_highlight") return next;
+  if (current?.type === "clear_highlight") return current;
   if (current) return current;
   return next;
 }
@@ -77,7 +129,13 @@ export function finalizeHighlightForResponse(
   action: MonitorAiAction | null,
   view: MonitorAiViewContext | undefined,
 ): { action: MonitorAiAction | null; status: MonitorAiHighlightStatus } {
-  if (!action || action.type !== "highlight") {
+  if (!action) {
+    return { action: null, status: null };
+  }
+  if (action.type === "clear_highlight") {
+    return { action, status: null };
+  }
+  if (action.type !== "highlight") {
     return { action: null, status: null };
   }
   const chartId = action.target.chartId;

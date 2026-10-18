@@ -10,6 +10,7 @@ export { MAX_TOOL_ITERATIONS };
 import { sanitizeAssistantMessage } from "./validate-response";
 import {
   authorizeHighlightRequest,
+  buildClearActionFromProposal,
   buildHighlightActionFromProposal,
   finalizeHighlightForResponse,
   mergeHighlightAction,
@@ -64,14 +65,19 @@ function adoptHighlightFromTool(
   args: Record<string, unknown>,
   current: MonitorAiAction | null,
 ): MonitorAiAction | null {
-  if (toolName !== "propose_chart_highlight") return current;
   const auth = authorizeHighlightRequest(
     validated.meetingId,
     validated.meetingId,
     validated.caller.role,
   );
   if (!auth.ok) return current;
-  const built = buildHighlightActionFromProposal(args);
+  if (toolName === "clear_chart_highlight") {
+    const built = buildClearActionFromProposal(args);
+    if (!built.ok) return current;
+    return mergeHighlightAction(current, built.action);
+  }
+  if (toolName !== "propose_chart_highlight") return current;
+  const built = buildHighlightActionFromProposal(args, validated.viewContext);
   if (!built.ok) return current;
   return mergeHighlightAction(current, built.action);
 }
@@ -103,6 +109,12 @@ function navigationHint(req: MonitorAiValidatedRequest): string {
       bits.push("visibleCharts=ninguna (no proponer resaltado)");
     }
     if (vc.mountedChartIds.length) bits.push(`mountedCharts=${vc.mountedChartIds.join("|")}`);
+    const ah = vc.activeHighlight;
+    if (ah?.chartId) {
+      bits.push(
+        `activeHighlight=${ah.chartId}${ah.category ? `:${ah.category}` : ""} (resaltado actual en pantalla)`,
+      );
+    }
   }
   return bits.length ? `Contexto de vista del participante (no es dato numérico): ${bits.join(", ")}.` : "";
 }

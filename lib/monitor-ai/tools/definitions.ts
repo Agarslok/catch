@@ -90,17 +90,35 @@ export const MONITOR_AI_TOOL_DECLARATIONS = [
       required: ["chartId"],
     },
   },
+  {
+    name: "clear_chart_highlight",
+    description:
+      "Quita el resaltado de una gráfica. Sin parámetros: quita cualquier resaltado activo. Con chartId y/o category: solo si coincide con el resaltado actual (usa activeHighlight del contexto). Usar cuando el usuario pida desmarcar, quitar resaltado o dejar de señalar.",
+    parameters: {
+      type: "object",
+      properties: {
+        chartId: { type: "string", enum: [...MONITOR_CHART_IDS] },
+        category: {
+          type: "string",
+          description: "Etiqueta del elemento resaltado (la misma usada al resaltar)",
+        },
+        reason: { type: "string", description: "Motivo breve (opcional)" },
+      },
+    },
+  },
 ] as const;
 
 export type MonitorAiToolName =
   | "get_section_summary"
   | "get_market_metric"
   | "compare_client_to_market"
-  | "propose_chart_highlight";
+  | "propose_chart_highlight"
+  | "clear_chart_highlight";
 
 export const MONITOR_AI_TOOL_NAMES = new Set<string>([
   "get_section_summary",
   "get_market_metric",
   "compare_client_to_market",
   "propose_chart_highlight",
+  "clear_chart_highlight",
 ]);

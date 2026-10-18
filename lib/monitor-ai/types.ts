@@ -71,7 +71,16 @@ export type MonitorAiHighlightAction = {
   reason?: string;
 };
 
-export type MonitorAiAction = MonitorAiHighlightAction;
+export type MonitorAiClearHighlightAction = {
+  type: "clear_highlight";
+  target?: {
+    chartId?: MonitorChartId;
+    category?: string;
+  };
+  reason?: string;
+};
+
+export type MonitorAiAction = MonitorAiHighlightAction | MonitorAiClearHighlightAction;
 
 export type MonitorAiInterpreter = "gemini" | "unavailable";
 

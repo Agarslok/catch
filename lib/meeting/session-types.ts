@@ -1,5 +1,6 @@
 import type { ChartKind, MunFilter } from "@/lib/data/guanajuato-2026";
 import type { ChartAction } from "@/lib/visualization/types";
+import type { MonitorSessionPhase } from "./monitor-session-phase";
 import type { PresentedChart, SessionScript } from "./script-types";
 
 export type MeetingPresentationStatus = "live" | "paused";
@@ -8,6 +9,16 @@ export type MeetingGlobalView = {
   munFilter?: MunFilter;
   chartKind?: ChartKind;
   highlight?: { category?: string; seriesKey?: string };
+  /** Pausa del video del avatar (solo el presentador puede cambiarlo). */
+  avatarVideoPaused?: boolean;
+  /** Fase del monitor HTML / flujo pre-reunión (Supabase Realtime). */
+  monitorSessionPhase?: MonitorSessionPhase;
+  /** Fase 8: la sección actual espera autorización del moderador. */
+  awaitingModerator?: boolean;
+  sectionAwaitSectionId?: string | null;
+  sectionAwaitSectionLabel?: string | null;
+  /** Último punto presentado antes del cierre de sección. */
+  sectionClosedPointId?: string | null;
 };
 
 export type MeetingStateRow = {

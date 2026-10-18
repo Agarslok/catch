@@ -5,7 +5,10 @@ import {
   getSectionSummary,
   MonitorDataQueryError,
 } from "@/lib/monitor-data/queries";
-import { buildHighlightActionFromProposal } from "../validate-highlight";
+import {
+  buildClearActionFromProposal,
+  buildHighlightActionFromProposal,
+} from "../validate-highlight";
 import type { MonitorAiToolName } from "./definitions";
 
 export type ToolExecutionResult =
@@ -58,8 +61,27 @@ export function executeMonitorAiTool(
           ok: true,
           data: {
             accepted: true,
-            chartId: built.action.target.chartId,
-            category: built.action.target.category,
+            chartId: built.action.target?.chartId ?? null,
+            category: built.action.target?.category ?? null,
+          },
+        };
+      }
+      case "clear_chart_highlight": {
+        const built = buildClearActionFromProposal(args);
+        if (!built.ok) {
+          return {
+            ok: false,
+            code: "INVALID_HIGHLIGHT",
+            error: built.errors.join("; "),
+          };
+        }
+        return {
+          ok: true,
+          data: {
+            accepted: true,
+            cleared: true,
+            chartId: built.action.target?.chartId ?? null,
+            category: built.action.target?.category ?? null,
           },
         };
       }
@@ -79,6 +101,7 @@ function isToolName(name: string): name is MonitorAiToolName {
     name === "get_section_summary" ||
     name === "get_market_metric" ||
     name === "compare_client_to_market" ||
-    name === "propose_chart_highlight"
+    name === "propose_chart_highlight" ||
+    name === "clear_chart_highlight"
   );
 }

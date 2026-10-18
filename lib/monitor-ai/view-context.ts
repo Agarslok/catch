@@ -10,6 +10,14 @@ export type MonitorAiVisibleChartMeta = {
   mounted: boolean;
 };
 
+export type MonitorAiActiveHighlightRef = {
+  chartId: MonitorChartId;
+  category?: string;
+  seriesKey?: string;
+  datasetIndex?: number;
+  index?: number;
+};
+
 export type MonitorAiViewContext = {
   presentationStep: number;
   stepType: MonitorAiViewStepType;
@@ -21,6 +29,7 @@ export type MonitorAiViewContext = {
   mountedChartIds: MonitorChartId[];
   chartSurface?: "canvas" | "table";
   visibleCharts?: MonitorAiVisibleChartMeta[];
+  activeHighlight?: MonitorAiActiveHighlightRef | null;
 };
 
 const VIEW_CONTEXT_KEYS = new Set([
@@ -34,6 +43,7 @@ const VIEW_CONTEXT_KEYS = new Set([
   "mountedChartIds",
   "chartSurface",
   "visibleCharts",
+  "activeHighlight",
 ]);
 
 const STEP_TYPES = new Set<string>(["inicio", "explica", "hoja", "cierre", "other"]);
@@ -100,6 +110,28 @@ export function parseMonitorAiViewContext(raw: unknown): MonitorAiViewContext | 
     }
   }
 
+  let activeHighlight: MonitorAiActiveHighlightRef | null | undefined;
+  if (o.activeHighlight !== undefined && o.activeHighlight !== null) {
+    if (typeof o.activeHighlight !== "object") return null;
+    const h = o.activeHighlight as Record<string, unknown>;
+    const cid = String(h.chartId ?? "").trim();
+    if (!isMonitorChartId(cid)) return null;
+    activeHighlight = {
+      chartId: cid,
+      category:
+        typeof h.category === "string" && h.category.trim()
+          ? h.category.trim().slice(0, 120)
+          : undefined,
+      seriesKey:
+        typeof h.seriesKey === "string" ? h.seriesKey.trim().slice(0, 80) : undefined,
+      datasetIndex:
+        Number.isInteger(h.datasetIndex) ? (h.datasetIndex as number) : undefined,
+      index: Number.isInteger(h.index) ? (h.index as number) : undefined,
+    };
+  } else if (o.activeHighlight === null) {
+    activeHighlight = null;
+  }
+
   return {
     presentationStep: presentationStep as number,
     stepType: stepType as MonitorAiViewStepType,
@@ -111,6 +143,7 @@ export function parseMonitorAiViewContext(raw: unknown): MonitorAiViewContext | 
     mountedChartIds,
     chartSurface,
     visibleCharts,
+    activeHighlight,
   };
 }
 

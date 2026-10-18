@@ -8,13 +8,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "tsx --test lib/monitor-data/parity.test.ts lib/monitor-ai/run-with-tools.test.ts lib/monitor-ai/validate-highlight.test.ts lib/monitor-ai/view-context.test.ts",
+    "test": "tsx --test lib/http/api-error.test.ts lib/monitor-data/parity.test.ts lib/monitor-charts/chart-highlight-visual.test.ts lib/monitor-charts/echarts-highlight-runtime.test.ts lib/monitor-ai/run-with-tools.test.ts lib/monitor-ai/validate-highlight.test.ts lib/monitor-ai/action-contract.test.ts lib/monitor-ai/presentation-navigation.test.ts lib/monitor-ai/presentation-controller-effects.test.ts lib/monitor-ai/interpret.test.ts lib/monitor-ai/direct-instruction.test.ts lib/monitor-ai/interpret-route-auth.test.ts lib/monitor-ai/fase-7.4-audit.test.ts lib/monitor-ai/view-context.test.ts lib/meeting/monitor-session-phase.test.ts lib/meeting/monitor-narration-plan.test.ts lib/meeting/monitor-narration-gate.test.ts lib/meeting/monitor-narration-echo.test.ts lib/meeting/monitor-narration-runtime.test.ts lib/meeting/monitor-narration-step-enter.test.ts lib/meeting/monitor-narration-cues.test.ts lib/meeting/section-flow.test.ts lib/meeting/meeting-state-sync.test.ts lib/meeting/presentation-recovery.test.ts",
     "db:push": "node scripts/supabase-db-push.mjs"
   },
   "dependencies": {
+    "@daily-co/daily-js": "^0.83.1",
     "@supabase/supabase-js": "^2.49.8",
     "echarts": "^5.6.0",
     "echarts-for-react": "^3.0.2",
+    "jspdf": "^2.5.2",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
