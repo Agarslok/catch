@@ -144,16 +144,39 @@ h1,h2,h3{font-family:var(--display); letter-spacing:-.01em}
 
 /* avatar desplegable */
 .avatar-w{position:fixed; right:24px; bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:45; display:flex; flex-direction:column; align-items:flex-end; gap:12px}
+.avatar-w--left{left:24px; right:auto; align-items:flex-start}
+.avatar-w--visitante{z-index:44}
 .fab{min-height:56px; padding:0 22px 0 16px; border-radius:999px; border:0; color:#fff; font-weight:700; font-size:15px; display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,var(--azul),var(--cyan)); box-shadow:0 8px 24px rgba(39,120,177,.3); transition:transform .2s, box-shadow .2s}
 .fab:hover{transform:translateY(-2px); box-shadow:0 12px 28px rgba(39,120,177,.4)}
 .fab .pulso{position:relative; width:12px; height:12px; border-radius:50%; background:#fff}
 .fab .pulso::after{content:""; position:absolute; inset:0; border-radius:50%; background:#fff; animation:aiPulse 1.6s infinite}
 @keyframes aiPulse{0%{transform:scale(1); opacity:.7}100%{transform:scale(2.2); opacity:0}}
 .panel-av{width:min(380px,calc(100vw - 32px)); background:#FFFFFF; color:var(--tinta); border:1px solid var(--borde); border-radius:20px; overflow:hidden; box-shadow:0 16px 40px rgba(39,120,177,.16); transform-origin:bottom right; animation:abre .22s both}
+.avatar-w--left .panel-av{transform-origin:bottom left}
+.panel-av .video{position:relative}
+.panel-av__dock{position:absolute; left:10px; bottom:10px; z-index:6; display:flex; flex-wrap:wrap; align-items:center; gap:6px; max-width:calc(100% - 20px); pointer-events:auto}
+.panel-av__dock .dock-btn{border:1px solid rgba(255,255,255,.35); background:rgba(255,255,255,.94); color:var(--azul); border-radius:999px; padding:6px 11px; font-weight:700; font-size:12px; cursor:pointer; box-shadow:0 2px 10px rgba(15,47,72,.25)}
+.panel-av__dock .dock-btn.lleno{background:var(--azul); color:#fff; border-color:var(--azul)}
+.panel-av__dock .btn-mic{min-width:40px; min-height:40px; padding:0; border-radius:50%; box-shadow:0 2px 10px rgba(15,47,72,.25); border:1px solid rgba(255,255,255,.35); background:rgba(255,255,255,.94); color:var(--azul); display:inline-flex; align-items:center; justify-content:center; position:relative}
+.panel-av__dock .btn-mic.escuchando{color:#fff; background:linear-gradient(145deg,var(--azul),var(--cyan)); border-color:transparent}
+.panel-av__dock .btn-mic .ia-mic-ico{display:flex; width:20px; height:20px}
+.panel-av__dock .btn-mic.escuchando .ia-mic-ico{display:none}
+.panel-av__dock .btn-mic .ia-mic-barras{display:none}
+.panel-av__dock .btn-mic.escuchando .ia-mic-barras{display:flex}
+.panel-av__dock--solo-audio{position:static; left:auto; bottom:auto; padding:9px 12px; border-top:1px solid var(--borde); background:var(--superficie); max-width:none; box-shadow:none}
+.panel-av__dock--solo-audio button,.panel-av__dock--solo-audio input[type=range]{pointer-events:auto}
+.panel-av--visitante.cliente-avatar-en-vivo{margin:0; border-radius:20px}
+.panel-av__gemini-opts{display:flex; flex-direction:column; gap:8px; margin-top:12px; font-size:12px}
+.panel-av__gemini-opts label{display:flex; align-items:flex-start; gap:8px; line-height:1.35; cursor:pointer}
+.panel-av__dock .dock-btn--teclado{min-width:40px; padding:6px 12px; font-size:16px; line-height:1}
 @keyframes abre{from{opacity:0; transform:translateY(10px) scale(.97)}to{opacity:1; transform:none}}
-.panel-av .video{aspect-ratio:16/9; background:linear-gradient(135deg,#2778B1,#38AECB); display:grid; place-items:center; text-align:center; font-size:13px; color:rgba(255,255,255,.9); padding:12px}
+.panel-av .video{aspect-ratio:16/9; background:#0f2f48; padding:0; display:block}
+.panel-av .avatar-video{width:100%; height:100%; object-fit:cover; display:block; aspect-ratio:16/9}
 .panel-av .video .cara{width:70px; height:70px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#E3F5FA,#9FDCEB 55%,#5CC6DE); margin:0 auto 8px; position:relative}
 .panel-av .video .cara.habla::after{content:""; position:absolute; inset:-6px; border-radius:50%; border:2px solid #7FD3E6; animation:aiPulse 1.2s infinite}
+.panel-av .audio-ctrl{display:flex; align-items:center; gap:10px; padding:9px 12px; border-top:1px solid var(--borde); background:var(--superficie)}
+.panel-av .audio-ctrl button{border:0; background:transparent; font-size:18px; cursor:pointer; padding:4px 8px; line-height:1}
+.panel-av .audio-ctrl input[type=range]{flex:1; min-width:0; accent-color:var(--azul)}
 .panel-av .dentro{padding:14px 16px 16px}
 .panel-av .dentro p{margin:0 0 12px; font-size:15px; line-height:1.5}
 .panel-av .acc{display:flex; gap:8px; flex-wrap:wrap}
@@ -192,8 +215,26 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .mod-centro{padding:20px 26px; overflow:auto; max-height:calc(100vh - 46px); background:var(--pista)}
 .mod-centro .titulo{display:flex; align-items:center; gap:10px; margin-bottom:12px}
 .mod-centro .titulo h2{margin:0; font-size:20px}
-.pantalla{border:1px solid var(--borde); border-radius:16px; overflow:hidden; background:var(--superficie)}
-.pantalla .barra{display:flex; justify-content:space-between; padding:8px 14px; font-size:12px; color:var(--suave); border-bottom:1px solid var(--borde)}
+.pantalla{border:1px solid var(--borde); border-radius:16px; overflow:hidden; background:var(--superficie); transition:background .45s ease, box-shadow .45s ease, border-color .45s ease}
+.pantalla--cliente-preview.pantalla--modo-edicion-sim{background:#FFFFFF; border-color:rgba(39,120,177,.28); box-shadow:0 0 0 1px rgba(39,120,177,.1), 0 10px 28px rgba(39,120,177,.09)}
+.pantalla .barra{display:flex; justify-content:space-between; padding:8px 14px; font-size:12px; color:var(--suave); border-bottom:1px solid var(--borde); transition:background .45s ease, border-color .45s ease}
+.pantalla--modo-edicion-sim .barra--cliente-preview{background:rgba(39,120,177,.05); border-bottom-color:rgba(39,120,177,.16)}
+.pantalla--cliente-preview > .dentro#mod-preview{transition:background .45s ease, box-shadow .45s ease}
+.pantalla--cliente-preview.pantalla--modo-edicion-sim > .dentro#mod-preview{background:rgba(39,120,177,.13); box-shadow:inset 0 0 0 1px rgba(39,120,177,.16)}
+.pantalla--cliente-preview.pantalla--modo-edicion-sim #mod-preview .explica,
+.pantalla--cliente-preview.pantalla--modo-edicion-sim #mod-preview .portada,
+.pantalla--cliente-preview.pantalla--modo-edicion-sim #mod-preview .copia,
+.pantalla--cliente-preview.pantalla--modo-edicion-sim #mod-preview .hoja,
+.pantalla--cliente-preview.pantalla--modo-edicion-sim #mod-preview .central{transition:background .45s ease}
+.pantalla--cliente-preview.pantalla--modo-edicion-sim #mod-preview .explica .copia,
+.pantalla--cliente-preview.pantalla--modo-edicion-sim #mod-preview .portada,
+.pantalla--cliente-preview.pantalla--modo-edicion-sim #mod-preview > .copia{background:rgba(255,255,255,.38); border-radius:12px}
+.pantalla .barra--cliente-preview{display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:10px; padding:10px 14px}
+.barra-cli-izq{justify-self:start}
+.barra-cli-centro{grid-column:2; justify-self:center; text-align:center; font-size:12px; font-weight:700; color:var(--tinta)}
+.btn-modo-edicion-sim{justify-self:end; grid-column:3; border-radius:999px; padding:6px 14px; font-size:12px; font-weight:700; border:1px solid rgba(39,120,177,.22); background:rgba(39,120,177,.13); color:var(--azul); transition:background .35s ease, color .35s ease, border-color .35s ease, box-shadow .35s ease}
+.btn-modo-edicion-sim:hover{background:rgba(39,120,177,.2)}
+.btn-modo-edicion-sim.is-activo{background:var(--azul); color:#fff; border-color:var(--azul); box-shadow:0 2px 10px rgba(39,120,177,.28)}
 .pantalla .dentro{padding:20px 22px}
 .pantalla .explica{min-height:0; gap:28px}
 .pantalla .grande{font-size:56px}
@@ -292,21 +333,142 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .narracion-bar .ctrl{margin-left:auto; display:flex; gap:10px; align-items:center; flex:none}
 .narracion-bar .redondo{width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.45); background:transparent; color:#fff; font-size:18px}
 .narracion-bar .estado{background:var(--gris-azul); color:var(--profundo); border-radius:999px; padding:11px 18px; font-weight:700; border:0}
+.pregunta-ia{position:relative}
 .pregunta-ia label{display:block; font-size:14px; color:var(--suave); margin-bottom:8px}
-.fila-ia{display:flex; gap:8px}
-.fila-ia input{flex:1; border:1px solid var(--borde); border-radius:12px; padding:12px 14px; background:var(--superficie)}
+.moderador .pregunta-ia{margin-top:16px}
+.diag-narracion{margin:12px 0 0; padding:12px 14px; border:1px dashed var(--borde); border-radius:12px; background:var(--superficie)}
+.diag-narracion p{margin:0 0 8px; font-size:13px; color:var(--suave)}
+.diag-narracion-out{margin:10px 0 0; max-height:220px; overflow:auto; padding:10px 12px; border-radius:10px; background:var(--pista); font-size:12px; line-height:1.45; white-space:pre-wrap; word-break:break-word}
+.fila-ia{display:flex; gap:8px; align-items:stretch; position:relative}
+.fila-ia input{flex:1; border:1px solid var(--borde); border-radius:12px; padding:12px 14px; background:var(--superficie); transition:border-color .2s, box-shadow .2s}
 .fila-ia .btn{border-radius:12px; padding:0 22px}
+.fila-ia .btn-mic{flex:none; width:48px; min-width:48px; height:48px; padding:0; display:inline-flex; align-items:center; justify-content:center; position:relative;
+  border:1px solid var(--borde); background:var(--superficie); color:var(--azul); border-radius:14px; overflow:visible; transition:background .2s, color .2s, border-color .2s, transform .15s}
+.fila-ia .btn-mic:hover:not(:disabled){background:var(--cielo); border-color:var(--cyan)}
+.fila-ia .btn-mic:active:not(:disabled){transform:scale(.96)}
+.fila-ia .btn-mic .ia-mic-ico{display:flex; width:22px; height:22px}
+.fila-ia .btn-mic .ia-mic-ico svg{width:100%; height:100%; display:block}
+.fila-ia .btn-mic .ia-mic-ondas{position:absolute; inset:-4px; border-radius:18px; pointer-events:none; opacity:0; transition:opacity .2s}
+.fila-ia .btn-mic .ia-mic-ondas::before,.fila-ia .btn-mic .ia-mic-ondas::after{content:""; position:absolute; inset:0; border-radius:inherit; border:2px solid var(--cyan)}
+.fila-ia .btn-mic.escuchando{color:#fff; background:linear-gradient(145deg,var(--azul),var(--cyan)); border-color:transparent; box-shadow:0 4px 18px rgba(39,120,177,.35)}
+.fila-ia .btn-mic.escuchando .ia-mic-ondas{opacity:1}
+.fila-ia .btn-mic.escuchando .ia-mic-ondas::before{animation:iaMicOnda 1.8s ease-out infinite}
+.fila-ia .btn-mic.escuchando .ia-mic-ondas::after{animation:iaMicOnda 1.8s ease-out .55s infinite}
+@keyframes iaMicOnda{0%{transform:scale(1); opacity:.65}100%{transform:scale(1.55); opacity:0}}
+.fila-ia .btn-mic .ia-mic-barras{display:none; gap:3px; align-items:flex-end; height:18px; margin-left:2px}
+.fila-ia .btn-mic.escuchando .ia-mic-ico{display:none}
+.fila-ia .btn-mic.escuchando .ia-mic-barras{display:flex}
+.fila-ia .btn-mic .ia-mic-barras span{width:3px; border-radius:2px; background:currentColor; height:6px; animation:iaMicBarra .9s ease-in-out infinite}
+.fila-ia .btn-mic .ia-mic-barras span:nth-child(2){animation-delay:.12s; height:10px}
+.fila-ia .btn-mic .ia-mic-barras span:nth-child(3){animation-delay:.24s; height:14px}
+.fila-ia .btn-mic .ia-mic-barras span:nth-child(4){animation-delay:.36s; height:9px}
+.fila-ia .btn-mic .ia-mic-barras span:nth-child(5){animation-delay:.48s; height:7px}
+@keyframes iaMicBarra{0%,100%{transform:scaleY(.45); opacity:.7}50%{transform:scaleY(1); opacity:1}}
+.fila-ia .btn-mic:disabled{opacity:.45; cursor:not-allowed}
+.ia-voz-live{display:flex; align-items:center; gap:8px; margin:8px 0 0; font-size:13px; font-weight:600; color:var(--azul); animation:iaVozLiveIn .35s ease}
+.ia-voz-live[hidden]{display:none !important}
+.ia-voz-live .ia-voz-dot{width:8px; height:8px; border-radius:50%; background:var(--cyan); flex:none; box-shadow:0 0 0 0 rgba(56,174,203,.5); animation:iaVozDot 1.2s ease-in-out infinite}
+@keyframes iaVozDot{0%,100%{box-shadow:0 0 0 0 rgba(56,174,203,.45)}50%{box-shadow:0 0 0 6px rgba(56,174,203,0)}}
+@keyframes iaVozLiveIn{from{opacity:0; transform:translateY(-4px)}to{opacity:1; transform:none}}
+.ia-voz-aviso{margin:6px 0 0; font-size:13px; color:var(--suave)}
+.ia-voz-aviso:empty{display:none}
+@media (prefers-reduced-motion: reduce){
+  .fila-ia .btn-mic .ia-mic-ondas::before,.fila-ia .btn-mic .ia-mic-ondas::after,
+  .fila-ia .btn-mic .ia-mic-barras span,.ia-voz-live .ia-voz-dot{animation:none !important}
+}
 .resp-ia{margin-top:10px; background:var(--cielo); border-radius:12px; padding:10px 14px; font-size:15px}
+.chat-ia-historial{display:flex; flex-direction:column; gap:8px; margin-top:10px; max-height:min(42vh,360px); overflow:auto}
+.chat-ia-historial:empty{display:none}
+.chat-ia-historial .msg{padding:9px 13px; border-radius:14px; max-width:100%; font-size:15px; line-height:1.45}
+.chat-ia-historial .msg.yo{background:var(--cielo); align-self:flex-end; max-width:92%}
+.chat-ia-historial .msg.ia{background:var(--pista); align-self:stretch}
+.popover-seleccion-ia{position:fixed; z-index:46; pointer-events:auto; transform:translate(-50%, calc(-100% - 10px))}
+.popover-seleccion-ia .btn{font-size:13px; padding:8px 16px; border-radius:999px; box-shadow:0 8px 22px rgba(27,79,122,.2); white-space:nowrap}
+.ia-habla-ctrl{display:flex; flex-direction:column; align-items:stretch; gap:10px; margin-top:12px; padding-top:12px; border-top:1px solid rgba(39,120,177,.15)}
+.ia-habla-acciones{display:flex; flex-wrap:wrap; align-items:center; gap:8px}
+.ia-habla-ctrl .btn{padding:8px 16px; font-size:13px}
+.ia-habla-ajustes{display:flex; flex-wrap:wrap; gap:12px 16px; align-items:flex-end; padding:12px 14px; background:var(--pista); border:1px solid var(--borde); border-radius:12px}
+.ia-habla-campo{display:flex; flex-direction:column; gap:6px; flex:1 1 200px; min-width:0}
+.ia-habla-campo>span{font-size:12px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; color:var(--suave)}
+.ia-habla-voz select{width:100%; min-height:44px; border:1px solid var(--borde); border-radius:12px; padding:10px 40px 10px 14px; font-size:14px; font-weight:600; color:var(--tinta); background-color:var(--superficie);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%232778B1' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 14px center; appearance:none; box-shadow:inset 0 1px 0 rgba(255,255,255,.6); transition:border-color .2s, box-shadow .2s}
+.ia-habla-voz select:hover{border-color:var(--cyan)}
+.ia-habla-voz select:focus{outline:none; border-color:var(--azul); box-shadow:0 0 0 3px rgba(56,174,203,.22)}
+.ia-habla-vol .ia-habla-vol-fila{display:flex; align-items:center; gap:10px; min-height:44px; padding:0 4px}
+.ia-habla-vol input[type=range]{flex:1; min-width:0; height:6px; accent-color:var(--azul)}
+.ia-habla-vol [data-ia-hablar-vol-pct]{font-size:13px; font-weight:700; color:var(--azul); min-width:2.75em; text-align:right}
+.ia-habla-sin-tts{margin-top:10px; font-size:13px; color:var(--suave)}
+.ia-auto-tts{display:flex; align-items:center; gap:8px; margin:4px 0 0; font-size:13px; color:var(--suave); cursor:pointer; user-select:none}
+.ia-auto-tts input{accent-color:var(--azul); width:16px; height:16px}
 .resp-ia:empty{display:none}
 .avatar-rail{margin-top:18px; border-radius:16px; overflow:hidden; border:1px solid var(--borde)}
 .avatar-rail .cab-av{width:100%; display:flex; justify-content:space-between; align-items:center; border:0; border-radius:0; padding:11px 14px; color:#fff; font-weight:700; background:linear-gradient(135deg,var(--azul),var(--cyan))}
 .avatar-rail .cab-av .pulso{position:relative; width:9px; height:9px; border-radius:50%; background:#fff}
 .avatar-rail .cab-av .pulso::after{content:""; position:absolute; inset:0; border-radius:50%; background:#fff; animation:aiPulse 1.6s infinite}
-.avatar-rail .video{aspect-ratio:4/3; background:linear-gradient(160deg,#E9F3F9,#CFE4F1); display:grid; place-items:center; text-align:center; font-size:12.5px; color:var(--suave); padding:10px}
+.avatar-rail .video{aspect-ratio:4/3; background:#0f2f48; display:block; position:relative; padding:0}
+.avatar-rail .avatar-video{width:100%; height:100%; object-fit:cover; display:block; aspect-ratio:4/3; vertical-align:top}
 .avatar-rail .video .cara{width:58px; height:58px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#7FD3E6,#38AECB 55%,#2778B1); margin:0 auto 6px; position:relative}
 .avatar-rail .video .cara.habla::after{content:""; position:absolute; inset:-6px; border-radius:50%; border:2px solid #7FD3E6; animation:aiPulse 1.2s infinite}
-.avatar-rail .escuchar{width:100%; border:0; border-top:1px solid var(--borde); background:var(--superficie); padding:9px; font-weight:700; color:var(--azul); border-radius:0}
-@media (max-width:900px){ .narracion-bar{flex-direction:column; align-items:flex-start} .narracion-bar .ctrl{margin-left:0} .cliente .cuerpo{padding:8px 18px 24px} .avatar-rail{display:none} }
+.avatar-rail .audio-ctrl{display:flex; align-items:center; gap:10px; padding:9px 12px; border-top:1px solid var(--borde); background:var(--superficie)}
+.avatar-rail .audio-ctrl button{border:0; background:transparent; font-size:18px; cursor:pointer; padding:4px 8px; line-height:1}
+.avatar-rail .audio-ctrl input[type=range]{flex:1; min-width:0; accent-color:var(--azul)}
+.avatar-tavus-bar{display:flex; flex-direction:column; gap:8px; padding:10px 12px; background:var(--superficie); border-bottom:1px solid var(--borde); position:relative; z-index:5; flex-shrink:0}
+.avatar-tavus-status{font-size:12px; font-weight:700; color:var(--azul); line-height:1.35}
+.avatar-tavus-actions{display:flex; flex-wrap:wrap; gap:8px}
+.avatar-tavus-actions button{appearance:none; cursor:pointer; border:0; border-radius:999px; padding:8px 14px; font-weight:700; font-size:12px; color:#fff; background:linear-gradient(135deg,var(--azul),var(--cyan)); box-shadow:0 2px 8px rgba(39,120,177,.25); pointer-events:auto; position:relative; z-index:2}
+.avatar-tavus-actions button[data-tavus-end]{background:var(--superficie); color:var(--azul); border:1px solid var(--borde); box-shadow:none}
+.avatar-video-media{position:relative; flex:1; min-height:0; background:#0f2f48; aspect-ratio:16/9}
+.avatar-rail .avatar-video-media{aspect-ratio:4/3}
+.avatar-tavus-video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:2; pointer-events:none}
+.avatar-video-slot{display:flex; flex-direction:column; min-height:0; height:100%}
+.avatar-video-slot .avatar-video[data-tavus-local-video]{width:100%; height:100%; object-fit:cover; display:block}
+.panel-av .video{display:flex; flex-direction:column; padding:0}
+.panel-av .avatar-video-media{aspect-ratio:16/9}
+.avatar-rail .video{display:flex; flex-direction:column; padding:0}
+.avatar-idle{position:absolute; inset:0; display:grid; place-items:center; text-align:center; padding:12px; color:var(--cielo); font-weight:700; font-size:13px; background:#0f2f48; z-index:1; pointer-events:none}
+.avatar-video-media:has([data-tavus-remote-video]:not([hidden])) .avatar-idle{display:none}
+[data-tavus-remote-audio]{position:absolute;width:0;height:0;opacity:0;pointer-events:none}
+.cliente-avatar-en-vivo{margin:0 0 16px; border:1px solid var(--borde); border-radius:14px; overflow:hidden; background:var(--superficie)}
+.cliente-avatar-en-vivo__cab{display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; padding:10px 14px; border-bottom:1px solid var(--borde); font-size:13px}
+.cliente-avatar-en-vivo__cab [data-tavus-status]{margin-left:auto; font-weight:600; color:var(--azul); font-size:12px}
+.cliente-avatar-en-vivo__media .avatar-video-media{aspect-ratio:16/9; min-height:180px}
+.cliente-avatar-en-vivo__media .avatar-video-slot .audio-ctrl{border-top:1px solid var(--borde)}
+.cliente-avatar-en-vivo__media .avatar-video-media,.cliente-avatar-en-vivo__media .avatar-tavus-video{pointer-events:none}
+.cliente-avatar-en-vivo__media .audio-ctrl{pointer-events:auto}
+.cliente-avatar-en-vivo--solo-audio .cliente-avatar-en-vivo__media .avatar-video-media{min-height:0; aspect-ratio:auto; padding:12px}
+.prep-centro{display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:min(420px,55vh); padding:32px 24px; text-align:center; gap:16px}
+.prep-centro h2{margin:0; font-size:clamp(22px,3vw,28px); color:var(--profundo)}
+.prep-centro .sub{max-width:36em; margin:0; color:var(--suave); line-height:1.5}
+.prep-upload{border:2px dashed var(--borde); border-radius:16px; padding:28px 20px; width:min(100%,420px); background:var(--superficie); cursor:pointer; transition:border-color .2s, background .2s}
+.prep-upload:hover,.prep-upload:focus-within{border-color:var(--cyan); background:var(--cielo)}
+.prep-upload input{position:absolute; width:1px; height:1px; opacity:0; pointer-events:none}
+.prep-upload strong{display:block; color:var(--azul); margin-bottom:6px}
+.prep-upload span{font-size:13px; color:var(--suave)}
+.prep-gen{display:flex; flex-direction:column; align-items:center; gap:14px; padding:48px 24px; min-height:min(420px,55vh)}
+.prep-gen .spinner{width:44px; height:44px; border:3px solid var(--borde); border-top-color:var(--azul); border-radius:50%; animation:prepSpin .9s linear infinite}
+@keyframes prepSpin{to{transform:rotate(360deg)}}
+.prep-gen p{margin:0; font-weight:700; color:var(--profundo)}
+.prep-gen .sub{font-weight:400; color:var(--suave)}
+.prep-vacio{padding:24px 16px; color:var(--suave); font-size:14px; line-height:1.45}
+.prep-vacio p{margin:0}
+.banner-iniciar-reunion{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; margin:0 0 12px; padding:12px 16px; border-radius:12px; border:1px solid var(--borde); background:var(--cielo)}
+.banner-iniciar-reunion p{margin:0; font-size:14px; color:var(--tinta)}
+.revision-previa-mod{display:flex; flex-direction:column; gap:16px; width:100%}
+.revision-toolbar-mod{display:flex; justify-content:flex-start}
+.revision-encabezado{margin:0; font-size:clamp(18px,2.2vw,22px); color:var(--profundo)}
+.revision-preview-wrap .dentro{max-height:min(52vh,520px); overflow:auto; padding:0}
+.revision-preview-wrap .cliente--revision{pointer-events:none; transform:scale(.98); transform-origin:top center}
+.guion-interno-mod{display:flex; flex-direction:column; gap:12px; border:1px solid var(--borde); border-radius:14px; padding:14px 16px; background:var(--cielo); max-height:min(48vh,480px); overflow:auto}
+.guion-bloque-mod{padding-bottom:10px; border-bottom:1px solid var(--borde); font-size:14px}
+.guion-bloque-mod:last-child{border-bottom:0; padding-bottom:0}
+.guion-bloque-mod ul{margin:8px 0 0; padding:0; list-style:none; display:grid; gap:6px}
+.guion-bloque-mod li span{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--suave); font-weight:700}
+.guion-aviso{margin:0; font-size:13px; color:var(--suave)}
+.espera-cliente{display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:min(480px,60vh); padding:40px 24px; text-align:center; gap:12px}
+.espera-cliente h2{margin:0; font-size:clamp(24px,3.5vw,32px); color:var(--profundo)}
+.espera-cliente .espera-pulso{width:10px; height:10px; border-radius:50%; background:var(--cyan); animation:parpadeo 1.6s infinite}
+@media (max-width:900px){ .narracion-bar{flex-direction:column; align-items:flex-start} .narracion-bar .ctrl{margin-left:0} .cliente .cuerpo{padding:8px 18px 24px} .cliente .rail .avatar-rail{display:none} .cliente-avatar-en-vivo{display:block} }
 </style>
 </head>
 <body>
@@ -695,7 +857,7 @@ const DETALLE = {
 const PASOS = [{tipo: 'inicio'}];
 SECCIONES.forEach((s, si) => { s.graficos.forEach((g, gi) => PASOS.push({tipo: 'explica', s: si, g: gi})); PASOS.push({tipo: 'hoja', s: si}); });
 PASOS.push({tipo: 'cierre'});
-const tituloPaso = p => p.tipo === 'inicio' ? 'Bienvenida y agenda' : p.tipo === 'cierre' ? 'Cierre, preguntas y exportación'
+const tituloPaso = p => p.tipo === 'inicio' ? 'Bienvenida y agenda' : p.tipo === 'cierre' ? 'Cierre y preguntas'
   : p.tipo === 'explica' ? SECCIONES[p.s].graficos[p.g].titulo : 'Hoja completa de ' + SECCIONES[p.s].nombre;
 // Cabecera del cliente: arriba la sección (y en qué parte va), abajo el foco de la pantalla
 const focoPaso = p => p.tipo === 'inicio' ? 'Bienvenida' : p.tipo === 'cierre' ? 'Cierre de la sesión' : p.tipo === 'explica' ? SECCIONES[p.s].graficos[p.g].titulo : 'Hoja completa';
@@ -715,9 +877,85 @@ function migrarColaDesdeLegacy(g) {
     status: q.respondida ? 'attended' : 'pending', respuesta: q.respuesta || '',
   }));
 }
-const S = {pos: 0, unlockedStep: 0, rol: 'moderador', monitorHighlight: null, fuenteClave: null, cola: migrarColaDesdeLegacy(guardado), toques: guardado.toques || {}, claridad: guardado.claridad || {},
-  vistas: {cliente: {live: true, pos: 0, resp: {}, exploreSection: null, peekExplica: null}, movil: {live: true, pos: 0, resp: {}, exploreSection: null, peekExplica: null}}, peekPreview: null, tabMod: 'preguntas', sala: null, conectados: 0};
+const S = {pos: 0, unlockedStep: 0, rol: 'moderador', faseSesion: 'preparacion', generacionInformeEnCurso: false, mensajeGeneracionInforme: '', prepArchivoNombre: '', monitorHighlight: null, fuenteClave: null, avatarVideoPaused: false, narracionEsperaAutorizacion: false, sectionCloseDedup: null, sectionNarracionTimer: null, sectionClaridadLista: false, lastSectionContinueAt: null, advanceInFlight: false, narracionSinConfirmar: false, narracionRuntime: { execId: null, status: 'idle', stepIndex: -1, echoId: null, startedAt: null, paused: false, errorReason: null }, cola: migrarColaDesdeLegacy(guardado), toques: guardado.toques || {}, claridad: guardado.claridad || {},
+  vistas: {cliente: {live: true, pos: 0, resp: {}, exploreSection: null, exploreClaritySource: null, peekExplica: null}, movil: {live: true, pos: 0, resp: {}, exploreSection: null, exploreClaritySource: null, peekExplica: null}}, peekPreview: null, tabMod: 'preguntas', sala: null, conectados: 0, modoEdicionPreviewSim: false};
 const persistir = () => guardar('catch-live-v1', {cola: S.cola, toques: S.toques, claridad: S.claridad});
+const FASES_SESION = ['preparacion', 'generando_informe', 'revision_previa', 'listo_para_iniciar', 'reunion_activa', 'cierre'];
+function faseSesionValida(f) { return FASES_SESION.includes(f); }
+function visitanteVeReunion() { return S.faseSesion === 'reunion_activa' || S.faseSesion === 'cierre'; }
+function presentadorEnRevisionPrevia() { return S.faseSesion === 'revision_previa' || S.faseSesion === 'listo_para_iniciar'; }
+function presentadorVeDashboard() { return presentadorEnRevisionPrevia() || visitanteVeReunion(); }
+function presentadorDashboardListo() { return visitanteVeReunion(); }
+function resolverFaseInicial(stored, step, unlocked) {
+  if (stored === 'listo_para_iniciar') return 'revision_previa';
+  if (faseSesionValida(stored)) return stored;
+  if ((step ?? 0) > 0 || (unlocked ?? 0) > 0) return 'reunion_activa';
+  return 'preparacion';
+}
+async function publicarFaseSesion(fase) {
+  if (!faseSesionValida(fase) || S.faseSesion === fase) return;
+  S.faseSesion = fase;
+  enviar('faseSesion', { fase });
+  const api = window.__CATCH_MONITOR_SYNC_API__;
+  if (api?.publishSessionPhase) await api.publishSessionPhase(fase);
+  if (fase === 'cierre' || fase === 'reunion_activa') actualizarFasePorPaso();
+  programarRender();
+}
+function aplicarFaseSesion(fase) {
+  if (!faseSesionValida(fase) || S.faseSesion === fase) return;
+  S.faseSesion = fase;
+  if (!presentadorEnRevisionPrevia()) S.modoEdicionPreviewSim = false;
+  programarRender();
+}
+function htmlBarraLoQueVeCliente() {
+  const meta = `${esc(DATOS.edicion)} · Su empresa = ${CLIENTE}`;
+  if (!presentadorEnRevisionPrevia()) {
+    return `<div class="barra"><span>Lo que ve el cliente</span><span>${meta}</span></div>`;
+  }
+  const edit = !!S.modoEdicionPreviewSim;
+  return `<div class="barra barra--cliente-preview">
+    <span class="barra-cli-izq">Lo que ve el cliente</span>
+    <span class="barra-cli-centro">${meta}</span>
+    <button type="button" class="btn-modo-edicion-sim${edit ? ' is-activo' : ''}" data-toggle-modo-edicion aria-pressed="${edit}">${edit ? 'Modo lectura' : 'Modo edición'}</button>
+  </div>`;
+}
+function clasePantallaClientePreview() {
+  if (!presentadorEnRevisionPrevia()) return 'pantalla';
+  return 'pantalla pantalla--cliente-preview' + (S.modoEdicionPreviewSim ? ' pantalla--modo-edicion-sim' : '');
+}
+function actualizarFasePorPaso() {
+  if (!presentadorDashboardListo() && S.rol === 'moderador') return;
+  const enCierre = PASOS[S.pos]?.tipo === 'cierre';
+  if (enCierre && S.faseSesion !== 'cierre') void publicarFaseSesion('cierre');
+  else if (!enCierre && S.faseSesion === 'cierre') void publicarFaseSesion('reunion_activa');
+}
+const MENSAJES_GEN_INFORME = ['Preparando la información', 'Organizando las secciones del informe', 'Preparando el guion del avatar'];
+async function iniciarGeneracionInformeSimulada() {
+  if (S.generacionInformeEnCurso || S.faseSesion !== 'preparacion') return;
+  S.generacionInformeEnCurso = true;
+  await publicarFaseSesion('generando_informe');
+  const t0 = Date.now();
+  const minMs = 2200;
+  for (let i = 0; i < MENSAJES_GEN_INFORME.length; i++) {
+    S.mensajeGeneracionInforme = MENSAJES_GEN_INFORME[i];
+    programarRender();
+    await new Promise(r => setTimeout(r, 750));
+  }
+  const rest = minMs - (Date.now() - t0);
+  if (rest > 0) await new Promise(r => setTimeout(r, rest));
+  S.mensajeGeneracionInforme = '';
+  S.generacionInformeEnCurso = false;
+  await publicarFaseSesion('revision_previa');
+}
+async function iniciarReunionDesdeListo() {
+  if (!presentadorEnRevisionPrevia() || S.rol !== 'moderador') return;
+  await publicarFaseSesion('reunion_activa');
+  enviar('estado', payloadEstadoSesion());
+}
+function avatarMp4Enabled() {
+  const cfg = window.__CATCH_MONITOR_SYNC__;
+  return cfg?.mp4Enabled === true;
+}
 const COLA_TIPO = {written_question: 'Pregunta escrita', assistant_to_presenter: 'Asistente → presentador', ai_escalation: 'Escalación desde asistente', oral_turn: 'Turno oral solicitado', clarity_doubt: 'Duda en claridad'};
 const IA_ESCALA_ENVIADAS = new Set();
 function hashPreguntaIA(texto) {
@@ -793,7 +1031,7 @@ function patchColaLocal(id, patch) {
   Object.assign(q, patch);
   S.cola.sort(ordenCola);
   persistir();
-  programarRender();
+  actualizarPanelModeradorParcial();
 }
 const canal = ('BroadcastChannel' in window) ? new BroadcastChannel('catch-live-v1') : null;
 function enviar(tipo, data) { aplicar(tipo, data); try { canal && canal.postMessage({tipo, data}); } catch (e) {} if (S.sala) S.sala.emit(tipo, data).catch(() => {}); }
@@ -811,34 +1049,62 @@ function acotarPosExploracion(rol, pos) {
   }
   return p;
 }
-function reaccionarAvanceGlobal(prevPos, nuevaPos) {
+function presentadorAvanzoDeSeccion(prevPos, nuevaPos) {
   const secPrev = seccionDePaso(prevPos);
   const secGlobal = seccionDePaso(nuevaPos);
-  const presentadorAvanzoSeccion = secGlobal > secPrev && secPrev >= 0;
+  if (secGlobal > secPrev) return true;
+  if (secPrev < 0 && secGlobal >= 0) return true;
+  return false;
+}
+function visitanteDebeVolverAlVivoTrasAvance(rol, prevPos, nuevaPos) {
+  const v = vistaParticipante(rol);
+  if (v.live) return false;
+  const secGlobal = seccionDePaso(nuevaPos);
+  if (presentadorAvanzoDeSeccion(prevPos, nuevaPos)) return true;
+  if (secGlobal >= 0 && typeof v.exploreSection === 'number' && secGlobal > v.exploreSection) return true;
+  return false;
+}
+function reaccionarAvanceGlobal(prevPos, nuevaPos) {
   ['cliente', 'movil'].forEach(rol => {
     const v = vistaParticipante(rol);
-    if (v.live) return;
-    if (presentadorAvanzoSeccion) {
+    if (visitanteDebeVolverAlVivoTrasAvance(rol, prevPos, nuevaPos)) {
       volverAlVivo(rol, true);
       return;
     }
-    v.pos = acotarPosExploracion(rol, v.pos);
+    if (!v.live) v.pos = acotarPosExploracion(rol, v.pos);
   });
 }
-function entrarExploracion(rol, posInicial) {
+function detalleToqueExploracion(v) {
+  const src = v?.exploreClaritySource;
+  if (src === 'claro') return 'Exploración tras «quedó claro»';
+  if (src === 'explorar') return 'Exploración tras «quiero explorar»';
+  if (src === 'duda') return 'Exploración mientras espera turno oral';
+  return 'Modo exploración individual';
+}
+function mensajeLivebarExploracion(rol) {
+  const v = vistaParticipante(rol);
+  const maxSec = maxSeccionAutorizada();
+  const tope = esc(SECCIONES[maxSec]?.nombre || 'la sección actual');
+  const titulo = detalleToqueExploracion(v);
+  return `<b>${titulo}</b> · puede revisar lo ya presentado (hasta ${tope}) · <button type="button" class="btn texto" data-vivo>Volver al moderador</button>`;
+}
+function entrarExploracion(rol, posInicial, opts) {
   const v = vistaParticipante(rol);
   const sec = seccionDePaso(posInicial ?? S.pos);
   if (sec < 0) return;
+  if (opts?.claritySource) v.exploreClaritySource = opts.claritySource;
+  else if (!opts?.keepClaritySource) v.exploreClaritySource = null;
   v.live = false;
   v.exploreSection = sec;
   v.pos = acotarPosExploracion(rol, posInicial ?? S.pos);
-  registrar('explorar', 'Modo exploración individual', sec);
+  registrar('explorar', detalleToqueExploracion(v), sec);
   programarRender();
 }
 function volverAlVivo(rol, silencioso) {
   const v = vistaParticipante(rol);
   v.live = true;
   v.exploreSection = null;
+  v.exploreClaritySource = null;
   v.peekExplica = null;
   v.pos = S.pos;
   cerrarFuente();
@@ -850,17 +1116,118 @@ function chartIdEnPaso(pos) {
   if (p?.tipo === 'explica') return SECCIONES[p.s].graficos[p.g].id;
   return null;
 }
-function limpiarResaltadoSiCambiaPaso(nuevaPos) {
-  const cid = chartIdEnPaso(nuevaPos);
-  if (S.monitorHighlight && cid && S.monitorHighlight.chartId !== cid) S.monitorHighlight = null;
-  if (S.monitorHighlight && PASOS[nuevaPos]?.tipo === 'inicio') S.monitorHighlight = null;
+function pasoIndiceParaChartId(chartId) {
+  return PASOS.findIndex((p) => p.tipo === 'explica' && SECCIONES[p.s].graficos[p.g].id === chartId);
+}
+function claveResaltadoMonitor(ref) {
+  if (!ref || !ref.chartId) return '';
+  return [ref.chartId, ref.datasetIndex ?? '', ref.index ?? '', ref.seriesKey ?? '', ref.category ?? ''].join('|');
+}
+let claveUltimoResaltadoRemoto = '';
+function limpiarResaltadoSiCambiaPaso(nuevaPos, prevPos) {
+  const prev = typeof prevPos === 'number' ? prevPos : S.pos;
+  if (nuevaPos === prev || !S.monitorHighlight) return;
+  S.monitorHighlight = null;
+  if (puedePublicarResaltado()) enviar('resaltado', null);
+  else refrescarResaltadoGraficos(true);
+}
+function chartInstanciaPorId(chartId) {
+  for (const [canvasId, chart] of graficos) {
+    const cv = document.getElementById(canvasId);
+    if (!cv?.dataset?.s) continue;
+    const g = SECCIONES[+cv.dataset.s].graficos[+cv.dataset.g];
+    if (g.id === chartId) return { chart, g, canvas: cv };
+  }
+  return null;
+}
+function enumerarElementosResaltables(chartId) {
+  const hit = chartInstanciaPorId(chartId);
+  if (!hit) return [];
+  const { chart, g } = hit;
+  const out = [];
+  chart.data.datasets.forEach((ds, di) => {
+    if (esLineaReferencia(ds)) return;
+    const len = ds.data?.length ?? 0;
+    for (let i = 0; i < len; i++) {
+      if (ds.data[i] == null && chart.config.type !== 'matrix') continue;
+      out.push(metaResaltadoDesdeElemento(g, chart, { datasetIndex: di, index: i }));
+    }
+  });
+  return out;
+}
+function refCoincideConProbe(ref, probe) {
+  if (typeof probe.datasetIndex === 'number' && probe.datasetIndex !== ref.datasetIndex) return false;
+  if (typeof probe.index === 'number' && probe.index !== ref.index) return false;
+  if (probe.seriesKey && ref.seriesKey && !etiquetaResaltadoIgual(probe.seriesKey, ref.seriesKey)) return false;
+  if (probe.category != null && probe.category !== '' && !etiquetaResaltadoIgual(probe.category, ref.category)) return false;
+  return true;
+}
+function resolverResaltadoEnDiapositiva(chartId, probe) {
+  const ctx = obtenerContextoVisual();
+  if (!ctx.visibleChartIds.includes(chartId)) {
+    return { ok: false, code: 'stale_context', error: 'Esa gráfica no está en la diapositiva actual.' };
+  }
+  const opts = enumerarElementosResaltables(chartId);
+  if (!opts.length) {
+    if (typeof probe.datasetIndex === 'number' && typeof probe.index === 'number') {
+      return { ok: true, ref: Object.assign({ chartId }, probe) };
+    }
+    return { ok: false, code: 'no_options', error: 'No hay elementos resaltables en la gráfica visible.' };
+  }
+  let matches = opts.filter(o => refCoincideConProbe(o, probe));
+  if (!matches.length && probe.category) {
+    const needle = String(probe.category).trim().toLowerCase();
+    matches = opts.filter(o => {
+      if (probe.seriesKey && o.seriesKey && !etiquetaResaltadoIgual(probe.seriesKey, o.seriesKey)) return false;
+      const cat = String(o.category).trim().toLowerCase();
+      return cat === needle || cat.includes(needle);
+    });
+  }
+  if (!matches.length) return { ok: false, code: 'not_found', error: 'No se encontró ese elemento en la gráfica actual.' };
+  const uniq = [...new Map(matches.map(m => [`${m.datasetIndex}:${m.index}:${m.category}`, m])).values()];
+  if (uniq.length > 1) return { ok: false, code: 'ambiguous', error: 'La instrucción es ambigua: hay varias coincidencias. Sea más específico.' };
+  return { ok: true, ref: uniq[0] };
+}
+let moderadorControlaPosLocal = false;
+function moderadorIgnoraSesionRemota(posRemoto) {
+  if (S.rol !== 'moderador' || typeof posRemoto !== 'number') return false;
+  if (!moderadorControlaPosLocal) return false;
+  return posRemoto !== S.pos;
+}
+function payloadEstadoSesion(extra) {
+  return Object.assign({
+    pos: S.pos,
+    unlockedStep: S.unlockedStep ?? S.pos,
+    narracionEsperaAutorizacion: S.narracionEsperaAutorizacion,
+    sectionClaridadLista: S.sectionClaridadLista,
+  }, extra || {});
+}
+function aplicarFlagsEsperaSeccion(d) {
+  let changed = false;
+  if (typeof d.narracionEsperaAutorizacion === 'boolean' && d.narracionEsperaAutorizacion !== S.narracionEsperaAutorizacion) {
+    S.narracionEsperaAutorizacion = d.narracionEsperaAutorizacion;
+    changed = true;
+  }
+  if (typeof d.sectionClaridadLista === 'boolean' && d.sectionClaridadLista !== S.sectionClaridadLista) {
+    S.sectionClaridadLista = d.sectionClaridadLista;
+    changed = true;
+    if (S.sectionClaridadLista && PASOS[S.pos]?.tipo === 'hoja') {
+      ['cliente', 'movil'].forEach(rol => programarClaridadSiCorresponde(rol, PASOS[S.pos].s));
+    }
+  }
+  return changed;
 }
 function aplicarSesion(d) {
+  const visitanteEspera = S.rol !== 'moderador' && !visitanteVeReunion();
   const prev = S.pos;
-  if (typeof d.unlockedStep === 'number') S.unlockedStep = Math.max(S.unlockedStep ?? 0, d.unlockedStep);
+  const prevUnlocked = S.unlockedStep ?? 0;
+  const flagsChanged = aplicarFlagsEsperaSeccion(d);
+  if (typeof d.unlockedStep === 'number' && !visitanteEspera) S.unlockedStep = Math.max(prevUnlocked, d.unlockedStep);
   if (typeof d.pos === 'number') {
+    if (visitanteEspera) return;
+    if (moderadorIgnoraSesionRemota(d.pos)) return;
     if (d.pos !== S.pos) {
-      limpiarResaltadoSiCambiaPaso(d.pos);
+      limpiarResaltadoSiCambiaPaso(d.pos, prev);
       S.pos = d.pos;
       S.unlockedStep = Math.max(S.unlockedStep ?? 0, d.unlockedStep ?? d.pos, d.pos);
       if (PASOS[prev]?.tipo === 'hoja' && PASOS[S.pos]?.tipo !== 'hoja') {
@@ -873,17 +1240,41 @@ function aplicarSesion(d) {
     }
   }
   if (typeof d.unlockedStep === 'number') {
-    ['cliente', 'movil'].forEach(rol => {
-      const v = vistaParticipante(rol);
-      if (!v.live) v.pos = acotarPosExploracion(rol, v.pos);
-    });
+    if (visitanteEspera) return;
+    const nextUnlocked = S.unlockedStep;
+    const secPrevU = seccionDePaso(prevUnlocked);
+    const secNextU = seccionDePaso(nextUnlocked);
+    if (secNextU > secPrevU) {
+      ['cliente', 'movil'].forEach(rol => {
+        if (!vistaParticipante(rol).live) volverAlVivo(rol, true);
+      });
+    } else {
+      ['cliente', 'movil'].forEach(rol => {
+        const v = vistaParticipante(rol);
+        if (!v.live) v.pos = acotarPosExploracion(rol, v.pos);
+      });
+    }
+    if (S.rol === 'moderador') return;
     programarRender();
+    return;
   }
+  if (flagsChanged && !visitanteEspera) programarRender();
 }
 function aplicar(tipo, d) {
   if (tipo === 'sesion') return aplicarSesion(d);
+  if (tipo === 'faseSesion') {
+    aplicarFaseSesion(d.fase);
+    return;
+  }
   if (tipo === 'resaltado') {
-    const next = d && d.chartId ? d : null;
+    const next = coerceResaltadoGlobal(d);
+    if (next === undefined) return;
+    const clave = claveResaltadoMonitor(next);
+    if (clave && clave === claveUltimoResaltadoRemoto && mismoResaltado(S.monitorHighlight, next)) {
+      refrescarResaltadoGraficos(true);
+      return;
+    }
+    claveUltimoResaltadoRemoto = clave;
     if (mismoResaltado(S.monitorHighlight, next)) {
       refrescarResaltadoGraficos(true);
       return;
@@ -893,21 +1284,34 @@ function aplicar(tipo, d) {
     return;
   }
   if (tipo === 'estado') {
+    if (S.rol !== 'moderador' && !visitanteVeReunion()) return;
     const prev = S.pos;
-    if (typeof d.pos !== 'number') return;
-    if (d.pos === S.pos) return;
-    limpiarResaltadoSiCambiaPaso(d.pos);
+    const flagsChanged = aplicarFlagsEsperaSeccion(d);
+    if (typeof d.pos !== 'number') {
+      if (flagsChanged) programarRender();
+      return;
+    }
+    if (d.pos === S.pos) {
+      if (flagsChanged) programarRender();
+      return;
+    }
+    limpiarResaltadoSiCambiaPaso(d.pos, prev);
     S.pos = d.pos;
-    S.unlockedStep = Math.max(S.unlockedStep ?? 0, d.pos);
+    S.unlockedStep = Math.max(S.unlockedStep ?? 0, d.unlockedStep ?? d.pos, d.pos);
     reaccionarAvanceGlobal(prev, S.pos);
     persistir();
     programarRender();
     return;
   }
+  if (tipo === 'avatarVideo') {
+    S.avatarVideoPaused = !!d.paused;
+    sincronizarPausaAvatarVideo();
+    return;
+  }
   if (tipo === 'cola') {
     if (S.rol !== 'moderador') return;
     aplicarCola(d.items);
-    programarRender();
+    actualizarPanelModeradorParcial();
     return;
   }
   if (tipo === 'pregunta') {
@@ -923,7 +1327,7 @@ function aplicar(tipo, d) {
   else if (tipo === 'toque') { const t = S.toques[d.k] || (S.toques[d.k] = {seccion: d.seccion, tipo: d.tipo, detalle: d.detalle, n: 0}); t.n += 1; }
   else if (tipo === 'claridad') { const c = S.claridad[d.s] || (S.claridad[d.s] = {claro: 0, duda: 0, glosario: 0, explorar: 0}); c[d.voto] = (c[d.voto] || 0) + 1; }
   persistir();
-  if (tipo === 'toque' || tipo === 'pregunta') {
+  if (tipo === 'toque' || tipo === 'pregunta' || tipo === 'respuesta') {
     actualizarPanelModeradorParcial();
     return;
   }
@@ -934,11 +1338,14 @@ canal && (canal.onmessage = ev => {
   if (tipo === 'sesion') return aplicarSesion(data || {});
   if (tipo) aplicar(tipo, data);
 });
+window.addEventListener('catch-monitor-estado', ev => {
+  aplicar('estado', ev.detail || {});
+});
 async function conectarSala() {
   try {
     const sala = await window.claude?.use?.('room'); if (!sala) return;
     S.sala = sala;
-    ['estado', 'pregunta', 'respuesta', 'toque', 'claridad', 'resaltado'].forEach(t => sala.on(t, m => { if (!m.isMe) aplicar(t, m.data); }));
+    ['estado', 'pregunta', 'respuesta', 'toque', 'claridad', 'resaltado', 'avatarVideo'].forEach(t => sala.on(t, m => { if (!m.isMe) aplicar(t, m.data); }));
     sala.onPeers(ch => { S.conectados = ch.peers.length; pintarSync(); });
     pintarSync();
   } catch (e) {}
@@ -948,16 +1355,307 @@ function pintarSync() {
   el.innerHTML = S.sala ? `<span class="punto vivo"></span>En vivo: ${S.conectados || 1} ${S.conectados === 1 ? 'persona conectada' : 'personas conectadas'}`
     : `<span class="punto"></span>Las vistas se sincronizan entre pestañas de este navegador`;
 }
+function consultarPlanNarracion(pos) {
+  const fn = window.planMonitorNarration;
+  if (typeof fn !== 'function') return null;
+  return fn(typeof pos === 'number' ? pos : S.pos);
+}
+function sincronizarEsperaNarracion() {
+  const plan = consultarPlanNarracion(S.pos);
+  S.narracionEsperaAutorizacion = !!(plan && plan.blockAdvance);
+  if (S.narracionEsperaAutorizacion && S.narracionRuntime && S.narracionRuntime.status !== 'idle') {
+    S.narracionRuntime.status = 'awaiting_moderator';
+  }
+}
+function iniciarNarracionRuntime(stepIndex, echoId, opts) {
+  const status = opts?.status || 'speaking';
+  S.narracionRuntime = {
+    execId: opts?.execId || `narr-exec-${stepIndex}-${Date.now()}`,
+    status,
+    stepIndex,
+    echoId,
+    startedAt: Date.now(),
+    paused: false,
+    errorReason: opts?.errorReason || null,
+  };
+  return S.narracionRuntime.execId;
+}
+let orquestacionPasoSeq = 0;
+let orquestacionPasoAplicada = { stepIndex: -1, generation: -1, fase: '' };
+function etiquetaEstadoNarracion() {
+  const r = S.narracionRuntime;
+  if (r?.status === 'error') {
+    return r.errorReason === 'tavus_inactive'
+      ? 'Narración no enviada: Tavus no está conectado. El paso no cambia.'
+      : (r.errorReason || 'No se pudo enviar la narración a Tavus.');
+  }
+  if (S.narracionEsperaAutorizacion || r?.status === 'awaiting_moderator') {
+    return 'Esperando autorización del moderador para continuar la sección. Avance manual.';
+  }
+  if (S.narracionSinConfirmar) {
+    return 'Narración sin confirmar: no hay señal de fin del avatar. El temporizador no avanza el punto. Repita o pulse Siguiente.';
+  }
+  if (r?.status === 'paused') return 'Narración en pausa. El avance automático permanece bloqueado.';
+  if (r?.status === 'speaking') return 'Narración activa en Tavus. El avance sigue siendo manual.';
+  return 'Narración inactiva.';
+}
+function htmlEstadoNarracionPaso() {
+  if (S.rol !== 'moderador' || typeof window.planMonitorNarration !== 'function') return '';
+  if (!presentadorDashboardListo() || presentadorEnRevisionPrevia()) return '';
+  return `<p class="sub" data-estado-narracion style="margin:8px 0 0">${esc(etiquetaEstadoNarracion())}</p>`;
+}
+function planActivoCoincideConPaso(plan, stepIndex) {
+  return !!(plan && plan.stepIndex === stepIndex);
+}
+function accionResaltadoDesdePlan(plan) {
+  const ref = plan && plan.highlightRef;
+  if (!ref || !ref.chartId) return null;
+  return {
+    type: 'highlight',
+    target: {
+      chartId: ref.chartId,
+      category: ref.category,
+      seriesKey: ref.seriesKey,
+      datasetIndex: ref.datasetIndex,
+      index: ref.index,
+    },
+  };
+}
+function playbackNarracionVigente() {
+  const pb = S.narracionPlayback;
+  if (!pb || pb.status === 'cancelled' || pb.status === 'done') return null;
+  if (!S.narracionRuntime || S.narracionRuntime.execId !== pb.execId) return null;
+  if (S.pos !== pb.stepIndex) return null;
+  if (S.narracionRuntime.status === 'paused') return null;
+  return pb;
+}
+function comenzarNarracionPorSegmentos(step, execId, segments) {
+  const api = window.CatchNarrationCues;
+  if (!api || !Array.isArray(segments) || !segments.length) return null;
+  if (S.narracionPlayback) api.cancel(S.narracionPlayback);
+  const pb = api.createPlayback(execId, step, segments);
+  S.narracionPlayback = pb;
+  return api.start(pb);
+}
+function onNarracionReplicaStarted() {
+  const pb = playbackNarracionVigente();
+  if (!pb || !window.CatchNarrationCues) return;
+  const ref = window.CatchNarrationCues.onReplicaStarted(pb);
+  if (!ref || !ref.chartId) return;
+  void aplicarAccionResaltadoIA({ type: 'highlight', target: ref }, { narrativeCue: true });
+}
+function onNarracionReplicaStopped() {
+  const pb = playbackNarracionVigente();
+  if (!pb || !window.CatchNarrationCues) return;
+  const next = window.CatchNarrationCues.onReplicaStopped(pb);
+  if (next && next.text) {
+    presentarGeminiEnFrida(next.text, next.echoId);
+    return;
+  }
+  if (pb.status === 'done') solicitarAvanceTrasFinDeDiapositiva(pb);
+}
+function solicitarAvanceTrasFinDeDiapositiva(pb) {
+  if (!pb || pb.status !== 'done') return;
+  if (S.avanceNarracionAplicado === pb.execId) return;
+  if (S.pos !== pb.stepIndex) return;
+  if (!S.narracionRuntime || S.narracionRuntime.execId !== pb.execId) return;
+  if (S.narracionRuntime.status === 'paused') return;
+  S.avanceNarracionAplicado = pb.execId;
+  procesarFinNarracionSeccion(pb.stepIndex, pb.execId, 'provider');
+}
+window.__CATCH_NARRATION_ON_REPLICA_STARTED__ = onNarracionReplicaStarted;
+window.__CATCH_NARRATION_ON_REPLICA_IDLE__ = onNarracionReplicaStopped;
+function programarOrquestacionPasoActivo() {
+  if (S.rol !== 'moderador') return;
+  if (!presentadorDashboardListo() || presentadorEnRevisionPrevia()) return;
+  if (typeof window.planMonitorNarration !== 'function') return;
+  const step = S.pos;
+  const fase = S.faseSesion;
+  if (orquestacionPasoAplicada.stepIndex === step && orquestacionPasoAplicada.fase === fase) return;
+  const seq = ++orquestacionPasoSeq;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => { void ejecutarOrquestacionPasoActivo(step, seq); });
+  });
+}
+async function ejecutarOrquestacionPasoActivo(step, seq) {
+  if (seq !== orquestacionPasoSeq) return;
+  if (S.rol !== 'moderador' || S.pos !== step) return;
+  if (!presentadorDashboardListo() || presentadorEnRevisionPrevia()) return;
+  const plan = consultarPlanNarracion(step);
+  if (!planActivoCoincideConPaso(plan, step)) return;
+  if (orquestacionPasoAplicada.stepIndex === step && orquestacionPasoAplicada.generation === seq) return;
+  orquestacionPasoAplicada = { stepIndex: step, generation: seq, fase: S.faseSesion };
+  sincronizarEsperaNarracion();
+  const echoId = `plan-enter-${step}-${seq}`;
+  const execId = iniciarNarracionRuntime(step, echoId, {
+    status: plan.blockAdvance ? 'awaiting_moderator' : 'speaking',
+  });
+  if (seq !== orquestacionPasoSeq || S.narracionRuntime?.execId !== execId || S.pos !== step) return;
+  const texto = plan && typeof plan.speakText === 'string' ? plan.speakText.trim() : '';
+  if (!texto) {
+    S.narracionRuntime.status = plan.blockAdvance ? 'awaiting_moderator' : 'idle';
+    pintarEstadoNarracionPaso();
+    return;
+  }
+  const api = window.__CATCH_TAVUS_CVI__;
+  if (!api?.isActive?.()) {
+    S.narracionRuntime.status = 'error';
+    S.narracionRuntime.errorReason = 'tavus_inactive';
+    pintarEstadoNarracionPaso();
+    return;
+  }
+  const segments = Array.isArray(plan.segments) && plan.segments.length
+    ? plan.segments
+    : [{ id: 'lead', text: texto, highlight: null }];
+  const first = comenzarNarracionPorSegmentos(step, execId, segments);
+  const sent = first ? presentarGeminiEnFrida(first.text, first.echoId) : false;
+  if (seq !== orquestacionPasoSeq || S.narracionRuntime?.execId !== execId) return;
+  if (!sent) {
+    S.narracionRuntime.status = 'error';
+    S.narracionRuntime.errorReason = 'echo_failed';
+  } else if (plan.blockAdvance) {
+    S.narracionRuntime.status = 'speaking';
+  }
+  intentarAvanceDesdeNarracion(execId);
+  pintarEstadoNarracionPaso();
+  if (sent && texto) programarFinNarracionSeccion(step, execId, texto);
+  else if (!texto && plan.blockAdvance) programarFinNarracionSeccion(step, execId, '');
+}
+function pintarEstadoNarracionPaso() {
+  const el = document.querySelector('[data-estado-narracion]');
+  if (el) el.textContent = etiquetaEstadoNarracion();
+}
+function pausarNarracionRuntime() {
+  cancelarTimerNarracionSeccion();
+  S.narracionSinConfirmar = false;
+  try { window.CatchNarrationCues?.cancel?.(S.narracionPlayback); } catch { /* ignore */ }
+  orquestacionPasoSeq += 1;
+  if (!S.narracionRuntime || S.narracionRuntime.status === 'idle') return;
+  S.narracionRuntime.paused = true;
+  S.narracionRuntime.status = 'paused';
+  try { window.__CATCH_TAVUS_CVI__?.interrupt?.(); } catch { /* ignore */ }
+}
+function intentarAvanceDesdeNarracion(execId) {
+  sincronizarEsperaNarracion();
+  if (execId && S.narracionRuntime?.execId && execId !== S.narracionRuntime.execId) return false;
+  if (S.narracionRuntime?.paused || S.narracionRuntime?.status === 'paused') return false;
+  if (S.narracionEsperaAutorizacion || S.narracionRuntime?.status === 'awaiting_moderator') return false;
+  /* Tavus echo sin señal fiable de fin: no auto-avance (Fase 6). */
+  return false;
+}
+function cancelarTimerNarracionSeccion() {
+  if (S.sectionNarracionTimer) {
+    clearTimeout(S.sectionNarracionTimer);
+    S.sectionNarracionTimer = null;
+  }
+}
+function marcarNarracionSinConfirmar(step, execId) {
+  if (S.rol !== 'moderador' || S.pos !== step) return;
+  if (execId && S.narracionRuntime?.execId && execId !== S.narracionRuntime.execId) return;
+  S.narracionSinConfirmar = true;
+  pintarEstadoNarracionPaso();
+}
+function programarFinNarracionSeccion(step, execId, texto) {
+  cancelarTimerNarracionSeccion();
+  const api = window.CatchSectionClose;
+  const ms = api?.estimateNarrationDurationMs ? api.estimateNarrationDurationMs(texto) : 1800;
+  S.sectionNarracionTimer = setTimeout(() => {
+    S.sectionNarracionTimer = null;
+    marcarNarracionSinConfirmar(step, execId);
+  }, ms || 1800);
+}
+function activarEsperaSeccion(sectionIndex) {
+  S.narracionEsperaAutorizacion = true;
+  S.sectionClaridadLista = true;
+  if (S.narracionRuntime && S.narracionRuntime.status !== 'idle') {
+    S.narracionRuntime.status = 'awaiting_moderator';
+  }
+  pintarEstadoNarracionPaso();
+  if (PASOS[S.pos]?.tipo === 'hoja' && PASOS[S.pos].s === sectionIndex) {
+    ['cliente', 'movil'].forEach(rol => programarClaridadSiCorresponde(rol, sectionIndex));
+  }
+  enviar('estado', payloadEstadoSesion());
+}
+function procesarFinNarracionSeccion(step, execId, endSource) {
+  const api = window.CatchSectionClose;
+  if (!api?.evaluateNarrationEnd) return;
+  if (S.rol !== 'moderador' || S.pos !== step) return;
+  const decision = api.evaluateNarrationEnd({
+    stepIndex: step,
+    execId,
+    currentStepIndex: S.pos,
+    runtimeExecId: S.narracionRuntime?.execId || null,
+    dedup: S.sectionCloseDedup,
+    narrationFinished: true,
+    endSource: endSource || 'provider',
+  });
+  if (decision.kind === 'ignore' || decision.kind === 'deduped') return;
+  if (decision.kind === 'navigate_next_slide' || decision.kind === 'navigate_hoja') {
+    S.sectionCloseDedup = decision.dedup;
+    moverModerador(decision.targetStep);
+    return;
+  }
+  if (decision.kind === 'await_moderator') {
+    S.sectionCloseDedup = decision.dedup;
+    activarEsperaSeccion(decision.sectionIndex);
+  }
+}
+function continuarSeccionModerador() {
+  const api = window.CatchSectionClose;
+  if (!api?.continueTarget) return;
+  if (api.shouldBlockDuplicateContinue && api.shouldBlockDuplicateContinue(S.lastSectionContinueAt)) return;
+  if (!S.narracionEsperaAutorizacion && PASOS[S.pos]?.tipo !== 'hoja') return;
+  const target = api.continueTarget(S.pos);
+  if (target == null) return;
+  S.lastSectionContinueAt = Date.now();
+  S.narracionEsperaAutorizacion = false;
+  S.sectionClaridadLista = false;
+  S.sectionCloseDedup = null;
+  cancelarTimerNarracionSeccion();
+  enviar('estado', payloadEstadoSesion({ narracionEsperaAutorizacion: false, sectionClaridadLista: false }));
+  moverModerador(target);
+}
 function moverModerador(pos) {
+  try { window.CatchNarrationCues?.cancel?.(S.narracionPlayback); } catch { /* ignore */ }
+  const enRevision = S.rol === 'moderador' && presentadorEnRevisionPrevia();
+  if (!enRevision && !presentadorDashboardListo()) return;
+  if (S.advanceInFlight) return;
   const next = Math.max(0, Math.min(PASOS.length - 1, pos));
   if (next === S.pos) return;
-  enviar('estado', { pos: next });
+  const prev = S.pos;
+  S.advanceInFlight = true;
+  S.narracionSinConfirmar = false;
+  cancelarTimerNarracionSeccion();
+  if (PASOS[prev]?.tipo === 'hoja' && (PASOS[next]?.tipo !== 'hoja' || PASOS[next].s !== PASOS[prev].s)) {
+    S.narracionEsperaAutorizacion = false;
+    S.sectionClaridadLista = false;
+    S.sectionCloseDedup = null;
+  }
+  if (S.rol === 'moderador') moderadorControlaPosLocal = true;
+  try {
+    if (enRevision) {
+      limpiarResaltadoSiCambiaPaso(next, S.pos);
+      S.pos = next;
+      programarRender();
+      return;
+    }
+    enviar('estado', payloadEstadoSesion({ pos: next }));
+    if (PASOS[next]?.tipo === 'hoja') {
+      activarEsperaSeccion(PASOS[next].s);
+    }
+    actualizarFasePorPaso();
+  } finally {
+    S.advanceInFlight = false;
+  }
 }
 function posVista(rol) { if (rol === 'moderador') return S.pos; const v = S.vistas[rol]; return v.live ? S.pos : v.pos; }
 
 function registrar(tipo, detalle, seccion) {   // "toques": qué consulta el cliente, para adaptar la siguiente sesión
   const sec = seccion ?? (PASOS[posVista(S.rol)].s ?? -1);
-  enviar('toque', {k: `${sec}|${tipo}|${detalle}`, seccion: sec, tipo, detalle});
+  const payload = {k: `${sec}|${tipo}|${detalle}`, seccion: sec, tipo, detalle};
+  // Preguntas al asistente IA del visitante: solo en este dispositivo (no BroadcastChannel / sala).
+  if (tipo === 'ia' && S.rol !== 'moderador') return;
+  enviar('toque', payload);
 }
 
 // ======================= resaltado sincronizado (presentador / IA / clientes) =======================
@@ -971,6 +1669,23 @@ function graficoPorId(chartId) {
   return null;
 }
 function puedePublicarResaltado() { return S.rol === 'moderador'; }
+/** null = limpiar; undefined = rechazar (chartId/categoría inválidos). */
+function coerceResaltadoGlobal(d) {
+  if (d == null) return null;
+  if (typeof d !== 'object') return undefined;
+  const chartId = String(d.chartId || d.chart_id || '').trim();
+  if (!chartId) return null;
+  if (!graficoPorId(chartId)) return undefined;
+  const ref = {
+    chartId,
+    category: d.category != null ? String(d.category) : undefined,
+    seriesKey: d.seriesKey != null ? String(d.seriesKey) : (d.series_key != null ? String(d.series_key) : ''),
+    datasetIndex: Number.isInteger(d.datasetIndex) ? d.datasetIndex : (Number.isInteger(d.dataset_index) ? d.dataset_index : undefined),
+    index: Number.isInteger(d.index) ? d.index : undefined,
+  };
+  if (ref.category == null && ref.index == null) return undefined;
+  return ref;
+}
 function mismoResaltado(a, b) {
   if (a === b) return true;
   if (!a || !b) return !a && !b;
@@ -978,7 +1693,9 @@ function mismoResaltado(a, b) {
 }
 function publicarResaltado(ref) {
   if (!puedePublicarResaltado()) return;
-  enviar('resaltado', ref && ref.chartId ? ref : null);
+  const next = ref && ref.chartId ? coerceResaltadoGlobal(ref) : null;
+  if (next === undefined) return;
+  enviar('resaltado', next);
 }
 function metaResaltadoDesdeElemento(g, chart, el) {
   const ds = chart.data.datasets[el.datasetIndex];
@@ -1188,16 +1905,18 @@ function solicitarResaltadoIA(req) {
   const chartId = String(req.chartId || req.chart_id || '').trim();
   if (!chartId || !graficoPorId(chartId)) return {ok: false, error: 'chartId desconocido: ' + chartId};
   if (req.clear || req.category === null) { publicarResaltado(null); return {ok: true, cleared: true}; }
-  const ref = {
+  const probe = {
     chartId,
     category: req.category != null ? String(req.category) : undefined,
     seriesKey: req.seriesKey != null ? String(req.seriesKey) : (req.series_key != null ? String(req.series_key) : ''),
     datasetIndex: Number.isInteger(req.datasetIndex) ? req.datasetIndex : (Number.isInteger(req.dataset_index) ? req.dataset_index : undefined),
     index: Number.isInteger(req.index) ? req.index : undefined,
   };
-  if (ref.category == null && ref.index == null) return {ok: false, error: 'Indique category o index'};
-  publicarResaltado(ref);
-  return {ok: true, highlight: ref};
+  if (probe.category == null && probe.index == null) return {ok: false, error: 'Indique category o index'};
+  const resolved = resolverResaltadoEnDiapositiva(chartId, probe);
+  if (!resolved.ok) return { ok: false, error: resolved.error, status: resolved.code };
+  publicarResaltado(resolved.ref);
+  return {ok: true, highlight: resolved.ref};
 }
 function listarGraficasMonitor() {
   return SECCIONES.flatMap((s, si) => s.graficos.map((g, gi) => ({
@@ -1206,6 +1925,7 @@ function listarGraficasMonitor() {
 }
 window.__CATCH_MONITOR_CHART__ = {
   listCharts: listarGraficasMonitor,
+  coerceHighlight: coerceResaltadoGlobal,
   applyHighlight: solicitarResaltadoIA,
   clearHighlight: () => publicarResaltado(null),
   getHighlight: () => S.monitorHighlight,
@@ -1226,29 +1946,134 @@ function graficoTieneResaltadoVisual(chartId) {
   }
   return false;
 }
-async function aplicarAccionResaltadoIA(action) {
+async function ejecutarClearResaltadoIA(action) {
+  if (!action || action.type !== 'clear_highlight') {
+    traceResaltadoIA('reject', { reason: 'invalid_clear' });
+    return { ok: false, status: 'rejected', error: 'Acción de limpieza no válida' };
+  }
+  const cur = S.monitorHighlight;
+  if (!cur) {
+    traceResaltadoIA('cleared', { noop: true });
+    return { ok: true, status: 'applied', cleared: true };
+  }
+  const t = action.target;
+  if (t?.chartId && cur.chartId !== t.chartId) {
+    traceResaltadoIA('cleared', { noop: true, reason: 'chart_mismatch' });
+    return { ok: true, status: 'applied', cleared: false };
+  }
+  if (t?.category && !etiquetaResaltadoIgual(t.category, cur.category)) {
+    traceResaltadoIA('cleared', { noop: true, reason: 'category_mismatch' });
+    return { ok: true, status: 'applied', cleared: false };
+  }
+  if (puedePublicarResaltado()) publicarResaltado(null);
+  else { S.monitorHighlight = null; refrescarResaltadoGraficos(true); }
+  traceResaltadoIA('cleared', { had: cur });
+  return { ok: true, status: 'applied', cleared: true };
+}
+function targetTieneIndicesResueltos(t) {
+  return Number.isInteger(t?.datasetIndex) && Number.isInteger(t?.index);
+}
+function refDesdeTargetHighlight(t) {
+  return {
+    chartId: t.chartId,
+    category: t.category != null ? String(t.category) : undefined,
+    seriesKey: t.seriesKey != null ? String(t.seriesKey) : '',
+    datasetIndex: t.datasetIndex,
+    index: t.index,
+  };
+}
+async function esperarRenderPendiente() {
+  if (!pendiente) return;
+  await new Promise(resolve => {
+    const tick = () => {
+      if (!pendiente) {
+        requestAnimationFrame(() => resolve());
+        return;
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+}
+async function asegurarInstanciaGrafica(chartId) {
+  let mount = await asegurarCanvasGrafica(chartId);
+  if (!chartInstanciaPorId(chartId)) {
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  }
+  if (!chartInstanciaPorId(chartId) && obtenerContextoVisual().visibleChartIds.includes(chartId)) {
+    const app = document.getElementById('app');
+    if (app && S.modoGraf !== 'tabla') pintarGraficos(app, S.rol !== 'moderador');
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  }
+  if (!chartInstanciaPorId(chartId)) {
+    return mount.ok ? { ok: false, reason: 'not_mounted' } : mount;
+  }
+  return { ok: true, reason: 'ready' };
+}
+async function aplicarAccionResaltadoIA(action, opts) {
   reiniciarTraceResaltadoIA();
-  if (!action || action.type !== 'highlight' || !action.target) {
+  if (!action || typeof action !== 'object') {
     traceResaltadoIA('reject', { reason: 'invalid_action' });
     return { ok: false, status: 'rejected', error: 'Acción no válida' };
   }
+  if (action.type === 'clear_highlight') {
+    return ejecutarClearResaltadoIA(action);
+  }
+  if (action.type !== 'highlight' || !action.target) {
+    traceResaltadoIA('reject', { reason: 'invalid_action' });
+    return { ok: false, status: 'rejected', error: 'Acción no válida' };
+  }
+  if (opts && opts.orchestrationSeq != null && opts.orchestrationSeq !== orquestacionPasoSeq) {
+    traceResaltadoIA('reject', { reason: 'stale_orchestration' });
+    return { ok: false, status: 'rejected', error: 'Resaltado obsoleto' };
+  }
   const t = action.target;
-  const ref = {
+  const allowNavigate = !!(opts && opts.allowNavigateToChart && puedePublicarResaltado());
+  const visiblePrep = await asegurarGraficaVisibleParaResaltado(t.chartId, allowNavigate);
+  if (!visiblePrep.ok && !allowNavigate) {
+    traceResaltadoIA('reject', { reason: visiblePrep.reason || 'not_in_view' });
+    return { ok: false, status: 'not_visible', error: 'El elemento no está en la vista actual.' };
+  }
+  if (!visiblePrep.ok && allowNavigate) {
+    traceResaltadoIA('reject', { reason: visiblePrep.reason || 'not_in_view' });
+    return { ok: false, status: 'not_visible', error: 'No pude mostrar la gráfica de ese elemento.' };
+  }
+  await esperarRenderPendiente();
+  const probe = {
     chartId: t.chartId,
     category: t.category,
     seriesKey: t.seriesKey != null ? String(t.seriesKey) : '',
     datasetIndex: t.datasetIndex,
     index: t.index,
   };
-  traceResaltadoIA('request', { ref, ctx: obtenerContextoVisual() });
-  const mount = await asegurarCanvasGrafica(ref.chartId);
-  traceResaltadoIA('mount', { chartId: ref.chartId, mount, ctx: obtenerContextoVisual() });
+  const mount = await asegurarInstanciaGrafica(t.chartId);
+  traceResaltadoIA('mount', { chartId: t.chartId, mount, ctx: obtenerContextoVisual() });
   if (!mount.ok) {
     const err = mount.reason === 'not_in_view'
       ? 'El elemento no está en la vista actual.'
       : 'La gráfica no está montada en pantalla.';
     traceResaltadoIA('reject', { reason: mount.reason });
     return { ok: false, status: 'not_visible', error: err };
+  }
+  let ref;
+  if (targetTieneIndicesResueltos(t)) {
+    ref = refDesdeTargetHighlight(t);
+  } else {
+    const resolved = resolverResaltadoEnDiapositiva(t.chartId, probe);
+    if (!resolved.ok) {
+      traceResaltadoIA('reject', { reason: resolved.code, error: resolved.error });
+      return { ok: false, status: resolved.code === 'stale_context' ? 'not_visible' : 'failed', error: resolved.error };
+    }
+    ref = resolved.ref;
+  }
+  if (opts && opts.orchestrationSeq != null && opts.orchestrationSeq !== orquestacionPasoSeq) {
+    traceResaltadoIA('reject', { reason: 'stale_orchestration' });
+    return { ok: false, status: 'rejected', error: 'Resaltado obsoleto' };
+  }
+  traceResaltadoIA('request', { ref, ctx: obtenerContextoVisual() });
+  if (opts && opts.orchestrationSeq != null && opts.orchestrationSeq !== orquestacionPasoSeq) {
+    traceResaltadoIA('reject', { reason: 'stale_orchestration' });
+    return { ok: false, status: 'rejected', error: 'Resaltado obsoleto' };
   }
   if (puedePublicarResaltado()) {
     const pub = solicitarResaltadoIA(ref);
@@ -1291,6 +2116,12 @@ function dibujar(canvas, cfg) {
       if (!el) { cerrarFuente(); return; }
       const k = claveFuenteElemento(g, el);
       if (S.fuenteClave === k && $('#fuente')?.classList.contains('abierta')) { cerrarFuente(); return; }
+      if (iaSeleccionContextualHabilitada() && !esLineaReferencia(chart.data.datasets[el.datasetIndex])) {
+        mostrarPopoverSeleccionIA(
+          { x: ev.native.clientX, y: ev.native.clientY },
+          construirSeleccionGrafica(g, chart, el, ev.native),
+        );
+      }
       mostrarFuente(g, chart, el, M);
       marcarAperturaFuente();
     }, 240);
@@ -1343,7 +2174,19 @@ function mostrarFuente(g, chart, el, M) {
 
 function limpiarGraficos(raiz) { [...graficos.keys()].forEach(id => { if (!document.getElementById(id) || (raiz && raiz.querySelector('#' + id))) { graficos.get(id).destroy(); graficos.delete(id); } }); }
 let pendiente = false;
-function programarRender() { if (pendiente) return; pendiente = true; requestAnimationFrame(() => { pendiente = false; render(); }); }
+let iaRespuestaActiva = 0;
+let renderPendienteTrasIA = false;
+function lanzarRenderPendienteIA() {
+  if (!renderPendienteTrasIA || iaRespuestaActiva > 0) return;
+  renderPendienteTrasIA = false;
+  programarRender();
+}
+function programarRender() {
+  if (iaRespuestaActiva > 0) { renderPendienteTrasIA = true; return; }
+  if (pendiente) return;
+  pendiente = true;
+  requestAnimationFrame(() => { pendiente = false; render(); });
+}
 
 // ======================= iconos =======================
 const ICON = {
@@ -1354,8 +2197,39 @@ const ICON = {
   kpi: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm9 5.2v-2.4l-2.4-.6a7 7 0 0 0-.8-1.9l1.3-2.1-1.7-1.7-2.1 1.3a7 7 0 0 0-1.9-.8L13.2 3h-2.4l-.6 2.4a7 7 0 0 0-1.9.8L6.2 4.9 4.5 6.6l1.3 2.1a7 7 0 0 0-.8 1.9L2.6 11v2.4l2.4.6c.2.7.4 1.3.8 1.9l-1.3 2.1 1.7 1.7 2.1-1.3c.6.4 1.2.6 1.9.8l.6 2.4h2.4l.6-2.4c.7-.2 1.3-.4 1.9-.8l2.1 1.3 1.7-1.7-1.3-2.1c.4-.6.6-1.2.8-1.9z"/></svg>',
   chart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16"/><path d="M8 17V9M12 17V6M16 17v-4"/></svg>',
   pdf: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h9l5 5v15H6zm8 1.5V8h4.5zM9 13v5h1.4v-1.6h.9a1.7 1.7 0 0 0 0-3.4zm1.4 1.1h.8a.6.6 0 0 1 0 1.2h-.8z"/></svg>',
-  mic: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>',
+  mic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1.75a3.25 3.25 0 0 0-3.25 3.25V12a3.25 3.25 0 0 0 6.5 0V5a3.25 3.25 0 0 0-3.25-3.25z"/><path d="M5 11.5a7 7 0 0 0 14 0"/><path d="M12 18.5V22"/><path d="M9 22h6"/></svg>',
 };
+
+function htmlBotonMicIA() {
+  return `<button type="button" class="btn btn-mic" data-ia-mic title="Dictar pregunta" aria-label="Dictar pregunta por voz" aria-pressed="false">
+    <span class="ia-mic-ondas" aria-hidden="true"></span>
+    <span class="ia-mic-ico">${ICON.mic}</span>
+    <span class="ia-mic-barras" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
+  </button>`;
+}
+function htmlOpcionesGeminiModerador() {
+  if (S.rol !== 'moderador') return '';
+  return `<div class="panel-av__gemini-opts" role="group" aria-label="Opciones de Gemini">
+    <label class="ia-auto-envio"><input type="checkbox" data-ia-voz-auto-envio ${leerAutoEnvioVozIA() ? 'checked' : ''} aria-label="Enviar pregunta a Gemini al terminar de hablar"> Enviar a Gemini al terminar de hablar</label>
+    <label class="ia-auto-tts"><input type="checkbox" data-ia-hablar-auto ${leerAutoTtsIA() ? 'checked' : ''} aria-label="Leer respuestas automáticamente"> Leer respuestas automáticamente (navegador si Tavus no está activo)</label>
+  </div>`;
+}
+function htmlBloquePreguntaIA() {
+  const autoTts = '';
+  const autoVoz = S.rol === 'moderador' ? '' : `<label class="ia-auto-envio"><input type="checkbox" data-ia-voz-auto-envio ${leerAutoEnvioVozIA() ? 'checked' : ''} aria-label="Enviar pregunta a Gemini al terminar de hablar"> Enviar a Gemini al terminar de hablar</label>`;
+  const etiqueta = S.rol === 'moderador'
+    ? 'Escriba una instrucción para dirigir la presentación (avanzar, repetir, ir a una sección…).'
+    : 'Pregúntale al asistente sobre lo que estás viendo.';
+  const placeholder = S.rol === 'moderador'
+    ? 'Ej.: Avanza al siguiente punto · Repite la explicación · Ve a salarios'
+    : '¿Qué significa rotación no controlada?';
+  return `<div class="pregunta-ia" data-ia-voz><label for="inIA">${etiqueta}</label>
+    <div class="fila-ia"><input id="inIA" placeholder="${placeholder}" autocomplete="off">${htmlBotonMicIA()}<button class="btn prim" data-enviar-ia>Enviar</button></div>
+    ${autoVoz}
+    ${autoTts}
+    <p class="ia-voz-live" id="iaVozLive" hidden><span class="ia-voz-dot" aria-hidden="true"></span>Escuchando — la transcripción va a Gemini (no a Tavus)</p>
+    <p class="ia-voz-aviso" id="iaVozAviso" role="status"></p><div class="chat-ia-historial" data-chat-ia-historial></div><div class="resp-ia" id="respIA" data-resp-ia-privada aria-live="polite"></div></div>`;
+}
 
 // ======================= vista del cliente =======================
 function htmlRecorrido(p) {
@@ -1457,17 +2331,73 @@ function textoNarracion(p) {
   return p.tipo === 'explica' ? `${SECCIONES[p.s].graficos[p.g].titulo}: ${SECCIONES[p.s].graficos[p.g].sub.toLowerCase()}. Toque cualquier dato para ver de dónde sale.` : p.tipo === 'hoja' ? 'Hoja completa: gráficos en tamaño resumido. «Ver más detalles» abre la explicación de cada uno. Confirme si esta sección quedó clara.'
     : p.tipo === 'cierre' ? 'Gracias. Aquí están las respuestas a las preguntas de la sala.' : 'Hola, soy el avatar de Catch. Le acompaño durante la presentación.';
 }
+function htmlAvatarAudioCtrl(withPause) {
+  const pauseBtn = withPause
+    ? `<button type="button" data-avatar-pause aria-pressed="${S.avatarVideoPaused}" aria-label="${S.avatarVideoPaused ? 'Reanudar video' : 'Pausar video'}">${S.avatarVideoPaused ? '▶' : '⏸'}</button>`
+    : '';
+  return `${pauseBtn}<button type="button" data-avatar-mute aria-pressed="true" aria-label="Activar sonido">🔇</button><input type="range" data-avatar-volume min="0" max="1" step="0.05" value="1" aria-label="Volumen">`;
+}
+function htmlAvatarAudioCtrlVisitante() {
+  const vol = leerVolAvatar();
+  return `<button type="button" data-avatar-mute aria-pressed="true" aria-label="Activar sonido del avatar">🔇</button><input type="range" data-avatar-volume min="0" max="1" step="0.05" value="${vol}" aria-label="Volumen del avatar">`;
+}
+function htmlAvatarDockPresentador() {
+  return `<div class="panel-av__dock" role="toolbar" aria-label="Controles del avatar">
+    ${htmlBotonMicIA()}
+    <button type="button" class="dock-btn dock-btn--teclado" data-enfocar-ia aria-label="Escribir pregunta para Gemini" title="Teclado · pregunta a Gemini">⌨</button>
+  </div>`;
+}
+function htmlAvatarTavusToolbar() {
+  if (S.rol !== 'moderador') return '';
+  return `<div class="avatar-tavus-bar" data-tavus-bar hidden><span class="avatar-tavus-status" data-tavus-status>${avatarMp4Enabled() ? 'Video local (MP4)' : 'Inicia sesión Tavus para ver a Frida'}</span>
+    <div class="avatar-tavus-actions"><button type="button" data-tavus-start>Iniciar Frida (Tavus)</button><button type="button" data-tavus-end hidden>Finalizar sesión</button></div></div>`;
+}
+function htmlAvatarVideoBlock(withPause, opts) {
+  const mp4On = avatarMp4Enabled();
+  const viewerRail = S.rol === 'cliente' || S.rol === 'movil';
+  const inlineAudio = opts?.inlineAudio !== false;
+  const mp4Tag = mp4On
+    ? '<video class="avatar-video" data-tavus-local-video src="/avatar_video.mp4" autoplay muted loop playsinline preload="metadata"></video>'
+    : '<video class="avatar-video" data-tavus-local-video data-avatar-mp4-reserve hidden aria-hidden="true" tabindex="-1" preload="none"></video><div class="avatar-idle" data-avatar-idle><span>Frida · Tavus CVI</span></div>';
+  const showAudioCtrl = inlineAudio && (mp4On || withPause || viewerRail);
+  const audioCtrl = showAudioCtrl
+    ? `<div class="audio-ctrl" role="group" aria-label="Audio del avatar">${htmlAvatarAudioCtrl(withPause)}</div>`
+    : '';
+  return `<div class="avatar-video-slot"><div class="avatar-video-media">${mp4Tag}
+    <video class="avatar-video avatar-tavus-video" data-tavus-remote-video playsinline hidden></video>
+    <audio data-tavus-remote-audio autoplay playsinline hidden></audio></div>${audioCtrl}</div>`;
+}
 function htmlAvatar(p) {
   const texto = textoNarracion(p);
-  return `<div class="avatar-w">${S.avatar ? `<div class="panel-av" role="dialog" aria-label="Avatar Catch"><div class="video"><div><div class="cara" id="cara"></div>Aquí va el video de LiveAvatar</div></div>
-    <div class="dentro"><p>${esc(texto)}</p><div class="acc"><button class="lleno" data-escuchar-texto>Escuchar</button><button data-abrir="ia">Preguntar al avatar</button><button data-abrir="glosario">Glosario</button></div></div></div>` : ''}
-    <button class="fab" data-avatar aria-expanded="${!!S.avatar}"><span class="pulso"></span>${S.avatar ? 'Ocultar avatar' : 'Avatar Catch'}</button></div>`;
+  const withPause = S.rol === 'moderador';
+  return `<div class="avatar-w avatar-w--left">${S.avatar ? `<div class="panel-av" role="dialog" aria-label="Avatar Catch">${htmlAvatarTavusToolbar()}<div class="video">${htmlAvatarVideoBlock(withPause, { inlineAudio: false })}${htmlAvatarDockPresentador()}</div>
+    <div class="dentro"><p>${esc(texto)}</p>${htmlOpcionesGeminiModerador()}</div></div>` : ''}
+    <button type="button" class="fab" data-avatar aria-expanded="${!!S.avatar}"><span class="pulso"></span>${S.avatar ? 'Ocultar avatar' : 'Avatar Catch'}</button></div>`;
 }
-function htmlAvatarRail() {   // avatar desplegable en la columna izquierda, como la tarjeta "Avatar IA" del demo
+function esVisitanteAvatarEnVivo() {
+  return S.rol === 'cliente' || S.rol === 'movil';
+}
+function htmlAvatarClienteFlotante() {
+  if (!esVisitanteAvatarEnVivo()) return '';
+  return `<div class="avatar-w avatar-w--left avatar-w--visitante">${S.avatar ? `<div class="panel-av panel-av--visitante cliente-avatar-en-vivo" role="region" aria-label="Avatar en vivo del presentador">
+    <div class="cliente-avatar-en-vivo__cab"><span class="punto vivo"></span><strong>Avatar en vivo</strong><span data-tavus-status>Esperando al presentador…</span></div>
+    <div class="video">${htmlAvatarVideoBlock(false, { inlineAudio: false })}</div>
+    <div class="panel-av__dock panel-av__dock--solo-audio" role="group" aria-label="Audio del avatar">${htmlAvatarAudioCtrlVisitante()}</div>
+  </div>` : ''}
+    <button type="button" class="fab" data-avatar aria-expanded="${!!S.avatar}"><span class="pulso"></span>${S.avatar ? 'Ocultar avatar' : 'Avatar en vivo'}</button></div>`;
+}
+function insertAvatarFlotanteVisitante(raiz) {
+  if (!esVisitanteAvatarEnVivo()) return;
+  if (S.avatar === undefined) S.avatar = true;
+  raiz.insertAdjacentHTML('beforeend', htmlAvatarClienteFlotante());
+}
+function htmlAvatarRail() {   // avatar en rail solo para vista previa del moderador si se reutiliza
+  if (esVisitanteAvatarEnVivo()) return '';
   return `<div class="avatar-rail"><button class="cab-av" data-avatar aria-expanded="${!!S.avatar}">Avatar IA <span class="pulso"></span></button>
-    ${S.avatar ? `<div class="video"><div><div class="cara" id="cara"></div>Aquí va el video de LiveAvatar</div></div><button class="escuchar" data-escuchar-texto>Escuchar narración</button>` : ''}</div>`;
+    ${S.avatar ? `${htmlAvatarTavusToolbar()}<div class="video">${htmlAvatarVideoBlock(false)}</div>` : ''}</div>`;
 }
 function renderCliente(raiz, opciones = {}) {
+  if (!opciones.preview && !visitanteVeReunion()) return renderClienteEspera(raiz);
   const rol = opciones.preview ? 'moderador' : 'cliente';
   const pos = posVista(rol); const p = PASOS[pos]; const pref = opciones.preview ? 'pv' : 'cl';
   const v = S.vistas.cliente;
@@ -1487,20 +2417,440 @@ function renderCliente(raiz, opciones = {}) {
       <button class="btn texto" data-abrir="glosario">Glosario</button><button class="btn texto" data-abrir="presentador">Preguntar al presentador</button>
       ${v.live ? `<button class="pill-vivo" data-explorar title="Explorar por mi cuenta"><span class="punto vivo"></span>Siguiendo en vivo</button>` : `<button class="btn prim" data-vivo>Volver al moderador</button>`}</div></div>
       <div class="cuerpo" id="cl-cuerpo">
-        <div class="livebar">${v.live ? '<b>Sigues al presentador</b> · sincronizado con la sesión en vivo' : `<b>Exploración individual</b> · puede revisar lo ya presentado (hasta ${esc(SECCIONES[maxSec]?.nombre || 'la sección actual')}) · <button type="button" class="btn texto" data-vivo>Volver al moderador</button>`}</div>
+        <div class="livebar">${v.live ? '<b>Sigues al presentador</b> · sincronizado con la sesión en vivo' : mensajeLivebarExploracion('cliente')}</div>
         <div class="central">${cuerpo}</div>
-        <div class="narracion-bar"><div><small>Avatar Catch narrando</small><p>${esc(textoNarracion(p))}</p></div>
+        <div class="narracion-bar"><div><small>Contexto de la sección</small><p>${esc(textoNarracion(p))}</p></div>
           <div class="ctrl"><button class="redondo" data-flecha="-1" aria-label="Paso anterior">←</button>${v.live ? '<span class="estado">Esperando al presentador</span>' : '<button type="button" class="estado" data-flecha="1">Siguiente en la sección</button>'}</div></div>
-        <div class="pregunta-ia"><label for="inIA">Pregúntale al asistente sobre lo que estás viendo.</label>
-          <div class="fila-ia"><input id="inIA" placeholder="¿Qué significa rotación no controlada?" autocomplete="off"><button class="btn prim" data-enviar-ia>Enviar</button></div><div class="resp-ia" id="respIA"></div></div>
+        ${htmlBloquePreguntaIA()}
       </div></section></div>`;
+  insertAvatarFlotanteVisitante(raiz);
   pintarGraficos(raiz, false); contarCifras(raiz);
-  if (p.tipo === 'hoja' && !peek) programarClaridadSiCorresponde('cliente', p.s);
+  if (p.tipo === 'hoja' && !peek && v.live) programarClaridadSiCorresponde('cliente', p.s);
 }
-async function enviarIA() {
-  const inp = $('#inIA'), caja = $('#respIA'); if (!inp || !inp.value.trim()) return;
-  const t = inp.value.trim(); inp.value = ''; const s = seccionActual(); registrar('ia', t.slice(0, 60), s);
-  await renderRespuestaAsistente(caja, t, s);
+function limpiarBorradorVozIA(inp) {
+  if (inp) inp.value = '';
+  baseTranscripcionIA = '';
+}
+function cajaHistorialIA() {
+  const raiz = vozRaizActiva || document.getElementById('app') || document;
+  return raiz.querySelector('[data-chat-ia-historial]');
+}
+function cajaRespuestaIA() {
+  const raiz = vozRaizActiva || document.getElementById('app') || document;
+  return raiz.querySelector('[data-resp-ia-privada]') || raiz.querySelector('#respIA') || $('#respIA');
+}
+function prepararEntradaHistorialIA(pregunta) {
+  const hist = cajaHistorialIA();
+  if (!hist) return cajaRespuestaIA();
+  hist.insertAdjacentHTML('beforeend', `<div class="msg yo">${esc(pregunta)}</div>`);
+  const caja = document.createElement('div');
+  caja.className = 'msg ia';
+  caja.innerHTML = '<span class="ia-cargando">Pensando…</span>';
+  hist.appendChild(caja);
+  hist.scrollTop = hist.scrollHeight;
+  document.querySelector('.pregunta-ia')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  return caja;
+}
+async function enviarIAPregunta(pregunta, opts) {
+  const texto = String(pregunta || '').trim();
+  if (!texto || !cajaRespuestaIA()) return;
+  const navRepetible = S.rol === 'moderador' && !!instruccionNavegacionModerador(texto);
+  if (texto === ultimaPreguntaEnviadaIA && !opts?.force && !navRepetible) return;
+  if (vozEnvioEnCurso) return;
+  vozEnvioEnCurso = true;
+  clearTimeout(vozEnvioTimer);
+  if (!opts?.keepMic) detenerVozIA();
+  else pausarReconocimientoVozIA();
+  detenerHabla();
+  ultimaPreguntaEnviadaIA = texto;
+  const s = seccionActual();
+  registrar('ia', texto.slice(0, 60), s);
+  const caja = prepararEntradaHistorialIA(texto);
+  try {
+    await renderRespuestaAsistente(caja, texto, s);
+    const hist = cajaHistorialIA();
+    if (hist) hist.scrollTop = hist.scrollHeight;
+  } finally {
+    vozEnvioEnCurso = false;
+    if (opts?.reanudarMicTrasRespuesta) programarReanudarVozIA();
+  }
+}
+async function enviarIA(opts) {
+  const inp = $('#inIA');
+  if (!inp?.value.trim()) return;
+  const pregunta = inp.value.trim();
+  limpiarBorradorVozIA(inp);
+  await enviarIAPregunta(pregunta, opts);
+}
+
+function iaSeleccionContextualHabilitada() {
+  return S.faseSesion === 'reunion_activa';
+}
+function zonaSeleccionContextual() {
+  if (!iaSeleccionContextualHabilitada()) return null;
+  if (S.rol === 'moderador') return document.querySelector('#mod-preview');
+  if (S.rol === 'movil') return document.querySelector('.movil .contenido');
+  return document.querySelector('#cl-cuerpo .central');
+}
+function metaBaseSeleccionContextual() {
+  const ctx = obtenerContextoVisual();
+  const si = ctx.sectionIndex;
+  return {
+    presentationStep: ctx.presentationStep,
+    sectionIndex: si,
+    sectionName: si !== undefined && si >= 0 ? SECCIONES[si].nombre : '',
+    slideTitle: tituloPaso(PASOS[ctx.presentationStep] || {}),
+    role: ctx.role,
+    visibleChartIds: ctx.visibleChartIds.slice(),
+  };
+}
+function seleccionContextualSigueValida(sel) {
+  if (!sel || typeof sel.presentationStep !== 'number') return false;
+  return sel.presentationStep === posVista(rolMonitorEfectivo());
+}
+let popoverSeleccionIA = null;
+let enviandoSeleccionContextualIA = false;
+function cerrarPopoverSeleccionIA() {
+  popoverSeleccionIA?.remove();
+  popoverSeleccionIA = null;
+  S.seleccionContextualPendiente = null;
+}
+function posicionarPopoverSeleccionIA(anchor) {
+  if (!popoverSeleccionIA) return;
+  const pad = 12;
+  let x;
+  let y;
+  if (anchor && typeof anchor.left === 'number') {
+    x = anchor.left + anchor.width / 2;
+    y = anchor.top;
+  } else {
+    x = anchor?.x ?? 0;
+    y = anchor?.y ?? 0;
+  }
+  const w = popoverSeleccionIA.offsetWidth || 180;
+  const h = popoverSeleccionIA.offsetHeight || 40;
+  x = Math.min(Math.max(x, pad + w / 2), window.innerWidth - pad - w / 2);
+  y = Math.max(y, pad + h + 8);
+  popoverSeleccionIA.style.left = `${x}px`;
+  popoverSeleccionIA.style.top = `${y}px`;
+}
+function mostrarPopoverSeleccionIA(anchor, payload) {
+  if (!iaSeleccionContextualHabilitada()) return;
+  cerrarPopoverSeleccionIA();
+  S.seleccionContextualPendiente = payload;
+  const el = document.createElement('div');
+  el.className = 'popover-seleccion-ia';
+  el.innerHTML =
+    '<button type="button" class="btn prim" data-preguntar-seleccion-ia>Preguntar a la IA</button>';
+  document.body.appendChild(el);
+  popoverSeleccionIA = el;
+  posicionarPopoverSeleccionIA(anchor);
+}
+function nodoEnZonaSeleccion(nodo) {
+  const zona = zonaSeleccionContextual();
+  if (!zona || !nodo) return false;
+  const el = nodo.nodeType === 1 ? nodo : nodo.parentElement;
+  return !!(el && zona.contains(el));
+}
+function seleccionTextoInvalidaParaIA(range) {
+  const el = range.commonAncestorContainer.nodeType === 1
+    ? range.commonAncestorContainer
+    : range.commonAncestorContainer.parentElement;
+  if (!el) return true;
+  if (el.closest('.pregunta-ia, .popover-seleccion-ia, .velo, .notas, .mod-col, .acciones, input, textarea, select, button, .rail, .cabeza, .narracion-bar, .livebar')) {
+    return true;
+  }
+  return !nodoEnZonaSeleccion(el);
+}
+function detectarSeleccionTextoIA() {
+  if (!iaSeleccionContextualHabilitada()) return;
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed || sel.rangeCount < 1) return;
+  const range = sel.getRangeAt(0);
+  if (seleccionTextoInvalidaParaIA(range)) {
+    if (!popoverSeleccionIA) cerrarPopoverSeleccionIA();
+    return;
+  }
+  const text = sel.toString().replace(/\s+/g, ' ').trim();
+  if (text.length < 2) return;
+  const rect = range.getBoundingClientRect();
+  if (!rect.width && !rect.height) return;
+  const meta = metaBaseSeleccionContextual();
+  mostrarPopoverSeleccionIA(rect, Object.assign(meta, { kind: 'text', contentType: 'texto', selection: text }));
+}
+function tipoElementoGrafica(chart, ds) {
+  const t = ds.type || chart.config.type;
+  if (t === 'pie' || t === 'doughnut') return 'segmento';
+  if (t === 'scatter' || t === 'bubble') return 'punto';
+  if (t === 'radar') return 'dimensión';
+  if (t === 'matrix') return 'celda';
+  if (t === 'line' && !esLineaReferencia(ds)) return 'serie';
+  if (chart.config.options?.indexAxis === 'y') return 'barra';
+  return 'categoría';
+}
+function valorVisibleGrafica(g, chart, el) {
+  const ds = chart.data.datasets[el.datasetIndex];
+  const raw = ds.data[el.index];
+  const etiqueta = raw?.id || chart.data.labels?.[el.index] || ds.label || '';
+  const cb = chart.options.plugins.tooltip.callbacks?.label;
+  let valor = cb
+    ? cb({ raw, dataset: ds, label: etiqueta, parsed: { y: raw, x: raw } }).trim()
+    : String(raw ?? '');
+  valor = valor.replace(/^.*?:\s*/, '').trim();
+  return valor;
+}
+function construirSeleccionGrafica(g, chart, el, ev) {
+  const ref = metaResaltadoDesdeElemento(g, chart, el);
+  const ds = chart.data.datasets[el.datasetIndex];
+  const contentType = tipoElementoGrafica(chart, ds);
+  const value = valorVisibleGrafica(g, chart, el);
+  const meta = metaBaseSeleccionContextual();
+  return Object.assign(meta, {
+    kind: 'chart',
+    contentType,
+    chartId: g.id,
+    chartTitle: g.titulo,
+    category: ref.category,
+    seriesKey: ref.seriesKey || '',
+    datasetIndex: ref.datasetIndex,
+    index: ref.index,
+    value: value || undefined,
+    visibleText: `${ref.seriesKey ? ref.seriesKey + ' · ' : ''}${ref.category}${value ? ': ' + value : ''}`,
+  });
+}
+function preguntaDesdeSeleccionContextual(sel) {
+  const paso = sel.presentationStep + 1;
+  const sec = sel.sectionName ? `, sección «${sel.sectionName}»` : '';
+  const diapo = sel.slideTitle ? ` («${sel.slideTitle}»)` : '';
+  if (sel.kind === 'text') {
+    return `En la diapositiva actual (paso ${paso}${sec})${diapo}, seleccioné el texto: «${sel.selection}». ¿Qué significa en este contexto y qué datos de la gráfica o la presentación lo respaldan?`;
+  }
+  const graf = sel.chartTitle ? `la gráfica «${sel.chartTitle}» (${sel.chartId})` : `la gráfica ${sel.chartId}`;
+  const elem = sel.category || 'el elemento seleccionado';
+  const serie = sel.seriesKey ? `, serie «${sel.seriesKey}»` : '';
+  const val = sel.value ? ` Valor visible: ${sel.value}.` : '';
+  const tipo = sel.contentType || 'elemento';
+  return `En la diapositiva actual (paso ${paso}${sec})${diapo}, en ${graf}, seleccioné ${tipo} «${elem}»${serie}.${val} ¿Qué representa y cómo debe interpretarse según los datos de esta visualización?`;
+}
+async function enviarSeleccionContextualIA() {
+  if (enviandoSeleccionContextualIA) return;
+  const sel = S.seleccionContextualPendiente;
+  if (!sel || !seleccionContextualSigueValida(sel)) {
+    cerrarPopoverSeleccionIA();
+    return;
+  }
+  if (!cajaRespuestaIA()) {
+    cerrarPopoverSeleccionIA();
+    return;
+  }
+  enviandoSeleccionContextualIA = true;
+  cerrarPopoverSeleccionIA();
+  try { window.getSelection()?.removeAllRanges(); } catch { /* ignore */ }
+  try {
+    const pregunta = preguntaDesdeSeleccionContextual(sel);
+    await enviarIAPregunta(pregunta, { force: true });
+  } finally {
+    enviandoSeleccionContextualIA = false;
+  }
+}
+
+let reconocimientoIA = null;
+let escuchandoIA = false;
+let baseTranscripcionIA = '';
+let micConversacionDeseada = false;
+let vozEnvioTimer = null;
+let vozEnvioEnCurso = false;
+let ultimaPreguntaEnviadaIA = '';
+let vozRaizActiva = null;
+const IA_VOZ_AUTO_ENVIO_KEY = 'catch-ia-voz-auto-envio';
+function leerAutoEnvioVozIA() {
+  try {
+    const v = sessionStorage.getItem(IA_VOZ_AUTO_ENVIO_KEY);
+    if (v === null) return S.rol === 'moderador';
+    return v === '1';
+  } catch { return S.rol === 'moderador'; }
+}
+function guardarAutoEnvioVozIA(on) {
+  try { sessionStorage.setItem(IA_VOZ_AUTO_ENVIO_KEY, on ? '1' : '0'); } catch { /* ignore */ }
+  sincronizarUiAutoEnvioVozIA();
+}
+function sincronizarUiAutoEnvioVozIA() {
+  const on = leerAutoEnvioVozIA();
+  document.querySelectorAll('[data-ia-voz-auto-envio]').forEach(el => { el.checked = on; });
+}
+function programarEnvioVozDesdeMic() {
+  if (!leerAutoEnvioVozIA()) return;
+  clearTimeout(vozEnvioTimer);
+  vozEnvioTimer = setTimeout(() => {
+    if (iaRespuestaActiva > 0 || vozEnvioEnCurso) return;
+    const inp = $('#inIA');
+    const t = inp?.value?.trim();
+    const navRepetible = S.rol === 'moderador' && !!instruccionNavegacionModerador(t);
+    if (!t || (t === ultimaPreguntaEnviadaIA && !navRepetible)) return;
+    void enviarIA({ keepMic: true, reanudarMicTrasRespuesta: true });
+  }, 1200);
+}
+function pausarReconocimientoVozIA() {
+  if (!reconocimientoIA) return;
+  try { reconocimientoIA.stop(); } catch (_) {}
+  reconocimientoIA = null;
+  escuchandoIA = false;
+  uiEscuchandoVozIA(document, false);
+}
+function programarReanudarVozIA() {
+  if (!micConversacionDeseada || !leerAutoEnvioVozIA() || !vozRaizActiva) return;
+  setTimeout(() => {
+    if (iaRespuestaActiva > 0 || escuchandoIA) return;
+    iniciarEscuchaVozIA(vozRaizActiva);
+  }, 400);
+}
+
+function soporteReconocimientoVozIA() {
+  return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+}
+function uiEscuchandoVozIA(raiz, activo) {
+  const root = raiz || document;
+  root.querySelectorAll('[data-ia-mic]').forEach(btn => {
+    btn.classList.toggle('escuchando', !!activo);
+    btn.setAttribute('aria-pressed', String(!!activo));
+    btn.setAttribute('aria-label', activo ? 'Detener dictado por voz' : 'Dictar pregunta por voz');
+    btn.title = activo ? 'Detener dictado' : 'Dictar pregunta';
+  });
+  root.querySelectorAll('#iaVozLive').forEach(el => { el.hidden = !activo; });
+}
+function detenerVozIA() {
+  micConversacionDeseada = false;
+  clearTimeout(vozEnvioTimer);
+  if (!reconocimientoIA && !escuchandoIA) return;
+  try { reconocimientoIA?.stop(); } catch (_) {}
+  reconocimientoIA = null;
+  escuchandoIA = false;
+  uiEscuchandoVozIA(document, false);
+}
+function raizVozIA() {
+  return vozRaizActiva || document.getElementById('app') || document;
+}
+function alternarMicVozIA() {
+  const raiz = raizVozIA();
+  if (escuchandoIA) {
+    detenerVozIA();
+    return;
+  }
+  if (S.rol === 'moderador') {
+    micConversacionDeseada = true;
+    if (!leerAutoEnvioVozIA()) guardarAutoEnvioVozIA(true);
+  } else {
+    micConversacionDeseada = leerAutoEnvioVozIA();
+  }
+  vozRaizActiva = raiz;
+  iniciarEscuchaVozIA(raiz);
+}
+function iniciarEscuchaVozIA(raiz) {
+  const inp = raiz.querySelector('#inIA');
+  const aviso = raiz.querySelector('#iaVozAviso');
+  const live = raiz.querySelector('#iaVozLive');
+  if (!inp || escuchandoIA) return;
+  const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognitionCtor) return;
+  const rec = new SpeechRecognitionCtor();
+  reconocimientoIA = rec;
+  rec.lang = 'es-MX';
+  rec.continuous = true;
+  rec.interimResults = true;
+  baseTranscripcionIA = (inp.value || '').trim();
+  rec.onstart = () => {
+    escuchandoIA = true;
+    uiEscuchandoVozIA(raiz, true);
+    mostrarAvisoVozIA(aviso, '');
+    if (live) live.hidden = false;
+  };
+  rec.onend = () => {
+    escuchandoIA = false;
+    uiEscuchandoVozIA(raiz, false);
+    if (reconocimientoIA === rec) reconocimientoIA = null;
+    if (micConversacionDeseada && leerAutoEnvioVozIA() && iaRespuestaActiva === 0) {
+      setTimeout(() => {
+        if (micConversacionDeseada && !escuchandoIA) iniciarEscuchaVozIA(raiz);
+      }, 300);
+    }
+  };
+  rec.onerror = ev => {
+    if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') {
+      mostrarAvisoVozIA(aviso, 'Permiso de micrófono denegado. Puede escribir la pregunta.');
+      micConversacionDeseada = false;
+    } else if (ev.error !== 'aborted' && ev.error !== 'no-speech') {
+      mostrarAvisoVozIA(aviso, 'No se pudo escuchar. Escriba la pregunta o intente de nuevo.');
+    }
+  };
+  rec.onresult = ev => {
+    let finalTxt = '';
+    let interimTxt = '';
+    for (let i = ev.resultIndex; i < ev.results.length; i++) {
+      const trozo = ev.results[i][0].transcript;
+      if (ev.results[i].isFinal) finalTxt += trozo;
+      else interimTxt += trozo;
+    }
+    if (finalTxt) {
+      const f = finalTxt.trim();
+      if (!f) return;
+      baseTranscripcionIA = baseTranscripcionIA ? `${baseTranscripcionIA.trim()} ${f}` : f;
+      inp.value = baseTranscripcionIA;
+      programarEnvioVozDesdeMic();
+    } else if (interimTxt) {
+      const base = baseTranscripcionIA.trim();
+      inp.value = base ? `${base} ${interimTxt.trim()}` : interimTxt.trim();
+    }
+  };
+  try {
+    rec.start();
+  } catch (_) {
+    mostrarAvisoVozIA(aviso, 'No se pudo iniciar el micrófono. Puede escribir la pregunta.');
+    detenerVozIA();
+  }
+}
+function mostrarAvisoVozIA(aviso, msg) {
+  if (!aviso) return;
+  aviso.textContent = msg || '';
+}
+function enlazarVozIA(raiz) {
+  if (S.rol !== 'cliente' && S.rol !== 'moderador') {
+    raiz.querySelectorAll('[data-ia-voz]').forEach(el => el.remove());
+    return;
+  }
+  const bloque = raiz.querySelector('[data-ia-voz]');
+  const inp = raiz.querySelector('#inIA');
+  const aviso = raiz.querySelector('#iaVozAviso');
+  if (!inp || !bloque) return;
+  vozRaizActiva = raiz;
+  raiz.querySelectorAll('[data-ia-hablar-auto]').forEach(el => {
+    if (el.dataset.iaAutoBound) return;
+    el.dataset.iaAutoBound = '1';
+    el.addEventListener('change', () => guardarAutoTtsIA(el.checked));
+  });
+  raiz.querySelectorAll('[data-ia-voz-auto-envio]').forEach(el => {
+    if (el.dataset.iaVozAutoBound) return;
+    el.dataset.iaVozAutoBound = '1';
+    el.addEventListener('change', () => guardarAutoEnvioVozIA(el.checked));
+  });
+  if (!soporteReconocimientoVozIA()) {
+    raiz.querySelectorAll('[data-ia-mic]').forEach(btn => {
+      btn.disabled = true;
+      btn.title = 'Reconocimiento de voz no disponible en este navegador';
+    });
+    mostrarAvisoVozIA(aviso, 'El dictado por voz no está disponible aquí; puede escribir la pregunta.');
+    return;
+  }
+  raiz.querySelectorAll('[data-ia-mic]').forEach(btn => {
+    if (btn.dataset.iaMicBound) return;
+    btn.dataset.iaMicBound = '1';
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      vozRaizActiva = raiz;
+      alternarMicVozIA();
+    });
+  });
+  sincronizarUiAutoEnvioVozIA();
+  uiEscuchandoVozIA(document, escuchandoIA);
 }
 
 function contarCifras(raiz) {   // la cifra grande cuenta desde 0: el único movimiento de la escena
@@ -1517,25 +2867,189 @@ function contarCifras(raiz) {   // la cifra grande cuenta desde 0: el único mov
 
 // ======================= vista del celular =======================
 function renderMovil(raiz, real) {
+  if (!visitanteVeReunion()) {
+    raiz.innerHTML = `<div class="${real ? '' : 'movil-marco'}"><div class="movil ${real ? 'real' : ''}"><header><div class="linea"><span>Catch · Monitor ${esc(DATOS.edicion)}</span><span>En espera</span></div>
+      <h2>Bienvenido a Catch</h2></header><div class="contenido espera-cliente" style="min-height:280px"><span class="espera-pulso"></span><p class="sub" style="color:var(--tinta);font-weight:600">Esperando el inicio de la reunión</p></div></div></div>`;
+    insertAvatarFlotanteVisitante(raiz);
+    return;
+  }
   const v = S.vistas.movil; const p = PASOS[posVista('movil')];
   const explorando = !v.live;
   let cont = '';
   const peek = v.peekExplica;
   const pMostrar = peek ? { tipo: 'explica', s: peek.s, g: peek.g } : p;
   if (p.tipo === 'inicio') cont = `<p class="lede">Bienvenido. Desde aquí sigue la presentación, hace preguntas anónimas y consulta al asistente.</p>`;
-  else if (p.tipo === 'cierre') cont = `<p class="lede">Gracias por participar. Estas son las respuestas a las preguntas de la sala.</p>${listaRespuestas()}`;
+  else if (p.tipo === 'cierre') cont = `<p class="lede">Gracias por participar. Estas son las respuestas a las preguntas de la sala.</p>${listaRespuestas()}${htmlCierreDescargasCliente()}`;
   else cont = (peek ? `<div class="hoja-detalle-nav"><button type="button" class="btn prim" data-volver-hoja>← Volver a hoja completa</button></div>` : '') + contenidoPaso(pMostrar, 'mv', !explorando && !peek, explorando, !!peek);
   raiz.innerHTML = `<div class="${real ? '' : 'movil-marco'}"><div class="movil ${real ? 'real' : ''}"><header><div class="linea"><span>Catch · Monitor ${esc(DATOS.edicion)}</span><span>${v.live ? '● En vivo' : 'Explorando'}</span></div>
     <h2>${esc(p.s !== undefined ? SECCIONES[p.s].nombre : p.tipo === 'cierre' ? 'Cierre' : 'Inicio')}</h2><p>${esc(tituloPaso(p))}</p></header>
     <div class="contenido"><label class="interruptor"><input type="checkbox" data-seguir ${v.live ? 'checked' : ''}> Seguir al moderador</label>
     ${v.live ? '' : `<div class="fila" style="justify-content:space-between;margin:0 0 10px;flex-wrap:wrap;gap:8px"><button type="button" class="btn prim" data-vivo>Volver al moderador</button><button type="button" class="btn" data-mv="-1">Anterior</button><button type="button" class="btn" data-mv="1">Siguiente</button></div>`}${cont}</div>
     <div class="acciones"><button data-abrir="presentador">Preguntar al presentador</button><button data-abrir="ia">Preguntar al avatar</button><button data-abrir="glosario">Glosario</button></div></div></div>`;
+  insertAvatarFlotanteVisitante(raiz);
   pintarGraficos(raiz, true); contarCifras(raiz);
-  if (p.tipo === 'hoja' && !peek) programarClaridadSiCorresponde('movil', p.s);
+  if (p.tipo === 'hoja' && !peek && v.live) programarClaridadSiCorresponde('movil', p.s);
 }
 
 // ======================= vista del moderador =======================
+function htmlModeradorTabs(pendientes, vacio) {
+  const tabs = [['preguntas', 'Preguntas', vacio ? 0 : pendientes], ['intereses', 'Intereses', 0], ['claridad', 'Claridad', 0]];
+  const lista = vacio
+    ? '<p class="vacio">Las preguntas, intereses y claridad estarán disponibles cuando comience la reunión.</p>'
+    : (S.tabMod === 'preguntas' ? panelPreguntas() : S.tabMod === 'intereses' ? panelIntereses() : panelClaridad());
+  return `<aside class="mod-col"><div class="tabs" role="tablist">${tabs.map(([k, l, b]) => `<button role="tab" data-tab="${k}" aria-selected="${S.tabMod === k}" ${vacio ? 'disabled' : ''}>${l}${b ? `<span class="badge">${b}</span>` : ''}</button>`).join('')}</div>
+     <div class="lista">${lista}</div></aside>`;
+}
+function renderModeradorPreparacion(raiz) {
+  const archivo = S.prepArchivoNombre ? `<span class="sub">Archivo seleccionado: ${esc(S.prepArchivoNombre)} (solo referencia visual)</span>` : '';
+  raiz.innerHTML = `<div class="moderador">
+   <aside class="mod-col"><h3>Guion de la sesión</h3><div class="prep-vacio"><p>El guion y las secciones del informe aparecerán después de preparar la sesión.</p></div></aside>
+   <section class="mod-centro"><div class="titulo"><h2>Preparación</h2><span class="leyenda-tuya">Antes de la reunión</span></div>
+    <div class="pantalla"><div class="barra"><span>Vista previa</span><span>${esc(DATOS.edicion)}</span></div>
+      <div class="dentro prep-centro">
+        <h2>Bienvenido a Catch</h2>
+        <p class="sub">Prepara la información para iniciar tu reunión. Puedes continuar sin subir archivos; se usará el informe de demostración.</p>
+        <label class="prep-upload"><input type="file" data-prep-archivo accept=".csv,.xlsx,.xls,.json,.pdf,.txt"><strong>Subir base de datos o información</strong><span>Arrastre un archivo o haga clic para seleccionar (opcional)</span></label>
+        ${archivo}
+        <button type="button" class="btn prim" data-prep-siguiente ${S.generacionInformeEnCurso ? 'disabled' : ''}>Siguiente</button>
+      </div></div>
+    <div class="notas"><h4>Notas para el moderador</h4><p style="margin:0">Cuando pulse «Siguiente», Catch simulará la generación del informe y cargará el dashboard de demostración. Después podrá iniciar la reunión para los participantes.</p></div>
+   </section>
+   ${htmlModeradorTabs(0, true)}</div>`;
+  raiz.insertAdjacentHTML('beforeend', htmlAvatar(PASOS[0]));
+}
+function renderModeradorGenerando(raiz) {
+  const msg = esc(S.mensajeGeneracionInforme || 'Generando informe…');
+  raiz.innerHTML = `<div class="moderador">
+   <aside class="mod-col"><h3>Guion de la sesión</h3><div class="prep-vacio"><p>Organizando el informe…</p></div></aside>
+   <section class="mod-centro"><div class="titulo"><h2>Generando informe</h2></div>
+    <div class="pantalla"><div class="dentro prep-gen" role="status" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Generando informe…</p>
+      <p class="sub">${msg}</p>
+    </div></div>
+   </section>
+   ${htmlModeradorTabs(0, true)}</div>`;
+  raiz.insertAdjacentHTML('beforeend', htmlAvatar(PASOS[0]));
+}
+function htmlGuionAvatarInterno() {
+  const bloques = [];
+  bloques.push(`<div class="guion-bloque-mod"><strong>Inicio</strong><ul>
+    <li><span>Momento</span>Al iniciar la reunión, paso de bienvenida y agenda.</li>
+    <li><span>Visualización</span>Portada con las secciones del monitor de demostración.</li>
+    <li><span>Guion</span>«Bienvenidos. Revisaremos con datos de demostración cómo se compara su empresa con el mercado de referencia, sección por sección.»</li></ul></div>`);
+  SECCIONES.forEach((s, si) => {
+    const n = si + 1;
+    const g0 = s.graficos[0], g1 = s.graficos[1] || s.graficos[0];
+    bloques.push(`<div class="guion-bloque-mod"><strong>Sección ${n} — ${esc(s.nombre)}</strong><ul>
+      <li><span>Momento</span>Primera gráfica de la sección.</li>
+      <li><span>Visualización</span>${esc(g0.titulo)}</li>
+      <li><span>Guion</span>«Comencemos con ${esc(s.nombre)}. ${esc(g0.nota)}»</li></ul></div>`);
+    if (s.graficos.length > 1) {
+      bloques.push(`<div class="guion-bloque-mod"><strong>Sección ${n} — ${esc(s.nombre)} (continuación)</strong><ul>
+        <li><span>Momento</span>Segunda visualización de la sección.</li>
+        <li><span>Visualización</span>${esc(g1.titulo)}</li>
+        <li><span>Guion</span>«Siguiente ángulo: presentamos ${esc(g1.titulo)}.»</li></ul></div>`);
+    }
+    bloques.push(`<div class="guion-bloque-mod"><strong>Hoja completa — ${esc(s.nombre)}</strong><ul>
+      <li><span>Momento</span>Al cerrar la sección, hoja completa e índice de gráficas.</li>
+      <li><span>Visualización</span>Índice de la sección.</li>
+      <li><span>Guion</span>«Abrimos la hoja completa de ${esc(s.nombre)} para ubicar cada gráfica en contexto.»</li></ul></div>`);
+    bloques.push(`<div class="guion-bloque-mod"><strong>Pausa para preguntas</strong><ul>
+      <li><span>Momento</span>Tras la sección ${n}, antes del siguiente capítulo.</li>
+      <li><span>Guion</span>«Antes de continuar, ¿tienen alguna pregunta sobre lo que acabamos de revisar?»</li></ul></div>`);
+    if (si < SECCIONES.length - 1) {
+      const sig = SECCIONES[si + 1];
+      bloques.push(`<div class="guion-bloque-mod guion-bloque-mod--trans"><strong>Transición</strong><p style="margin:8px 0 0">«Gracias. Pasemos ahora a ${esc(sig.nombre)}.»</p></div>`);
+    }
+  });
+  bloques.push(`<div class="guion-bloque-mod"><strong>Cierre</strong><ul>
+    <li><span>Momento</span>Paso final de la reunión.</li>
+    <li><span>Visualización</span>Resumen y preguntas anónimas.</li>
+    <li><span>Guion</span>«Repasemos los puntos más relevantes y abrimos espacio para las preguntas de la sala. Gracias por su tiempo.»</li></ul></div>`);
+  return bloques.join('');
+}
+function htmlDiagNarracionPrueba() {
+  if (S.rol !== 'moderador' || typeof window.planMonitorNarration !== 'function') return '';
+  return `<div class="diag-narracion" data-diag-narracion>
+    <p>Modo prueba · envía <code>speakText</code> del plan a Tavus (sin cambiar paso ni sincronización).</p>
+    <button type="button" class="btn suave" data-probar-narracion>Probar narración en Tavus (paso actual)</button>
+    <pre class="diag-narracion-out" data-diag-narracion-out hidden></pre>
+  </div>`;
+}
+function idEcoPlanNarracion(pos) {
+  return `plan-narr-${typeof pos === 'number' ? pos : S.pos}`;
+}
+function probarNarracionPlanEnTavus() {
+  if (S.rol !== 'moderador') return;
+  const fn = window.planMonitorNarration;
+  const out = document.querySelector('[data-diag-narracion-out]');
+  if (typeof fn !== 'function') {
+    console.warn('[Catch narración prueba] planMonitorNarration no está disponible');
+    if (out) { out.hidden = false; out.textContent = 'planMonitorNarration no está disponible en esta vista.'; }
+    return;
+  }
+  const posAntes = S.pos;
+  const plan = fn(S.pos);
+  sincronizarEsperaNarracion();
+  const texto = plan && typeof plan.speakText === 'string' ? plan.speakText.trim() : '';
+  const diag = {
+    stepKind: plan.stepKind,
+    stepIndex: plan.stepIndex,
+    speakText: plan.speakText,
+    highlightRef: plan.highlightRef,
+    blockAdvance: plan.blockAdvance,
+    awaitingModerator: S.narracionEsperaAutorizacion,
+    htmlPasoTipo: PASOS[S.pos]?.tipo ?? null,
+    htmlPos: S.pos,
+    posUnchanged: S.pos === posAntes,
+    tavus: { sent: false, reason: 'pending' },
+  };
+  if (!texto) {
+    diag.tavus = { sent: false, reason: 'empty_speak_text' };
+    console.warn('[Catch narración prueba] speakText vacío en paso', S.pos, plan);
+    if (out) { out.hidden = false; out.textContent = JSON.stringify(diag, null, 2); }
+    return;
+  }
+  const api = window.__CATCH_TAVUS_CVI__;
+  if (!api?.isActive?.()) {
+    const status = typeof api?.getStatus === 'function' ? api.getStatus() : 'no_api';
+    diag.tavus = { sent: false, reason: 'tavus_inactive', status };
+    console.warn('[Catch narración prueba] Tavus no conectado', status);
+    if (out) { out.hidden = false; out.textContent = JSON.stringify(diag, null, 2); }
+    return;
+  }
+  const echoId = idEcoPlanNarracion(S.pos);
+  const execId = iniciarNarracionRuntime(S.pos, echoId);
+  const segments = Array.isArray(plan.segments) && plan.segments.length
+    ? plan.segments
+    : [{ id: 'lead', text: texto, highlight: null }];
+  const first = comenzarNarracionPorSegmentos(S.pos, execId, segments);
+  const sent = first ? presentarGeminiEnFrida(first.text, first.echoId) : false;
+  if (!sent) {
+    S.narracionRuntime = { execId: null, status: 'idle', stepIndex: -1, echoId: null, startedAt: null, paused: false, errorReason: null };
+  }
+  diag.narrationRuntime = S.narracionRuntime;
+  diag.autoAdvanceBlocked = intentarAvanceDesdeNarracion(execId) === false;
+  diag.tavus = {
+    sent: !!sent,
+    echoId,
+    execId: sent ? execId : null,
+    reason: sent ? 'echo_sent' : 'echo_failed',
+    textChars: texto.length,
+  };
+  console.log('[Catch narración prueba]', diag);
+  if (out) {
+    out.hidden = false;
+    out.textContent = JSON.stringify(diag, null, 2);
+  }
+}
 function renderModerador(raiz) {
+  if (S.faseSesion === 'preparacion') return renderModeradorPreparacion(raiz);
+  if (S.faseSesion === 'generando_informe') return renderModeradorGenerando(raiz);
+  renderModeradorActivo(raiz);
+}
+function renderModeradorActivo(raiz) {
   if (PASOS[S.pos]?.tipo !== 'hoja') S.peekPreview = null;
   const p = PASOS[S.pos]; const sig = PASOS[S.pos + 1];
   const pendientes = S.cola.filter(q => q.status === 'pending').length;
@@ -1548,20 +3062,40 @@ function renderModerador(raiz) {
   const g = p.tipo === 'explica' ? SECCIONES[p.s].graficos[p.g] : null;
   raiz.innerHTML = `<div class="moderador">
    <aside class="mod-col"><h3>Guion de la sesión</h3><ul class="pasos">${lista}</ul></aside>
-   <section class="mod-centro"><div class="titulo"><h2>${esc(tituloPaso(p))}</h2><span class="leyenda-tuya">Paso ${S.pos + 1} de ${PASOS.length} · avance con ← →</span>
-      <span style="margin-left:auto"></span><button class="btn" data-exportar>${''}Exportar PDF</button></div>
-    <div class="pantalla"><div class="barra"><span>Lo que ve el cliente</span><span>${esc(DATOS.edicion)} · Su empresa = ${CLIENTE}</span></div><div class="dentro" id="mod-preview"></div></div>
-    <div class="controles"><button class="btn" data-mod="-1">Anterior</button><button class="btn prim" data-mod="1">Siguiente</button>
+   <section class="mod-centro"><div class="titulo"><h2>${esc(tituloPaso(p))}</h2><span class="leyenda-tuya">Paso ${S.pos + 1} de ${PASOS.length} · ${presentadorEnRevisionPrevia() ? 'previsualización local (no compartida)' : 'avance con ← →'}</span>
+      </div>
+    ${presentadorEnRevisionPrevia() ? `<div class="banner-iniciar-reunion"><p><strong>Informe listo.</strong> Use el guion a la izquierda para previsualizar. Los participantes siguen en espera.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center"><button type="button" class="btn" data-descargar-guion-pdf>Descargar guion en PDF</button>
+      <button type="button" class="btn prim" data-iniciar-reunion>Iniciar reunión</button></div></div>` : ''}
+    <div class="${clasePantallaClientePreview()}">${htmlBarraLoQueVeCliente()}<div class="dentro" id="mod-preview"></div></div>
+    <div class="controles"><button class="btn" data-mod="-1">Anterior</button><button class="btn prim" data-mod="1" ${S.narracionEsperaAutorizacion ? 'disabled' : ''}>Siguiente</button>
+      ${p.tipo === 'hoja' && S.narracionEsperaAutorizacion ? `<button type="button" class="btn prim" data-continuar-seccion>Continuar sección</button>` : ''}
       ${p.s !== undefined ? `<button class="btn suave" data-saltar="${PASOS.findIndex(q => q.tipo === 'hoja' && q.s === p.s)}">Mostrar hoja completa</button>` : ''}
       <span class="siguiente">${sig ? 'Sigue: ' + esc(tituloPaso(sig)) : 'Fin de la sesión'}</span></div>
+    ${htmlEstadoNarracionPaso()}
+    ${htmlDiagNarracionPrueba()}
     <div class="notas"><h4>Notas para el moderador</h4>${g ? `<p style="margin:0 0 6px">${esc(g.nota)}</p><p class="sub" style="margin:0">Términos que conviene aclarar: ${g.glos.map(esc).join(', ')}.</p>`
       : p.tipo === 'hoja' ? '<p style="margin:0">Al mostrar la hoja, el cliente ve los gráficos en miniatura y se abre la ventana «¿Quedó claro?» (si aún no respondió). Revise la pestaña «Claridad» antes de pasar a la siguiente sección.</p>'
-      : p.tipo === 'cierre' ? '<p style="margin:0">Responda las preguntas anónimas (pestaña «Preguntas») y exporte el PDF de la sesión.</p>' : '<p style="margin:0">Presente la agenda y explique que las preguntas son anónimas y se responden al final.</p>'}</div>
+      : p.tipo === 'cierre' ? '<p style="margin:0">Responda las preguntas anónimas (pestaña «Preguntas»). Al cierre, use los informes PDF debajo (feedback interno Catch y versión para el cliente).</p>' : '<p style="margin:0">Presente la agenda y explique que las preguntas son anónimas y se responden al final.</p>'}</div>
+    ${p.tipo === 'cierre' ? `<div class="cierre-pdf-moderador">${htmlCierreDescargasModerador()}</div>` : ''}
+    ${visitanteVeReunion() ? htmlBloquePreguntaIA() : ''}
    </section>
-   <aside class="mod-col"><div class="tabs" role="tablist">${[['preguntas', 'Preguntas', pendientes], ['intereses', 'Intereses'], ['claridad', 'Claridad']].map(([k, l, b]) => `<button role="tab" data-tab="${k}" aria-selected="${S.tabMod === k}">${l}${b ? `<span class="badge">${b}</span>` : ''}</button>`).join('')}</div>
-     <div class="lista">${S.tabMod === 'preguntas' ? panelPreguntas() : S.tabMod === 'intereses' ? panelIntereses() : panelClaridad()}</div></aside></div>`;
-  renderCliente($('#mod-preview', raiz), {preview: true});
+   ${htmlModeradorTabs(pendientes, false)}</div>`;
+  if (visitanteVeReunion() || presentadorEnRevisionPrevia()) renderCliente($('#mod-preview', raiz), {preview: true});
   raiz.insertAdjacentHTML('beforeend', htmlAvatar(p));   // la IA presenta: el avatar también está en la vista del moderador
+}
+function renderClienteEspera(raiz) {
+  raiz.innerHTML = `<div class="cliente"><nav class="rail" aria-label="Secciones"><div class="marca">Catch<small>CONSULTING</small></div>
+    <div class="prep-vacio" style="padding:16px 12px"><p>El guion estará disponible cuando comience la reunión.</p></div>
+    <div class="pie">HR Toolkit · Monitor de Mercado Laboral</div></nav>
+    <section class="escena"><div class="cabeza"><span class="contexto">Monitor de Mercado Laboral · ${esc(DATOS.edicion)}</span></div>
+      <div class="cuerpo" id="cl-cuerpo"><div class="central espera-cliente">
+        <h2>Bienvenido a Catch</h2>
+        <span class="espera-pulso" aria-hidden="true"></span>
+        <p class="sub" style="margin:0;font-size:16px;color:var(--tinta)">Esperando el inicio de la reunión</p>
+        <p class="sub" style="margin:8px 0 0;max-width:28em">El presentador está preparando la sesión. Esta pantalla cambiará automáticamente cuando la reunión comience.</p>
+      </div></div></section></div>`;
+  insertAvatarFlotanteVisitante(raiz);
 }
 function panelPreguntas() {
   if (!S.cola.length) return '<p class="vacio">Cola vacía. Llegan aquí preguntas escritas, escalaciones del asistente, turnos orales y señales de duda.</p>';
@@ -1597,10 +3131,23 @@ function listaRespuestas() {
   const r = S.cola.filter(q => q.respuesta && q.status === 'attended');
   return r.length ? r.map(q => `<div class="pregunta"><div class="meta">${esc(q.seccionNombre)} · ${esc(COLA_TIPO[q.kind] || '')}</div>${esc(q.texto)}<div class="resp">${esc(q.respuesta)}</div></div>`).join('') : '<p class="vacio">El moderador aún no publica respuestas.</p>';
 }
+function htmlCierreDescargasCliente() {
+  return `<div class="fila cierre-pdf" style="flex-direction:column;align-items:flex-start;gap:10px;margin-top:18px">
+    <p class="sub" style="margin:0">Resumen de la sesión para su archivo.</p>
+    <button type="button" class="btn prim" data-exportar-cliente>Descargar PDF para el cliente</button>
+  </div>`;
+}
+function htmlCierreDescargasModerador() {
+  return `<div class="fila cierre-pdf" style="flex-direction:column;align-items:flex-start;gap:10px;margin-top:12px">
+    <p class="sub" style="margin:0">Informes al cierre. Contenido de demostración donde aún no hay integración definitiva con datos de reunión.</p>
+    <button type="button" class="btn" data-exportar-catch>Descargar PDF de feedback de Catch</button>
+    <button type="button" class="btn prim" data-exportar-cliente>Descargar PDF para el cliente</button>
+  </div>`;
+}
 function htmlCierre() {
   const filas = SECCIONES.map((s, i) => { const c = S.claridad[i]; return `<div><b>${esc(s.nombre)}</b><span>${c ? `${c.claro} «quedó claro» · ${c.duda} con dudas` : 'Sin respuesta de claridad'}</span></div>`; }).join('');
   return `<div class="portada"><h2 class="grande">Gracias. Así quedó la sesión</h2><div class="agenda">${filas}</div><h3 style="margin-top:32px">Preguntas de la sala</h3>${listaRespuestas()}
-    <div class="fila" style="justify-content:flex-start;margin-top:14px"><button class="btn prim" data-exportar>Exportar el informe en PDF</button></div></div>`;
+    ${htmlCierreDescargasCliente()}</div>`;
 }
 
 // ======================= ventanas =======================
@@ -1637,42 +3184,47 @@ function marcarClaridadRespondida(rol, s) {
   } catch (e) {}
 }
 function hidratarRespuestasClaridad() {
-  const key = claridadStorageKey();
-  if (!key) return;
-  try {
-    const map = JSON.parse(localStorage.getItem(key) || '{}');
-    Object.entries(map).forEach(([s, ok]) => {
-      if (!ok) return;
-      S.vistas.cliente.resp[+s] = true;
-      S.vistas.movil.resp[+s] = true;
-    });
-  } catch (e) {}
+  /* Los votos se persisten para el presentador; no bloquean el modal del cliente. */
+}
+function visitanteSigueEnVivo(rol) {
+  return Boolean(vistaParticipante(rol)?.live);
 }
 function programarClaridadSiCorresponde(rol, s) {
-  if (claridadRespondida(rol, s)) return;
-  const token = rol + ':' + s;
+  if (rol !== 'cliente' && rol !== 'movil') return;
+  if (S.rol !== rol) return;
+  if (!visitanteSigueEnVivo(rol)) return;
+  if (vistaParticipante(rol).peekExplica) return;
+  const token = rol + ':' + s + ':' + S.pos;
   if (claridadAbierta === rol + s || claridadCola === token) return;
+  if ($('#capaModal').innerHTML) return;
   claridadCola = token;
   requestAnimationFrame(() => {
     claridadCola = null;
+    if (S.rol !== rol || !visitanteSigueEnVivo(rol)) return;
+    if (vistaParticipante(rol).peekExplica) return;
     const p = PASOS[posVista(rol)];
-    if (p.tipo === 'hoja' && p.s === s && !claridadRespondida(rol, s)) abrirClaridad(rol, s);
+    if (p && p.tipo === 'hoja' && p.s === s) abrirClaridad(rol, s);
   });
 }
-function entrarExploracionTrasClaridad(rol, s, voto) {
+function pasoExploracionTrasClaridad(s) {
   const hoja = PASOS.findIndex(q => q.tipo === 'hoja' && q.s === s);
   const inicio = primerPaso(s);
-  const destino = voto === 'explorar' ? (hoja >= 0 ? hoja : inicio) : inicio;
-  entrarExploracion(rol, destino);
+  return hoja >= 0 ? hoja : inicio;
+}
+function entrarExploracionTrasClaridad(rol, s, voto) {
+  entrarExploracion(rol, pasoExploracionTrasClaridad(s), { claritySource: voto });
 }
 function abrirClaridad(rol, s) {
-  if (claridadRespondida(rol, s)) return;
+  if (rol !== 'cliente' && rol !== 'movil') return;
+  const vistaActiva = S.rol === 'movil' ? 'movil' : S.rol === 'cliente' ? 'cliente' : null;
+  if (vistaActiva !== rol) return;
+  if (!visitanteSigueEnVivo(rol)) return;
   if (claridadAbierta === rol + s || $('#capaModal').innerHTML) return;
   claridadAbierta = rol + s;
-  const {capa, cerrar} = modal(`<h3>¿Quedó claro ${esc(SECCIONES[s].nombre)}?</h3><p>Está viendo la hoja completa de esta sección. Su respuesta es anónima.</p>
-    <div class="opciones"><button type="button" data-voto="claro">Sí, todo quedó claro<small>Indica que comprendió esta sección</small></button>
-    <button type="button" data-voto="duda">Tengo una duda<small>Solicita turno oral al presentador (sin activar audio aquí)</small></button>
-    <button type="button" data-voto="explorar">Quiero explorar<small>Recorre la sección a su ritmo</small></button></div>`, () => { claridadAbierta = null; });
+  const {capa, cerrar} = modal(`<h3>¿Quedó claro ${esc(SECCIONES[s].nombre)}?</h3><p>Está viendo la hoja completa de esta sección. Su respuesta es anónima. En cualquier opción puede recorrer la sección por su cuenta; el presentador ve un tipo de señal distinto según su elección.</p>
+    <div class="opciones"><button type="button" data-voto="claro">Sí, todo quedó claro<small>Registra comprensión y abre exploración desde esta hoja</small></button>
+    <button type="button" data-voto="duda">Tengo una duda<small>Solicita turno oral; después puede explorar mientras espera</small></button>
+    <button type="button" data-voto="explorar">Quiero explorar<small>Prefiere revisar la sección a su ritmo (sin marcar «quedó claro»)</small></button></div>`, () => { claridadAbierta = null; });
   capa.querySelectorAll('[data-voto]').forEach(b => b.addEventListener('click', () => {
     const voto = b.dataset.voto;
     marcarClaridadRespondida(rol, s);
@@ -1682,8 +3234,10 @@ function abrirClaridad(rol, s) {
     enviar('claridad', {s, voto});
     cerrar();
     if (voto === 'duda') {
-      void solicitarTurnoOralDirecto({ sectionIndex: s, source: 'clarity_modal' });
-    } else if (voto === 'explorar') entrarExploracionTrasClaridad(rol, s, voto);
+      void solicitarTurnoOralDirecto({ sectionIndex: s, source: 'clarity_modal', rol });
+    } else if (voto === 'claro' || voto === 'explorar') {
+      entrarExploracionTrasClaridad(rol, s, voto);
+    }
     programarRender();
   }));
 }
@@ -1715,10 +3269,18 @@ function abrirPregunta() {
     capa.querySelector('.modal').innerHTML = '<h3>Pregunta enviada</h3><p>Entró en la cola del moderador. Puede seguir la presentación.</p><div class="fila"><button class="btn prim" data-cerrar>Listo</button></div>';
   });
 }
-function mostrarConfirmacionTurnoOral() {
-  modal(`<div class="confirm-turno"><div class="ok-mark" aria-hidden="true">✓</div><h3>Turno solicitado</h3><p>Tu solicitud de turno fue enviada al presentador.</p>
+function mostrarConfirmacionTurnoOral(extra = {}) {
+  const rol = extra.rol;
+  const sectionIndex = extra.sectionIndex;
+  const desdeClaridad = extra.desdeClaridad && rol !== undefined && sectionIndex !== undefined;
+  const {capa, cerrar} = modal(`<div class="confirm-turno"><div class="ok-mark" aria-hidden="true">✓</div><h3>Turno solicitado</h3><p>Tu solicitud de turno fue enviada al presentador.</p>
     <p class="nota-anon">No se usa el micrófono de este dispositivo. Cuando le toque, podrá hablar en la reunión externa.</p>
-    <div class="fila"><button class="btn prim" data-cerrar>Listo</button></div></div>`);
+    ${desdeClaridad ? '<p class="sub" style="margin:12px 0 0">Mientras espera, puede recorrer los gráficos de esta sección sin perder su lugar en la cola oral.</p>' : ''}
+    <div class="fila">${desdeClaridad ? '<button type="button" class="btn prim" data-claridad-explorar>Explorar la sección</button>' : ''}<button class="btn${desdeClaridad ? '' : ' prim'}" data-cerrar>Listo</button></div></div>`);
+  capa.querySelector('[data-claridad-explorar]')?.addEventListener('click', () => {
+    cerrar();
+    entrarExploracionTrasClaridad(rol, sectionIndex, 'duda');
+  });
 }
 async function solicitarTurnoOralDirecto(opts = {}) {
   const ctx = opts.sectionIndex !== undefined
@@ -1733,7 +3295,10 @@ async function solicitarTurnoOralDirecto(opts = {}) {
     idempotencyKey: pid ? `oral:${ctx.sectionKey}:${pid}` : `oral:${uid()}`,
   });
   $('#capaModal').innerHTML = '';
-  mostrarConfirmacionTurnoOral();
+  const rol = opts.rol || (S.rol === 'movil' ? 'movil' : S.rol === 'cliente' ? 'cliente' : null);
+  const sectionIndex = opts.sectionIndex ?? ctx.seccion;
+  const desdeClaridad = source === 'clarity_modal' && sectionIndex !== undefined && rol;
+  mostrarConfirmacionTurnoOral({ rol, sectionIndex, desdeClaridad });
 }
 /** Heurística local: no sustituye un modelo de confianza; solo detecta frases de limitación del prompt. */
 function iaRequiereEscalamiento(respuesta, pregunta) {
@@ -1777,37 +3342,258 @@ function adjuntarOfertaEscalamiento(caja, pregunta) {
   if (!caja) return;
   caja.insertAdjacentHTML('beforeend', htmlOfertaEscalamiento(pregunta));
 }
-async function renderRespuestaAsistente(caja, pregunta, s) {
+const textoHablaPorCaja = new WeakMap();
+function soporteHablaNavegador() {
+  return typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
+}
+function asegurarVocesCargadas() {
+  if (!soporteHablaNavegador()) return;
+  speechSynthesis.getVoices();
+}
+function vocesEspanolHabla() {
+  if (!soporteHablaNavegador()) return [];
+  return speechSynthesis.getVoices().filter(v => /^es/i.test(v.lang || ''));
+}
+function initVocesHabla() {
+  if (!soporteHablaNavegador() || window.__catchVocesHablaInit) return;
+  window.__catchVocesHablaInit = true;
+  const refrescar = () => document.querySelectorAll('[data-ia-hablar-voz]').forEach(poblarSelectorVozHabla);
+  speechSynthesis.addEventListener('voiceschanged', refrescar);
+  refrescar();
+}
+function poblarSelectorVozHabla(select) {
+  if (!select) return;
+  asegurarVocesCargadas();
+  const voces = vocesEspanolHabla();
+  const guardada = leerVozHabla();
+  select.innerHTML = '';
+  if (!voces.length) {
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = 'Voz predeterminada del sistema';
+    select.appendChild(opt);
+    return;
+  }
+  voces.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v.voiceURI;
+    opt.textContent = `${v.name} (${v.lang})`;
+    if (guardada && v.voiceURI === guardada) opt.selected = true;
+    select.appendChild(opt);
+  });
+  if (!select.value && voces[0]) select.value = voces[0].voiceURI;
+}
+function adjuntarControlesHablaIA(caja, texto, echoId) {
+  if (!caja || S.rol !== 'moderador') return;
+  const plano = String(texto || '').trim();
+  if (!plano) return;
+  textoHablaPorCaja.set(caja, plano);
+  if (echoId) caja.dataset.iaEchoId = echoId;
+  caja.querySelector('.ia-habla-ctrl')?.remove();
+  caja.querySelector('.ia-habla-sin-tts')?.remove();
+  const tavusActivo = window.__CATCH_TAVUS_CVI__?.isActive?.();
+  if (!soporteHablaNavegador() && !tavusActivo) {
+    caja.insertAdjacentHTML('beforeend', '<p class="ia-habla-sin-tts" role="status">La lectura en voz alta no está disponible en este navegador. La respuesta escrita permanece visible arriba.</p>');
+    return;
+  }
+  initVocesHabla();
+  const volPct = Math.round(leerVolHabla() * 100);
+  caja.insertAdjacentHTML('beforeend', `<div class="ia-habla-ctrl" role="group" aria-label="Escuchar respuesta del asistente">
+    <div class="ia-habla-acciones">
+      <button type="button" class="btn prim" data-ia-hablar="play">Reproducir</button>
+      <button type="button" class="btn" data-ia-hablar="pause" disabled>Pausar</button>
+      <button type="button" class="btn" data-ia-hablar="resume" disabled hidden>Reanudar</button>
+      <button type="button" class="btn" data-ia-hablar="stop" disabled>Detener</button>
+    </div>
+    <div class="ia-habla-ajustes">
+      <label class="ia-habla-campo ia-habla-voz"><span>Voz del asistente</span><select data-ia-hablar-voz aria-label="Voz en español"></select></label>
+      <label class="ia-habla-campo ia-habla-vol"><span>Volumen</span><div class="ia-habla-vol-fila"><input type="range" min="0" max="100" step="5" value="${volPct}" data-ia-hablar-vol aria-valuemin="0" aria-valuemax="100" aria-label="Volumen de la voz"><span data-ia-hablar-vol-pct>${volPct}%</span></div></label>
+    </div>
+  </div>`);
+  poblarSelectorVozHabla(caja.querySelector('[data-ia-hablar-voz]'));
+  sincronizarControlesHabla();
+}
+const IA_AUTO_TTS_KEY = 'catch-ia-auto-tts';
+let iaPresentacionTurno = 0;
+function leerAutoTtsIA() {
+  try { return sessionStorage.getItem(IA_AUTO_TTS_KEY) === '1'; } catch { return false; }
+}
+function guardarAutoTtsIA(on) {
+  try { sessionStorage.setItem(IA_AUTO_TTS_KEY, on ? '1' : '0'); } catch { /* ignore */ }
+}
+function respuestaIAEsVigente(seq, turnoCaja) {
+  return seq === iaRequestSeq && turnoCaja === iaPresentacionTurno;
+}
+function pintarTextoRespuestaIA(caja, texto) {
+  caja.innerHTML = `<div class="ia-respuesta-texto">${esc(texto)}</div>`;
+}
+function anexarNotasResaltadoIA(caja, r, applyResult, full) {
+  if (applyResult && applyResult.status && applyResult.status !== 'applied' && !mensajeAfirmaResaltado(full)) {
+    const nota = notaEstadoResaltadoIA(applyResult.status);
+    if (nota) caja.insertAdjacentHTML('beforeend', `<p class="sub" style="margin-top:8px">${esc(nota)}</p>`);
+  } else if (!r.action && r.highlightStatus === 'not_visible') {
+    const nota = notaEstadoResaltadoIA('not_visible');
+    if (nota) caja.insertAdjacentHTML('beforeend', `<p class="sub" style="margin-top:8px">${esc(nota)}</p>`);
+  }
+}
+function anexarEscalamientoSiCorresponde(caja, full, pregunta) {
+  if (!iaRequiereEscalamiento(full, pregunta)) return;
+  const nota = document.createElement('p');
+  nota.className = 'sub';
+  nota.style.marginTop = '10px';
+  nota.textContent = 'No tengo información suficiente en el material de esta sesión para responder con fiabilidad.';
+  caja.appendChild(nota);
+  adjuntarOfertaEscalamiento(caja, pregunta);
+}
+function reproducirTtsRespuestaIA(textoPlano, echoId, opts) {
+  if (S.rol !== 'moderador' || !textoPlano?.trim()) return;
+  detenerHablaNavegador();
+  const api = window.__CATCH_TAVUS_CVI__;
+  const id = opts?.forceReplay ? `replay-${Date.now()}` : echoId;
+  if (api?.isActive?.()) {
+    if (api.speakEcho?.(textoPlano.trim(), id)) return;
+    if (opts?.forceReplay && soporteHablaNavegador()) {
+      asegurarVocesCargadas();
+      hablar(textoPlano.trim());
+    }
+    return;
+  }
+  asegurarVocesCargadas();
+  hablar(textoPlano.trim());
+}
+function anexarNotaTavusEchoFallido(caja) {
+  if (!caja || caja.querySelector('[data-tavus-echo-err]')) return;
+  const p = document.createElement('p');
+  p.className = 'sub';
+  p.dataset.tavusEchoErr = '1';
+  p.style.marginTop = '8px';
+  p.textContent = 'No pude hacer que Frida lea esta respuesta por Tavus. El texto sigue en pantalla; puedes usar «Reproducir» o revisar la sesión Tavus.';
+  caja.appendChild(p);
+}
+function presentarGeminiEnFrida(texto, echoId) {
+  if (S.rol !== 'moderador') return false;
+  const api = window.__CATCH_TAVUS_CVI__;
+  if (!api?.isActive?.()) return false;
+  detenerHablaNavegador();
+  return !!api.speakEcho?.(String(texto || '').trim(), echoId);
+}
+function textoEfectoOmitido(reason) {
+  if (reason === 'presentation_status_not_wired') {
+    return 'La pausa o reanudación global aún no está conectada en el monitor.';
+  }
+  if (reason === 'visitor_forbidden') return 'Acción global no permitida en esta vista.';
+  if (reason === 'navigate_rejected') return 'No se pudo cambiar de punto con el estado actual.';
+  return '';
+}
+function anexarNotasInterpretModerador(caja, r) {
+  if (!caja || r?.source !== 'interpret') return;
+  if (r.clarificationRequest) {
+    const p = document.createElement('p');
+    p.className = 'sub';
+    p.dataset.iaClarificacion = '1';
+    p.style.marginTop = '8px';
+    p.textContent = r.clarificationRequest;
+    caja.appendChild(p);
+  }
+  const apply = r.effectApply;
+  if (!apply) return;
+  const notas = [];
+  if (apply.navigated) notas.push('Paso actualizado en la presentación.');
+  else if (Array.isArray(r.effects) && r.effects.some(e => e && e.kind === 'navigate')) {
+    notas.push('No se cambió de punto (restricción del controlador o estado actual).');
+  }
+  (apply.skipped || []).forEach(s => {
+    const t = textoEfectoOmitido(s.reason);
+    if (t) notas.push(t);
+  });
+  if (!notas.length) return;
+  const p = document.createElement('p');
+  p.className = 'sub';
+  p.dataset.iaEfectoEstado = '1';
+  p.style.marginTop = '8px';
+  p.textContent = notas.join(' ');
+  caja.appendChild(p);
+}
+async function dispararNarracionDesdeInterpret(intents, seq, navigated) {
+  if (S.rol !== 'moderador' || seq !== iaRequestSeq || !Array.isArray(intents) || !intents.length) return;
+  if (navigated) return;
+  const plan = consultarPlanNarracion(S.pos);
+  if (!planActivoCoincideConPaso(plan, S.pos)) return;
+  for (const intent of intents) {
+    if (seq !== iaRequestSeq) return;
+    let texto = '';
+    if (intent === 'ask_questions') {
+      texto = '¿Tienen preguntas sobre este punto antes de continuar?';
+    } else if (plan && typeof plan.speakText === 'string') {
+      texto = plan.speakText.trim();
+    }
+    if (!texto) continue;
+    if (intent === 'repeat' && accionResaltadoDesdePlan(plan)) {
+      try {
+        await aplicarAccionResaltadoIA(accionResaltadoDesdePlan(plan));
+      } catch { /* ignore */ }
+    }
+    if (seq !== iaRequestSeq) return;
+    const echoId = `interpret-${intent}-${seq}-${S.pos}`;
+    const ok = presentarGeminiEnFrida(texto, echoId);
+    if (!ok && window.__CATCH_TAVUS_CVI__?.isActive?.()) {
+      const caja = cajaRespuestaIA();
+      if (caja) anexarNotaTavusEchoFallido(caja);
+    }
+  }
+}
+async function orquestarRespuestaIA(caja, pregunta, s, turnoCaja) {
   if (!caja) return;
+  iaRespuestaActiva++;
+  detenerHabla();
   caja.innerHTML = '<span class="ia-cargando">Pensando…</span>';
-  let full = '';
   try {
-    const r = await preguntarIA(pregunta, s, txt => { full = txt; caja.innerHTML = `<div class="ia-respuesta-texto">${esc(txt)}</div>`; });
-    full = typeof r === 'string' ? r : r.message;
+    const r = await preguntarIA(pregunta, s, txt => {
+      if (!respuestaIAEsVigente(iaRequestSeq, turnoCaja)) return;
+      pintarTextoRespuestaIA(caja, txt);
+    });
+    if (!respuestaIAEsVigente(r.seq, turnoCaja)) return;
+    let full = r.message;
     let applyResult = null;
-    if (typeof r === 'object') {
-      if (r.action) applyResult = await aplicarResaltadoDesdeIA(r.action, r.seq, null);
-      full = ajustarMensajeResaltadoIA(full, applyResult, r.highlightStatus);
-      caja.innerHTML = `<div class="ia-respuesta-texto">${esc(full)}</div>`;
-      if (applyResult && applyResult.status && applyResult.status !== 'applied' && !mensajeAfirmaResaltado(full)) {
-        const nota = notaEstadoResaltadoIA(applyResult.status);
-        if (nota) caja.insertAdjacentHTML('beforeend', `<p class="sub" style="margin-top:8px">${esc(nota)}</p>`);
-      } else if (!r.action && r.highlightStatus === 'not_visible') {
-        const nota = notaEstadoResaltadoIA('not_visible');
-        if (nota) caja.insertAdjacentHTML('beforeend', `<p class="sub" style="margin-top:8px">${esc(nota)}</p>`);
+    if (r.action) {
+      if (r.effectApply?.navigated) await esperarRenderPendiente();
+      applyResult = await aplicarResaltadoDesdeIA(r.action, r.seq, null, {
+        allowNavigateToChart: r.source === 'interpret' && S.rol === 'moderador' && !r.effectApply?.navigated,
+      });
+    }
+    if (!respuestaIAEsVigente(r.seq, turnoCaja)) return;
+    full = ajustarMensajeResaltadoIA(full, applyResult, r.highlightStatus);
+    pintarTextoRespuestaIA(caja, full);
+    anexarNotasResaltadoIA(caja, r, applyResult, full);
+    anexarNotasInterpretModerador(caja, r);
+    const echoKey = `gemini-${r.seq}`;
+    adjuntarControlesHablaIA(caja, full, echoKey);
+    if (r.source === 'interpret') {
+      const apply = r.effectApply;
+      if (apply?.narrationIntents?.length) {
+        await dispararNarracionDesdeInterpret(apply.narrationIntents, r.seq, !!apply.navigated);
+      }
+    } else {
+      const fridaPresento = presentarGeminiEnFrida(full, echoKey);
+      if (!fridaPresento && window.__CATCH_TAVUS_CVI__?.isActive?.()) {
+        anexarNotaTavusEchoFallido(caja);
+      } else if (!fridaPresento && leerAutoTtsIA()) {
+        reproducirTtsRespuestaIA(full);
       }
     }
-    if (!iaRequiereEscalamiento(full, pregunta)) return;
-    const nota = document.createElement('p');
-    nota.className = 'sub';
-    nota.style.marginTop = '10px';
-    nota.textContent = 'No tengo información suficiente en el material de esta sesión para responder con fiabilidad.';
-    caja.appendChild(nota);
-    adjuntarOfertaEscalamiento(caja, pregunta);
+    anexarEscalamientoSiCorresponde(caja, full, pregunta);
   } catch (e) {
+    if (turnoCaja !== iaPresentacionTurno) return;
     caja.innerHTML = '<p>No puedo usar el asistente en esta vista ahora. Cuando está disponible, solo responde con las cifras del contexto de la presentación.</p>';
     adjuntarOfertaEscalamiento(caja, pregunta);
+  } finally {
+    iaRespuestaActiva = Math.max(0, iaRespuestaActiva - 1);
+    lanzarRenderPendienteIA();
   }
+}
+async function renderRespuestaAsistente(caja, pregunta, s) {
+  const turnoCaja = ++iaPresentacionTurno;
+  await orquestarRespuestaIA(caja, pregunta, s, turnoCaja);
 }
 async function aceptarEscalamientoIA(texto) {
   const key = claveEscalamientoIA(texto);
@@ -1884,6 +3670,18 @@ function reiniciarTraceResaltadoIA() {
   catchHighlightTrace = { t: Date.now(), phases: [] };
   window.__CATCH_MONITOR_LAST_HIGHLIGHT_TRACE__ = catchHighlightTrace;
 }
+async function asegurarGraficaVisibleParaResaltado(chartId, allowNavigate) {
+  let ctx = obtenerContextoVisual();
+  if (ctx.visibleChartIds.includes(chartId)) return { ok: true };
+  if (!allowNavigate || S.rol !== 'moderador') return { ok: false, reason: 'not_in_view' };
+  const paso = pasoIndiceParaChartId(chartId);
+  if (paso < 0) return { ok: false, reason: 'unknown_chart' };
+  moverModerador(paso);
+  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  ctx = obtenerContextoVisual();
+  if (!ctx.visibleChartIds.includes(chartId)) return { ok: false, reason: 'not_in_view' };
+  return { ok: true };
+}
 async function asegurarCanvasGrafica(chartId) {
   let ctx = obtenerContextoVisual();
   if (ctx.mountedChartIds.includes(chartId)) return { ok: true, reason: 'already_mounted' };
@@ -1934,6 +3732,15 @@ function obtenerContextoVisual() {
     mountedChartIds,
     chartSurface,
     visibleCharts: metadatosGraficasVisibles(visibleChartIdsFinal),
+    activeHighlight: S.monitorHighlight
+      ? {
+          chartId: S.monitorHighlight.chartId,
+          category: S.monitorHighlight.category,
+          seriesKey: S.monitorHighlight.seriesKey,
+          datasetIndex: S.monitorHighlight.datasetIndex,
+          index: S.monitorHighlight.index,
+        }
+      : null,
   };
 }
 function metaNavegacionIA(s) {
@@ -1964,11 +3771,123 @@ async function cabecerasAuthIA() {
   extra.participantId = participantId;
   return { headers, extra };
 }
+function instruccionNavegacionModerador(texto) {
+  const f = String(texto || '')
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!f) return null;
+  if (/\bseccion\b/.test(f) && !/\bsiguiente punto\b/.test(f) && !/\bpunto anterior\b/.test(f)) return null;
+  if (/\b(explica|resalta|pausa|reanuda|repite)\b/.test(f)) return null;
+  if (/\b(regresa|regresar|retrocede|retroceder|anterior|atras|vuelve|volver)\b/.test(f)) return 'prev';
+  if (/\b(avanza|avanzar|adelante|siguiente)\b/.test(f)) return 'next';
+  if (/^contin(ua|uar)( con el siguiente( punto| paso)?)?$/.test(f)) return 'next';
+  return null;
+}
+/** Efectos validados en servidor → funciones del controlador (nunca S.pos directo). */
+function aplicarEfectosPresentacionValidados(rawEffects, opts) {
+  const api = window.CatchPresentationEffects;
+  if (!api?.normalizePresentationEffects || !api?.applyPresentationEffects) {
+    return { highlight: null, navigated: false, skipped: [], narrationIntents: [] };
+  }
+  const effects = api.normalizePresentationEffects(rawEffects);
+  const result = api.applyPresentationEffects(
+    effects,
+    { role: S.rol, stepIndex: S.pos },
+    {
+      moveModerator(target) {
+        const before = S.pos;
+        moverModerador(target);
+        return S.pos !== before;
+      },
+      afterSectionContinue() {
+        S.narracionEsperaAutorizacion = false;
+        S.sectionClaridadLista = false;
+        S.sectionCloseDedup = null;
+        cancelarTimerNarracionSeccion();
+      },
+      onNarration(intent) {
+        window.__CATCH_LAST_NARRATION_INTENT__ = intent;
+      },
+    },
+  );
+  return result;
+}
+let iaInterpretCadena = Promise.resolve();
+function encolarInterpretModerador(fn) {
+  const run = iaInterpretCadena.then(fn);
+  iaInterpretCadena = run.catch(() => {});
+  return run;
+}
+async function preguntarIAInterpretModerador(texto, s, alTexto, seq, safeAlTexto) {
+  const cfg = window.__CATCH_MONITOR_SYNC__;
+  const { headers } = await cabecerasAuthIA();
+  const ctx = obtenerContextoVisual();
+  const stepIndex = S.pos;
+  if (ctx.presentationStep !== stepIndex) {
+    ctx.presentationStep = stepIndex;
+  }
+  const body = {
+    instruction: texto,
+    stepIndex,
+    presentationStatus: 'live',
+    viewContext: ctx,
+  };
+  let res;
+  try {
+    res = await fetch(`/api/monitor/${encodeURIComponent(cfg.meetingId)}/interpret`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+    });
+  } catch {
+    throw new Error('sin-ia');
+  }
+  if (seq !== iaRequestSeq) throw new Error('sin-ia');
+  let data;
+  try { data = await res.json(); } catch { throw new Error('sin-ia'); }
+  if (!res.ok) {
+    const msg = data?.error?.message;
+    if (res.status === 401 || res.status === 403) throw new Error('sin-ia');
+    if (res.status === 429 && msg) {
+      const limited = String(msg).trim();
+      safeAlTexto(limited);
+      if (seq !== iaRequestSeq) throw new Error('sin-ia');
+      return { message: limited, action: null, highlightStatus: null, seq, source: 'interpret', effects: [] };
+    }
+    throw new Error('sin-ia');
+  }
+  if (data.contract !== 'catch.monitor.presentation.actions.v1' || typeof data.message !== 'string' || !data.message.trim()) {
+    throw new Error('sin-ia');
+  }
+  const answer = data.message.trim();
+  safeAlTexto(answer);
+  if (seq !== iaRequestSeq) throw new Error('sin-ia');
+  const effects = Array.isArray(data.effects) ? data.effects : [];
+  const applied = aplicarEfectosPresentacionValidados(effects);
+  return {
+    message: answer,
+    action: applied.highlight,
+    highlightStatus: null,
+    seq,
+    source: 'interpret',
+    effects,
+    clarificationRequest: data.clarificationRequest || null,
+    effectApply: applied,
+  };
+}
 async function preguntarIA(texto, s, alTexto) {
   const cfg = window.__CATCH_MONITOR_SYNC__;
   if (!cfg?.meetingId) throw new Error('sin-ia');
   const seq = ++iaRequestSeq;
   const safeAlTexto = (txt) => { if (seq !== iaRequestSeq) return; alTexto(txt); };
+  const isModerador = cfg.role === 'moderador';
+  if (isModerador) {
+    return encolarInterpretModerador(() => preguntarIAInterpretModerador(texto, s, alTexto, seq, safeAlTexto));
+  }
   const { headers, extra } = await cabecerasAuthIA();
   const body = Object.assign({ question: texto }, metaNavegacionIA(s), extra);
   let res;
@@ -1991,7 +3910,7 @@ async function preguntarIA(texto, s, alTexto) {
       const limited = String(msg).trim();
       safeAlTexto(limited);
       if (seq !== iaRequestSeq) throw new Error('sin-ia');
-      return { message: limited, action: null, highlightStatus: null, seq };
+      return { message: limited, action: null, highlightStatus: null, seq, source: 'chat', effects: [] };
     }
     throw new Error('sin-ia');
   }
@@ -2001,9 +3920,13 @@ async function preguntarIA(texto, s, alTexto) {
   const answer = data.message.trim();
   safeAlTexto(answer);
   if (seq !== iaRequestSeq) throw new Error('sin-ia');
-  const action = data.action && data.action.type === 'highlight' && data.action.target ? data.action : null;
+  let action = null;
+  if (data.action && typeof data.action === 'object') {
+    if (data.action.type === 'clear_highlight') action = data.action;
+    else if (data.action.type === 'highlight' && data.action.target) action = data.action;
+  }
   const highlightStatus = data.meta?.highlightStatus ?? null;
-  return { message: answer, action, highlightStatus, seq };
+  return { message: answer, action, highlightStatus, seq, source: 'chat', effects: [] };
 }
 function mensajeAfirmaResaltado(texto) {
   return /resaltad|resaltar|resalte|destacad/i.test(String(texto || ''));
@@ -2012,7 +3935,9 @@ function ajustarMensajeResaltadoIA(mensaje, applyResult, highlightStatus) {
   const ok = applyResult?.status === 'applied';
   if (ok) return mensaje;
   if (!mensajeAfirmaResaltado(mensaje) && highlightStatus !== 'not_visible' && applyResult?.status !== 'failed') return mensaje;
-  const nota = applyResult?.status === 'not_visible' || highlightStatus === 'not_visible'
+  const nota = applyResult?.error
+    ? applyResult.error
+    : applyResult?.status === 'not_visible' || highlightStatus === 'not_visible'
     ? notaEstadoResaltadoIA('not_visible')
     : (applyResult?.status === 'failed' ? notaEstadoResaltadoIA('failed') : notaEstadoResaltadoIA('not_visible'));
   const base = mensajeAfirmaResaltado(mensaje)
@@ -2020,7 +3945,8 @@ function ajustarMensajeResaltadoIA(mensaje, applyResult, highlightStatus) {
     : mensaje.trim();
   return (base ? base + ' ' : '') + nota;
 }
-function notaEstadoResaltadoIA(status) {
+function notaEstadoResaltadoIA(status, detail) {
+  if (detail) return detail;
   if (status === 'not_visible') {
     return 'No pude resaltar ese elemento en lo que estás viendo ahora. Abre la gráfica correspondiente o pide al presentador que la muestre.';
   }
@@ -2029,13 +3955,13 @@ function notaEstadoResaltadoIA(status) {
   }
   return '';
 }
-async function aplicarResaltadoDesdeIA(action, seq, caja) {
+async function aplicarResaltadoDesdeIA(action, seq, caja, opts) {
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   if (!action || seq !== iaRequestSeq || seq === iaHighlightAplicadoSeq) return null;
-  iaHighlightAplicadoSeq = seq;
-  const r = await aplicarAccionResaltadoIA(action);
+  const r = await aplicarAccionResaltadoIA(action, opts);
+  if (r?.status === 'applied') iaHighlightAplicadoSeq = seq;
   if (caja && r.status && r.status !== 'applied') {
-    const nota = notaEstadoResaltadoIA(r.status);
+    const nota = notaEstadoResaltadoIA(r.status, r.error);
     if (nota) {
       const p = document.createElement('p');
       p.className = 'sub';
@@ -2045,6 +3971,13 @@ async function aplicarResaltadoDesdeIA(action, seq, caja) {
     }
   }
   return r;
+}
+function enfocarEntradaGemini() {
+  const inp = document.getElementById('inIA');
+  if (!inp) return;
+  inp.focus({ preventScroll: false });
+  inp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  registrar('ia', 'Enfoque teclado Gemini', seccionActual());
 }
 function abrirIA() {
   const s = seccionActual(); registrar('ia', 'Abrió el asistente', s);
@@ -2084,64 +4017,280 @@ async function borradorIA(id) {
   $('#usar', capa).addEventListener('click', () => abrirRespuesta(id, texto));
 }
 
-// ======================= exportar PDF =======================
-async function exportarPDF() {
-  const aviso = m => modal(`<h3>Exportar PDF</h3><p>${m}</p><div class="fila"><button class="btn prim" data-cerrar>Cerrar</button></div>`);
-  if (!window.jspdf) return aviso('No se pudo cargar el generador de PDF. Revise la conexión y vuelva a intentarlo.');
-  const descargas = await window.claude?.use?.('downloads');
-  const {jsPDF} = window.jspdf; const doc = new jsPDF({unit: 'mm', format: 'a4'});
-  const W = 210, X = 16; let y = 20;
+// ======================= exportar PDF (solo en cierre) =======================
+function avisoPdf(m) {
+  modal(`<h3>Descarga PDF</h3><p>${m}</p><div class="fila"><button class="btn prim" data-cerrar>Cerrar</button></div>`);
+}
+function crearEscritorPdf(doc) {
+  const W = 210; const X = 16; let y = 20;
   const titulo = (t, tam = 16) => { doc.setFont('helvetica', 'bold'); doc.setFontSize(tam); doc.setTextColor(12, 47, 106); doc.text(t, X, y); y += tam * 0.5 + 2; };
   const parrafo = (t, tam = 10) => { doc.setFont('helvetica', 'normal'); doc.setFontSize(tam); doc.setTextColor(16, 34, 63); const l = doc.splitTextToSize(t, W - 2 * X); if (y + l.length * 5 > 280) { doc.addPage(); y = 20; } doc.text(l, X, y); y += l.length * tam * 0.45 + 3; };
-  titulo('Monitor de Mercado Laboral', 20); parrafo(`Edición ${DATOS.edicion} · Informe de la sesión · Su empresa: ${CLIENTE} · ${new Date().toLocaleDateString('es-MX')}`);
-  parrafo('Comparaciones con promedio simple de compañías sin ceros, como el Monitor. Las empresas se identifican solo con un ID anónimo.');
+  const nuevaPagina = () => { doc.addPage(); y = 20; };
+  return { titulo, parrafo, nuevaPagina, getY: () => y, setY: ny => { y = ny; } };
+}
+async function guardarPdfBlob(blob, filename) {
+  const descargas = await window.claude?.use?.('downloads');
+  if (!descargas) {
+    try {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(a.href);
+    } catch {
+      avisoPdf('No se pudo iniciar la descarga en este navegador.');
+    }
+    return;
+  }
+  try { await descargas.save({ filename, data: blob }); }
+  catch (e) { if (e?.code !== 'declined') avisoPdf('No se pudo guardar el PDF (' + esc(e?.code || 'error') + ').'); }
+}
+function asegurarJsPdf() {
+  if (!window.jspdf) return null;
+  const { jsPDF } = window.jspdf;
+  return new jsPDF({ unit: 'mm', format: 'a4' });
+}
+async function descargarPdfGuionAvatar() {
+  const doc = asegurarJsPdf();
+  if (!doc) return avisoPdf('No se pudo cargar el generador de PDF. Revise la conexión y vuelva a intentarlo.');
+  const { titulo, parrafo } = crearEscritorPdf(doc);
+  titulo('Guion de la reunión — Catch', 18);
+  parrafo('Guion de demostración con contenido simulado.', 9);
+  parrafo(`Monitor de Mercado Laboral · ${DATOS.edicion} · Uso interno del presentador · ${CLIENTE}`);
+  parrafo('Este documento no se comparte con el cliente.', 9);
+  const tmp = document.createElement('div');
+  tmp.innerHTML = htmlGuionAvatarInterno();
+  tmp.querySelectorAll('.guion-bloque-mod').forEach(el => {
+    const strong = el.querySelector('strong');
+    titulo(strong ? strong.textContent : 'Bloque', 12);
+    el.querySelectorAll('li').forEach(li => {
+      const lab = li.querySelector('span');
+      parrafo((lab ? lab.textContent + ': ' : '') + li.textContent.replace(lab?.textContent || '', '').trim());
+    });
+    const p = el.querySelector('p');
+    if (p) parrafo(p.textContent);
+  });
+  const blob = doc.output('blob');
+  await guardarPdfBlob(blob, `Catch_Guion_Avatar_${DATOS.edicion.replace(/\s+/g, '_')}.pdf`);
+}
+async function descargarPdfFeedbackCatch() {
+  const doc = asegurarJsPdf();
+  if (!doc) return avisoPdf('No se pudo cargar el generador de PDF. Revise la conexión y vuelva a intentarlo.');
+  const { titulo, parrafo } = crearEscritorPdf(doc);
+  const mid = window.__CATCH_MONITOR_SYNC__?.meetingId;
+  titulo('Catch — Feedback interno de sesión', 18);
+  parrafo('Documento de demostración. Combina señales locales de la sesión con observaciones de ejemplo. No constituye un informe oficial ni afirma análisis que aún no estén integrados en Catch.', 9);
+  parrafo(`Monitor de Mercado Laboral · ${DATOS.edicion} · Referencia: ${CLIENTE}${mid ? ' · Reunión ' + mid : ''} · ${new Date().toLocaleString('es-MX')}`);
+  titulo('Resumen ejecutivo (simulado)', 13);
+  parrafo('Participación estimada media-alta. Sugerencia de ejemplo: reforzar narrativa en rotación y beneficios en el siguiente seguimiento con el cliente.');
+  titulo('Temas tratados', 13);
+  SECCIONES.forEach(s => parrafo(`• ${s.nombre} — presentado en la sesión.`));
+  titulo('Claridad por sección (agregado local)', 13);
+  SECCIONES.forEach((s, i) => {
+    const c = S.claridad[i];
+    parrafo(c ? `${s.nombre}: ${c.claro} «quedó claro», ${c.duda} con dudas, ${c.explorar || 0} exploraron, ${c.glosario || 0} glosario.` : `${s.nombre}: sin respuesta de claridad.`);
+  });
+  titulo('Cola y señales (local)', 13);
+  parrafo(`Pendientes en cola: ${S.cola.filter(q => q.status === 'pending').length}. Atendidas: ${S.cola.filter(q => q.status === 'attended').length}.`);
+  const t = Object.values(S.toques).sort((a, b) => b.n - a.n).slice(0, 12);
+  if (!t.length) parrafo('Sin toques registrados en esta vista.');
+  else t.forEach(x => parrafo(`${x.n} × ${x.tipo}: ${x.detalle}`));
+  titulo('Observaciones internas (ejemplo)', 13);
+  parrafo('• Validar con consultoría si se requiere profundizar en compensación.\n• Registrar en CRM interés en comparación de beneficios.\n• No compartir este PDF con el cliente.');
+  const blob = doc.output('blob');
+  await guardarPdfBlob(blob, `Catch_Feedback_Interno_${DATOS.edicion.replace(/\s+/g, '_')}.pdf`);
+}
+async function descargarPdfParaCliente() {
+  const doc = asegurarJsPdf();
+  if (!doc) return avisoPdf('No se pudo cargar el generador de PDF. Revise la conexión y vuelva a intentarlo.');
+  const W = 210; const X = 16;
+  const { titulo, parrafo, nuevaPagina, getY, setY } = crearEscritorPdf(doc);
+  titulo('Monitor de Mercado Laboral', 20);
+  parrafo(`Edición ${DATOS.edicion} · Informe para ${CLIENTE} · ${new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}`);
+  parrafo('Resumen de la sesión presentada. Comparaciones con el mercado de referencia según la metodología del Monitor. Documento de demostración con la estructura de entrega al cliente.');
   modoPDF = true;
   for (const [si, s] of SECCIONES.entries()) {
-    doc.addPage(); y = 20; titulo(s.nombre);
+    nuevaPagina();
+    titulo(s.nombre);
     parrafo(s.kpis(EMP).map(k => `${k.l}: ${k.v}`).join('   |   '), 9);
     for (const g of s.graficos) {
-      if (y > 200) { doc.addPage(); y = 20; }
+      if (getY() > 200) nuevaPagina();
       const cv = document.createElement('canvas'); cv.width = 1000; cv.height = 460; cv.style.cssText = 'position:fixed;left:-9999px;width:1000px;height:460px'; document.body.appendChild(cv);
       const ch = new Chart(cv, Object.assign(g.config(EMP, false), {})); ch.options.responsive = false; ch.update('none');
       const img = cv.toDataURL('image/png'); ch.destroy(); cv.remove();
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(39, 120, 177); doc.text(g.titulo, X, y); y += 4;
-      doc.addImage(img, 'PNG', X, y, W - 2 * X, (W - 2 * X) * 0.46); y += (W - 2 * X) * 0.46 + 3;
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(39, 120, 177); doc.text(g.titulo, X, getY()); setY(getY() + 4);
+      doc.addImage(img, 'PNG', X, getY(), W - 2 * X, (W - 2 * X) * 0.46); setY(getY() + (W - 2 * X) * 0.46 + 3);
       parrafo(g.texto(EMP), 9);
     }
-    const c = S.claridad[si]; parrafo(c ? `Claridad: ${c.claro} «quedó claro», ${c.duda} con dudas, ${c.explorar || 0} quisieron explorar.` : 'Claridad: no se preguntó en la sesión.', 9);
+    const c = S.claridad[si];
+    if (c) parrafo(`Retroalimentación de la sesión: ${c.claro} participantes indicaron que el tema quedó claro.`, 9);
   }
   modoPDF = false;
-  doc.addPage(); y = 20; titulo('Preguntas de la sala (anónimas)');
-  if (!S.cola.length) parrafo('No hubo solicitudes en la cola.');
-  S.cola.forEach(q => parrafo(`[${q.seccionNombre}] (${COLA_TIPO[q.kind] || q.kind}) ${q.texto || '—'}${q.respuesta ? '\nRespuesta: ' + q.respuesta : '\n(' + q.status + ')'}`, 9));
-  y += 4; titulo('Intereses del cliente (consultas durante la sesión)');
-  const t = Object.values(S.toques).sort((a, b) => b.n - a.n).slice(0, 15);
-  if (!t.length) parrafo('No se registraron consultas.'); t.forEach(x => parrafo(`${x.n} × ${x.tipo}: ${x.detalle} (${x.seccion >= 0 ? SECCIONES[x.seccion].nombre : 'General'})`, 9));
+  nuevaPagina();
+  titulo('Preguntas respondidas en la sesión');
+  const r = S.cola.filter(q => q.respuesta && q.status === 'attended');
+  if (!r.length) parrafo('No hay respuestas publicadas aún.');
+  else r.forEach(q => parrafo(`${q.seccionNombre}: ${q.texto || '—'}\nRespuesta: ${q.respuesta}`, 9));
+  parrafo('Catch Consulting · HR Toolkit · Monitor de Mercado Laboral');
   const blob = doc.output('blob');
-  if (!descargas) return aviso('La descarga no está disponible en esta vista. Abra el artefacto en claude.ai con su cuenta para guardar el PDF.');
-  try { await descargas.save({filename: `Monitor_Catch_${DATOS.edicion.replace(/\s+/g, '_')}.pdf`, data: blob}); }
-  catch (e) { if (e?.code !== 'declined') aviso('No se pudo guardar el PDF (' + esc(e?.code || 'error') + ').'); }
+  await guardarPdfBlob(blob, `Monitor_Catch_Cliente_${DATOS.edicion.replace(/\s+/g, '_')}.pdf`);
 }
 
 // ======================= render general y eventos =======================
 function vistaDesdeHash() { const h = location.hash.replace('#', ''); return ['moderador', 'cliente', 'movil'].includes(h) ? h : 'moderador'; }
 let ultimaVista = '';
-function render() {
-  const app = $('#app'); limpiarGraficos();
+const AVATAR_VOL_KEY = 'catch-avatar-volume';
+function leerVolAvatar() {
+  try { const n = parseFloat(sessionStorage.getItem(AVATAR_VOL_KEY)); return Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 1; } catch { return 1; }
+}
+function guardarVolAvatar(v) { try { sessionStorage.setItem(AVATAR_VOL_KEY, String(v)); } catch { /* ignore */ } }
+function sincronizarPausaAvatarVideo() {
+  document.querySelectorAll('[data-avatar-pause]').forEach(btn => {
+    btn.setAttribute('aria-pressed', String(S.avatarVideoPaused));
+    btn.textContent = S.avatarVideoPaused ? '▶' : '⏸';
+    btn.setAttribute('aria-label', S.avatarVideoPaused ? 'Reanudar video' : 'Pausar video');
+  });
+  if (!avatarMp4Enabled()) return;
+  document.querySelectorAll('[data-tavus-local-video]:not([hidden])').forEach(v => {
+    if (S.avatarVideoPaused) v.pause();
+    else v.play().catch(() => {});
+  });
+}
+function enlazarAudioAvatar(raiz) {
+  const root = raiz || document;
+  if (!avatarMp4Enabled()) {
+    root.querySelectorAll('[data-tavus-local-video]').forEach(v => { v.pause(); });
+  }
+  function enlazarSlotAudioAvatar(slot) {
+    if (slot.dataset.avatarAudioBound) return;
+    const localV = slot.querySelector('[data-tavus-local-video]');
+    const remoteA = slot.querySelector('[data-tavus-remote-audio]');
+    const v = localV || slot.querySelector('.avatar-video');
+    const muteBtn = slot.querySelector('[data-avatar-mute]');
+    const slider = slot.querySelector('[data-avatar-volume]');
+    const pauseBtn = slot.querySelector('[data-avatar-pause]');
+    if (!muteBtn || !slider) return;
+    slot.dataset.avatarAudioBound = '1';
+    const vol = leerVolAvatar();
+    slider.value = String(vol);
+    const audioTarget = remoteA || v;
+    if (!audioTarget) return;
+    if (v && localV) {
+      v.volume = vol;
+      v.muted = true;
+    }
+    if (remoteA) {
+      remoteA.volume = vol;
+      remoteA.muted = false;
+    }
+    const syncMute = () => {
+      const muted = remoteA ? remoteA.muted : (v?.muted ?? true);
+      muteBtn.setAttribute('aria-pressed', String(muted));
+      muteBtn.textContent = muted ? '🔇' : '🔊';
+      muteBtn.setAttribute('aria-label', muted ? 'Activar sonido' : 'Silenciar');
+    };
+    syncMute();
+    if (v && localV && !S.avatarVideoPaused) v.play().catch(() => {});
+    muteBtn.addEventListener('click', async () => {
+      if (remoteA) {
+        if (remoteA.muted) {
+          remoteA.muted = false;
+          try { await remoteA.play(); syncMute(); } catch { remoteA.muted = true; syncMute(); }
+        } else { remoteA.muted = true; syncMute(); }
+        return;
+      }
+      if (!v) return;
+      if (v.muted) {
+        v.muted = false;
+        try { await v.play(); syncMute(); } catch { v.muted = true; syncMute(); }
+      } else { v.muted = true; syncMute(); }
+    });
+    slider.addEventListener('input', () => {
+      const next = parseFloat(slider.value);
+      guardarVolAvatar(next);
+      if (remoteA) remoteA.volume = next;
+      if (v) v.volume = next;
+      document.querySelectorAll('[data-avatar-volume]').forEach(sl => { if (sl !== slider) sl.value = String(next); });
+    });
+    if (pauseBtn) {
+      pauseBtn.addEventListener('click', () => {
+        if (S.rol !== 'moderador') return;
+        S.avatarVideoPaused = !S.avatarVideoPaused;
+        if (S.avatarVideoPaused) pausarNarracionRuntime();
+        enviar('avatarVideo', { paused: S.avatarVideoPaused });
+      });
+    }
+  }
+  root.querySelectorAll('.panel-av--visitante').forEach(panel => enlazarSlotAudioAvatar(panel));
+  root.querySelectorAll('.avatar-video-slot, .avatar-rail .video').forEach(slot => {
+    if (slot.closest('.panel-av--visitante')) return;
+    enlazarSlotAudioAvatar(slot);
+  });
+  sincronizarPausaAvatarVideo();
+}
+function render(opts) {
+  if (iaRespuestaActiva > 0 && !opts?.force) {
+    renderPendienteTrasIA = true;
+    return;
+  }
+  sincronizarEsperaNarracion();
+  const app = $('#app'); detenerVozIA(); detenerHablaNavegador(); limpiarGraficos();
+  cerrarPopoverSeleccionIA();
   const vista = S.rol + '|' + posVista(S.rol); if (vista !== ultimaVista) cerrarFuente(); ultimaVista = vista;
   document.querySelectorAll('#selVista button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === S.rol));
   const real = window.innerWidth < 600 && S.rol === 'movil';
-  if (S.rol === 'moderador') renderModerador(app); else if (S.rol === 'cliente') renderCliente(app); else renderMovil(app, real);
+  if (S.rol === 'moderador') renderModerador(app);
+  else if (S.rol === 'cliente') renderCliente(app);
+  else renderMovil(app, real);
   limpiarGraficos();
+  enlazarAudioAvatar(app);
+  enlazarVozIA(app);
+  try {
+    const tavus = window.__CATCH_TAVUS_CVI__;
+    tavus?.refreshUi?.();
+    tavus?.syncRemoteMedia?.();
+  } catch { /* ignore */ }
+  programarOrquestacionPasoActivo();
 }
 document.addEventListener('click', e => {
   const b = e.target.closest('button, [data-tocar], [data-volver-anterior]'); if (!b) return;
   const d = b.dataset;
   if (d.v) { S.rol = d.v; history.replaceState(null, '', '#' + d.v); $('#capaModal').innerHTML = ''; render(); return; }
+  if (d.prepSiguiente !== undefined) return void iniciarGeneracionInformeSimulada();
+  if (d.iniciarReunion !== undefined) return void iniciarReunionDesdeListo();
+  if (d.descargarGuionPdf !== undefined) return void descargarPdfGuionAvatar();
+  if (d.toggleModoEdicion !== undefined) {
+    if (!presentadorEnRevisionPrevia()) return;
+    S.modoEdicionPreviewSim = !S.modoEdicionPreviewSim;
+    return programarRender();
+  }
+  if (d.probarNarracion !== undefined) return probarNarracionPlanEnTavus();
+  if (d.continuarSeccion !== undefined) return continuarSeccionModerador();
   if (d.mod) return moverModerador(S.pos + (+d.mod));
   if (d.flecha) return pasoFlecha(+d.flecha);
   if (d.modoGraf) { S.modoGraf = d.modoGraf; registrar('vista', d.modoGraf === 'tabla' ? 'Vio la tabla' : 'Vio el gráfico'); return render(); }
   if (d.enviarIa !== undefined) return enviarIA();
+  if (d.preguntarSeleccionIa !== undefined) {
+    e.preventDefault();
+    e.stopPropagation();
+    return void enviarSeleccionContextualIA();
+  }
+  if (d.iaHablar) {
+    if (S.rol !== 'moderador') return;
+    const caja = b.closest('.resp-ia, .msg.ia');
+    const texto = caja ? textoHablaPorCaja.get(caja) : '';
+    if (d.iaHablar === 'play' && texto) {
+      const echoId = caja?.dataset?.iaEchoId || '';
+      return reproducirTtsRespuestaIA(texto, echoId, { forceReplay: true });
+    }
+    if (d.iaHablar === 'pause') return pausarHabla();
+    if (d.iaHablar === 'resume') return reanudarHabla();
+    if (d.iaHablar === 'stop') return detenerHabla();
+    return;
+  }
   if (d.volverAnterior !== undefined) {
     const pos = posVista(S.rol);
     const target = Math.max(0, pos - 1);
@@ -2198,6 +4347,7 @@ document.addEventListener('click', e => {
   if (d.abrir === 'presentador') return abrirMenuPresentador();
   if (d.abrir === 'pregunta') return abrirPregunta();
   if (d.solicitarTurnoOral !== undefined) return void solicitarTurnoOralDirecto();
+  if (d.enfocarIa !== undefined) return enfocarEntradaGemini();
   if (d.abrir === 'ia') return abrirIA();
   if (d.iaEscalarAceptar) return void aceptarEscalamientoIA(decodeURIComponent(d.iaEscalarAceptar));
   if (d.iaEscalarRechazar !== undefined) return rechazarEscalamientoIA(b);
@@ -2216,7 +4366,8 @@ document.addEventListener('click', e => {
   if (d.abrir === 'glosario') { registrar('glosario', 'Abrió el glosario'); return abrirGlosario(seccionActual()); }
   if (d.glos) { registrar('glosario', d.glos); return abrirGlosario(seccionActual(), d.glos); }
   if (d.escuchar) { const [s, g] = d.escuchar.split('|').map(Number); return hablar(SECCIONES[s].graficos[g].texto(EMP)); }
-  if (d.exportar !== undefined) return exportarPDF();
+  if (d.exportarCatch !== undefined) { if (S.rol !== 'moderador') return; return void descargarPdfFeedbackCatch(); }
+  if (d.exportarCliente !== undefined) return void descargarPdfParaCliente();
   if (d.avatar !== undefined) { S.avatar = !S.avatar; if (S.avatar) registrar('avatar', 'Abrió el avatar'); return render(); }
   if (d.escucharTexto !== undefined) return hablar(textoNarracion(PASOS[posVista(S.rol)]));
   if (d.cerrarFuente !== undefined) return cerrarFuente();
@@ -2231,23 +4382,180 @@ document.addEventListener('click', e => {
   if (e.target.closest('canvas')) return;
   cerrarFuente();
 });
+document.addEventListener('input', e => {
+  if (e.target.dataset.iaHablarVol === undefined) return;
+  const pct = parseInt(e.target.value, 10);
+  if (!Number.isFinite(pct)) return;
+  guardarVolHabla(pct / 100);
+  document.querySelectorAll('[data-ia-hablar-vol]').forEach(sl => { if (sl !== e.target) sl.value = String(pct); });
+  document.querySelectorAll('[data-ia-hablar-vol-pct]').forEach(el => { el.textContent = `${pct}%`; });
+});
 document.addEventListener('change', e => {
   const t = e.target;
+  if (t.dataset.iaHablarVoz !== undefined) {
+    guardarVozHabla(t.value);
+    document.querySelectorAll('[data-ia-hablar-voz]').forEach(sl => { if (sl !== t) sl.value = t.value; });
+    return;
+  }
+  if (t.dataset.iaHablarAuto !== undefined) {
+    guardarAutoTtsIA(t.checked);
+    return;
+  }
   if (t.dataset.filtro) { filtros[t.dataset.filtro] = t.value; registrar('filtro', `${{tier: 'Tier', tamano: 'Tamaño', proceso: 'Proceso'}[t.dataset.filtro]} = ${t.dataset.filtro === 'proceso' && t.value !== 'Todos' ? PROCESO[t.value] : t.value}`); render(); }
   if (t.dataset.seguir !== undefined) {
     if (t.checked) volverAlVivo('movil', true);
     else entrarExploracion('movil', S.pos);
   }
 });
-function hablar(texto) {
-  if (!('speechSynthesis' in window)) return;
-  speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(texto); u.lang = 'es-MX'; u.rate = 1.02;
-  const cara = document.querySelector('#cara'); cara && cara.classList.add('habla'); u.onend = () => document.querySelector('#cara')?.classList.remove('habla');
+const HABLA_VOL_KEY = 'catch-habla-volume';
+const HABLA_VOZ_KEY = 'catch-habla-voice-uri';
+let hablaUtterance = null;
+let hablaTextoActivo = '';
+let hablaOffsetActivo = 0;
+let hablaEstado = 'idle';
+let hablaSuprimirFin = false;
+function leerVolHabla() {
+  try { const n = parseFloat(sessionStorage.getItem(HABLA_VOL_KEY)); return Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 1; } catch { return 1; }
+}
+function guardarVolHabla(v) { try { sessionStorage.setItem(HABLA_VOL_KEY, String(v)); } catch { /* ignore */ } }
+function leerVozHabla() {
+  try { return sessionStorage.getItem(HABLA_VOZ_KEY) || ''; } catch { return ''; }
+}
+function guardarVozHabla(uri) {
+  try {
+    if (uri) sessionStorage.setItem(HABLA_VOZ_KEY, uri);
+    else sessionStorage.removeItem(HABLA_VOZ_KEY);
+  } catch { /* ignore */ }
+}
+function aplicarConfigVozHabla(u) {
+  u.lang = 'es-MX';
+  u.rate = 1.02;
+  u.volume = leerVolHabla();
+  asegurarVocesCargadas();
+  const uri = leerVozHabla();
+  const todas = speechSynthesis.getVoices();
+  if (uri) {
+    const elegida = todas.find(v => v.voiceURI === uri);
+    if (elegida) { u.voice = elegida; return; }
+  }
+  const es = vocesEspanolHabla();
+  if (es.length) u.voice = es.find(v => /es-MX/i.test(v.lang)) || es[0];
+}
+function quitarClaseHablaCara() { document.querySelector('#cara')?.classList.remove('habla'); }
+function sincronizarControlesHabla() {
+  if (!soporteHablaNavegador()) return;
+  const hablando = hablaEstado === 'playing';
+  const pausado = hablaEstado === 'paused';
+  document.querySelectorAll('.ia-habla-ctrl').forEach(ctrl => {
+    ctrl.querySelector('[data-ia-hablar="play"]')?.toggleAttribute('disabled', hablando || pausado);
+    const pauseBtn = ctrl.querySelector('[data-ia-hablar="pause"]');
+    const resumeBtn = ctrl.querySelector('[data-ia-hablar="resume"]');
+    if (pauseBtn) { pauseBtn.disabled = !hablando; pauseBtn.hidden = pausado; }
+    if (resumeBtn) { resumeBtn.disabled = !pausado; resumeBtn.hidden = !pausado; }
+    ctrl.querySelector('[data-ia-hablar="stop"]')?.toggleAttribute('disabled', !hablando && !pausado);
+    ctrl.querySelector('[data-ia-hablar-voz]')?.toggleAttribute('disabled', hablando);
+    ctrl.querySelector('[data-ia-hablar-vol]')?.toggleAttribute('disabled', hablando);
+  });
+}
+function enlazarEventosUtterance(u, offsetBase) {
+  u.onboundary = ev => {
+    if (typeof ev.charIndex === 'number') hablaOffsetActivo = offsetBase + ev.charIndex;
+  };
+  u.onstart = () => { hablaEstado = 'playing'; sincronizarControlesHabla(); };
+  u.onend = () => {
+    if (hablaSuprimirFin) {
+      hablaUtterance = null;
+      sincronizarControlesHabla();
+      return;
+    }
+    if (hablaEstado === 'playing') {
+      hablaTextoActivo = '';
+      hablaOffsetActivo = 0;
+      hablaEstado = 'idle';
+      quitarClaseHablaCara();
+    }
+    hablaUtterance = null;
+    sincronizarControlesHabla();
+  };
+  u.onerror = () => {
+    if (!hablaSuprimirFin) {
+      hablaTextoActivo = '';
+      hablaOffsetActivo = 0;
+      hablaEstado = 'idle';
+      quitarClaseHablaCara();
+    }
+    hablaUtterance = null;
+    sincronizarControlesHabla();
+  };
+}
+function iniciarHablaDesde(offset) {
+  if (!soporteHablaNavegador() || !hablaTextoActivo) return;
+  const frag = hablaTextoActivo.slice(offset).trim();
+  if (!frag) {
+    hablaTextoActivo = '';
+    hablaOffsetActivo = 0;
+    hablaEstado = 'idle';
+    quitarClaseHablaCara();
+    sincronizarControlesHabla();
+    return;
+  }
+  const u = new SpeechSynthesisUtterance(frag);
+  aplicarConfigVozHabla(u);
+  hablaUtterance = u;
+  enlazarEventosUtterance(u, offset);
+  const cara = document.querySelector('#cara');
+  cara && cara.classList.add('habla');
   speechSynthesis.speak(u);
+  sincronizarControlesHabla();
+}
+function hablar(texto) {
+  if (!soporteHablaNavegador()) return;
+  const t = String(texto || '').trim();
+  if (!t) return;
+  detenerHablaNavegador();
+  hablaTextoActivo = t;
+  hablaOffsetActivo = 0;
+  hablaEstado = 'playing';
+  iniciarHablaDesde(0);
+}
+function pausarHabla() {
+  pausarNarracionRuntime();
+  if (!soporteHablaNavegador() || hablaEstado !== 'playing') return;
+  hablaEstado = 'paused';
+  hablaSuprimirFin = true;
+  speechSynthesis.cancel();
+  hablaSuprimirFin = false;
+  hablaUtterance = null;
+  sincronizarControlesHabla();
+}
+function reanudarHabla() {
+  if (!soporteHablaNavegador() || hablaEstado !== 'paused' || !hablaTextoActivo) return;
+  hablaEstado = 'playing';
+  iniciarHablaDesde(hablaOffsetActivo);
+}
+function detenerHablaNavegador() {
+  if (!soporteHablaNavegador()) {
+    quitarClaseHablaCara();
+    return;
+  }
+  hablaSuprimirFin = true;
+  speechSynthesis.cancel();
+  hablaSuprimirFin = false;
+  hablaTextoActivo = '';
+  hablaOffsetActivo = 0;
+  hablaEstado = 'idle';
+  hablaUtterance = null;
+  quitarClaseHablaCara();
+  sincronizarControlesHabla();
+}
+function detenerHabla() {
+  try { window.__CATCH_TAVUS_CVI__?.interrupt?.(); } catch { /* ignore */ }
+  detenerHablaNavegador();
 }
 // Navegación provisional con flechas (mientras la IA no conduce sola la presentación).
 // Moderador, o cliente siguiendo en vivo: mueve la sesión para todos. Cliente explorando: solo su pantalla.
 function pasoFlecha(d) {
+  if (S.rol !== 'moderador' && !visitanteVeReunion()) return;
   if (S.rol === 'moderador') return moverModerador(S.pos + d);
   const rol = S.rol === 'movil' ? 'movil' : 'cliente';
   const v = vistaParticipante(rol);
@@ -2255,7 +4563,26 @@ function pasoFlecha(d) {
   v.pos = acotarPosExploracion(rol, v.pos + d);
   render();
 }
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t?.dataset?.prepArchivo !== undefined && t.files?.[0]) {
+    S.prepArchivoNombre = t.files[0].name;
+    programarRender();
+  }
+});
+document.addEventListener('mouseup', e => {
+  if (e.button !== 0) return;
+  if (e.target.closest('.popover-seleccion-ia, [data-preguntar-seleccion-ia]')) return;
+  if (e.target.closest('canvas')) return;
+  setTimeout(() => detectarSeleccionTextoIA(), 0);
+});
+document.addEventListener('mousedown', e => {
+  if (e.target.closest('.popover-seleccion-ia, [data-preguntar-seleccion-ia]')) return;
+  if (window.getSelection()?.toString().trim()) return;
+  cerrarPopoverSeleccionIA();
+});
 document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') cerrarPopoverSeleccionIA();
   if (e.key === 'Enter' && e.target.id === 'inIA') { e.preventDefault(); return enviarIA(); }
   if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
   if (e.target.closest('input, textarea, select') || $('#capaModal').innerHTML || S.rol === 'movil') return;

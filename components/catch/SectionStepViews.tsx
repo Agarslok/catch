@@ -99,6 +99,7 @@ export function ClarityStepView({
   onClear,
   onDoubts,
   onReview,
+  onExplore,
 }: {
   sectionLabel: string;
   chapterIndex: number;
@@ -106,6 +107,7 @@ export function ClarityStepView({
   onClear: () => void;
   onDoubts: () => void;
   onReview: () => void;
+  onExplore?: () => void;
 }) {
   const ch = CHAPTERS[chapterIndex] ?? CHAPTERS[0];
   return (
@@ -142,6 +144,12 @@ export function ClarityStepView({
             Quiero repasar conceptos
             <small>Consulta local de esta sección, sin cambiar lo que ve el resto.</small>
           </button>
+          {onExplore && (
+            <button type="button" className="clarity-btn" onClick={onExplore}>
+              Quiero explorar
+              <small>Revisa la sección a su ritmo. El presentador ve que eligió explorar.</small>
+            </button>
+          )}
         </div>
         {voted && (
           <p className="ask-ok">
@@ -150,7 +158,9 @@ export function ClarityStepView({
               ? ": quedó claro."
               : voted === "duda"
                 ? ": tiene dudas."
-                : ": repasará conceptos."}
+                : voted === "explorar"
+                  ? ": explorará la sección."
+                  : ": repasará conceptos."}
           </p>
         )}
       </div>
@@ -209,14 +219,95 @@ export function ConceptReviewView({
   );
 }
 
-export function ClosingView({ script }: { script: SessionScript }) {
+export function VisitorWaitingView() {
+  return (
+    <section className="stage stage--copy">
+      <div className="text" style={{ textAlign: "center", margin: "0 auto" }}>
+        <p className="chapter">Catch</p>
+        <h1 className="headline">Bienvenido a Catch</h1>
+        <p className="sub">Esperando el inicio de la reunión</p>
+        <p className="sub">
+          El presentador está preparando la sesión. Esta pantalla cambiará
+          automáticamente cuando la reunión comience.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+export function PresenterPreparationView({
+  fileName,
+  busy,
+  onFile,
+  onNext,
+}: {
+  fileName: string;
+  busy: boolean;
+  onFile: (name: string) => void;
+  onNext: () => void;
+}) {
+  return (
+    <section className="stage stage--copy">
+      <div className="text">
+        <p className="chapter">Preparación</p>
+        <h1 className="headline">Bienvenido a Catch</h1>
+        <p className="sub">
+          Prepara la información para iniciar tu reunión. Puedes continuar sin
+          subir archivos; se usará el informe de demostración.
+        </p>
+        <label className="clarity-btn clarity-btn--review" style={{ display: "block", cursor: "pointer" }}>
+          <input
+            type="file"
+            hidden
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) onFile(f.name);
+            }}
+          />
+          Subir base de datos o información
+          <small>Opcional · no se analiza en esta versión</small>
+        </label>
+        {fileName ? <p className="sub">Archivo: {fileName}</p> : null}
+        <button type="button" className="solid" disabled={busy} onClick={onNext}>
+          Siguiente
+        </button>
+      </div>
+    </section>
+  );
+}
+
+export function PresenterGeneratingView({ message }: { message: string }) {
+  return (
+    <section className="stage stage--copy">
+      <div className="text" style={{ textAlign: "center" }}>
+        <p className="chapter">Preparación</p>
+        <h1 className="headline">Generando informe…</h1>
+        <p className="sub">{message}</p>
+      </div>
+    </section>
+  );
+}
+
+export function ClosingView({
+  script,
+  isPresenter,
+  onDownloadCatch,
+  onDownloadClient,
+}: {
+  script: SessionScript;
+  isPresenter: boolean;
+  onDownloadCatch?: () => void;
+  onDownloadClient: () => void;
+}) {
   return (
     <section className="stage stage--copy">
       <div className="text">
         <p className="chapter">Cierre</p>
         <h1 className="headline">Gracias. Así quedó la sesión</h1>
         <p className="sub">
-          Las preguntas privadas y la claridad por sección quedan en el panel del presentador.
+          {isPresenter
+            ? "Descargue el feedback interno de Catch o el informe para entregar al cliente."
+            : "Descargue el resumen de la sesión preparado para usted."}
         </p>
       </div>
       <div className="agenda-grid">
@@ -226,6 +317,26 @@ export function ClosingView({ script }: { script: SessionScript }) {
             <span>{sec.summary}</span>
           </div>
         ))}
+      </div>
+      <div className="clarity-actions" style={{ marginTop: "1.25rem" }}>
+        {isPresenter && onDownloadCatch ? (
+          <button
+            type="button"
+            className="clarity-btn clarity-btn--ask"
+            onClick={onDownloadCatch}
+          >
+            Descargar PDF de feedback de Catch
+            <small>Uso interno Catch · contenido de demostración</small>
+          </button>
+        ) : null}
+        <button
+          type="button"
+          className="clarity-btn clarity-btn--ok"
+          onClick={onDownloadClient}
+        >
+          Descargar PDF para el cliente
+          <small>Resumen profesional para compartir con el cliente</small>
+        </button>
       </div>
     </section>
   );

@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AvatarDockVideo } from "@/components/catch/AvatarDockVideo";
 import { PresenterAvatarWidget } from "@/components/catch/PresenterAvatarWidget";
+import { TavusAiEcho } from "@/components/catch/TavusAiEcho";
+import { TavusCviProvider } from "@/components/catch/TavusCviProvider";
 import { StoryRail } from "@/components/catch/StoryRail";
 import { ChapterCharts } from "@/components/charts/ChapterCharts";
 import { logMeetingActivity } from "@/lib/activity/log";
@@ -23,7 +25,16 @@ import {
   ConceptReviewView,
   FullSheetView,
   IntroductionView,
+  PresenterGeneratingView,
+  PresenterPreparationView,
+  VisitorWaitingView,
 } from "@/components/catch/SectionStepViews";
+import {
+  presenterDashboardReady,
+  presenterInPreMeetingReview,
+  presenterSeesDashboard,
+  visitorSeesMeeting,
+} from "@/lib/meeting/monitor-session-phase";
 import { useSupabaseHealth } from "@/hooks/useSupabaseHealth";
 import { useInteractionAnalytics } from "@/hooks/useInteractionAnalytics";
 import { MeetingAnalyticsPanel } from "@/components/catch/MeetingAnalyticsPanel";
@@ -41,9 +52,24 @@ import {
   sectionForPoint,
   specialPointId,
 } from "@/lib/meeting/script";
+import {
+  estimateNarrationDurationMs,
+  scriptContinueTarget,
+  scriptPointAwaitingModerator,
+  shouldBlockDuplicateContinue,
+} from "@/lib/meeting/section-flow";
+import {
+  recoveryNotice,
+  type RecoveryNotice,
+} from "@/lib/meeting/presentation-recovery";
 import type { LocalExploreMode } from "@/lib/meeting/script-types";
 import type { ClarityVote } from "@/lib/meeting/session-types";
 import { validateChartAction } from "@/lib/visualization/actions";
+import {
+  downloadAvatarScriptPdf,
+  downloadCatchFeedbackPdf,
+  downloadClientSessionPdf,
+} from "@/lib/meeting/pdf-export";
 
 type Props = {
   meetingId: string;
@@ -82,9 +108,19 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
     globalView,
     eventSeq,
     setPresentationPaused,
+    setAvatarVideoPaused,
     publishGlobalAction,
+    sessionPhase,
+    publishSessionPhase,
+    publishGlobalViewPatch,
+    refreshGlobalState,
     ready,
   } = useMeetingSync(meetingId, isPresenter, presenterToken);
+
+  const [prepFileName, setPrepFileName] = useState("");
+  const [genMessage, setGenMessage] = useState("");
+  const [prepBusy, setPrepBusy] = useState(false);
+  const [presenterPreviewPointId, setPresenterPreviewPointId] = useState("");
 
   const [follow, setFollow] = useState(true);
   const [ownPointId, setOwnPointId] = useState(livePointId);
@@ -100,13 +136,25 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
   const [question, setQuestion] = useState("");
   const [askOk, setAskOk] = useState("");
   const [aiReply, setAiReply] = useState("");
+  const [aiReplySeq, setAiReplySeq] = useState(0);
   const [clarityVote, setClarityVote] = useState<ClarityVote | null>(null);
+  const [clarityPromptDismissed, setClarityPromptDismissed] = useState(false);
   const [qOpen, setQOpen] = useState(false);
+  const [recovery, setRecovery] = useState<RecoveryNotice | null>(null);
   const isMobile = useMediaQuery("(max-width: 860px)");
   const showLeftRail = !isMobile || isPresenter;
-  const showDockVideo = !isPresenter && !isMobile;
-  const showFloatingAvatar = !isPresenter && isMobile;
+  const showDockVideo = !isMobile;
+  const showFloatingAvatar = isMobile;
+  const avatarVideoPaused = globalView.avatarVideoPaused ?? false;
+  const avatarVideoProps = {
+    syncPaused: avatarVideoPaused,
+    canControlPause: isPresenter,
+    onTogglePause: () => void setAvatarVideoPaused(!avatarVideoPaused),
+  };
   const chatRef = useRef<HTMLInputElement>(null);
+  const narrationExecRef = useRef<string | null>(null);
+  const sectionDedupRef = useRef<string | null>(null);
+  const lastContinueAtRef = useRef<number | null>(null);
   const actorRef = useRef(
     isPresenter
       ? { id: "presenter", name: "Presentador" }
@@ -161,6 +209,15 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
     if (isPresenter) setPeekPointId(null);
   }, [livePointId, isPresenter]);
 
+  const presenterPreMeetingReview =
+    isPresenter && presenterInPreMeetingReview(sessionPhase);
+
+  useEffect(() => {
+    if (presenterPreMeetingReview) {
+      setPresenterPreviewPointId(livePointId);
+    }
+  }, [presenterPreMeetingReview, livePointId, sessionPhase]);
+
   useEffect(() => {
     if (!follow || isPresenter) return;
     if (globalView.munFilter) setMunFilter(globalView.munFilter);
@@ -169,7 +226,13 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
 
   const currentPointId =
     peekPointId ??
-    (isPresenter ? livePointId : follow ? livePointId : ownPointId);
+    (presenterPreMeetingReview
+      ? presenterPreviewPointId || livePointId
+      : isPresenter
+        ? livePointId
+        : follow
+          ? livePointId
+          : ownPointId);
   const currentPoint = remapHiddenPoint(
     script,
     getPointById(script, currentPointId) ?? getPointAt(script, liveStep),
@@ -182,18 +245,108 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
   const beat = chartRef?.beat ?? 0;
   const c = chapterMeta(chapterIndex) ?? CHAPTERS[0];
   const alignedWithGlobal = follow || currentPoint.id === livePointId;
+  const groupAwaitingModerator = globalView.awaitingModerator === true;
+  const livePoint = getPointById(script, livePointId);
+  const clarityAwaitSectionId =
+    globalView.sectionAwaitSectionId ??
+    (livePoint?.sectionId &&
+    (livePoint.kind === "full_sheet" || livePoint.kind === "clarity_check")
+      ? livePoint.sectionId
+      : null);
+  const liveSheetOrClarity =
+    livePoint?.kind === "full_sheet" || livePoint?.kind === "clarity_check";
+  const visitorClarityPrompt =
+    !isPresenter &&
+    follow &&
+    !reviewOpen &&
+    !peekPointId &&
+    !clarityPromptDismissed &&
+    liveSheetOrClarity &&
+    Boolean(clarityAwaitSectionId || livePoint?.sectionId);
+
+  const pdfMeta = useMemo(
+    () => ({
+      editionLabel: script.title || "Monitor de Mercado Laboral",
+      clientLabel: "Su empresa",
+      meetingId,
+      sectionNames: script.sections.map((s) => s.name),
+    }),
+    [script, meetingId],
+  );
+
+  const onDownloadClientPdf = useCallback(() => {
+    downloadClientSessionPdf(script, pdfMeta);
+  }, [script, pdfMeta]);
+
+  const onDownloadCatchPdf = useCallback(() => {
+    downloadCatchFeedbackPdf(pdfMeta);
+  }, [pdfMeta]);
+
+  const runSimulatedReportGeneration = useCallback(async () => {
+    if (prepBusy || sessionPhase !== "preparacion" || !isPresenter) return;
+    setPrepBusy(true);
+    const messages = [
+      "Preparando la información",
+      "Organizando las secciones del informe",
+      "Preparando el guion del avatar",
+    ];
+    await publishSessionPhase("generando_informe");
+    const t0 = Date.now();
+    for (const m of messages) {
+      setGenMessage(m);
+      await new Promise((r) => setTimeout(r, 750));
+    }
+    const rest = 2200 - (Date.now() - t0);
+    if (rest > 0) await new Promise((r) => setTimeout(r, rest));
+    setGenMessage("");
+    await publishSessionPhase("revision_previa");
+    setPrepBusy(false);
+  }, [isPresenter, prepBusy, publishSessionPhase, sessionPhase]);
+
+  const startMeetingFromReady = useCallback(async () => {
+    if (!presenterInPreMeetingReview(sessionPhase) || !isPresenter) return;
+    await publishSessionPhase("reunion_activa");
+    await publishStep(liveStep);
+  }, [isPresenter, liveStep, publishSessionPhase, publishStep, sessionPhase]);
+
+  const onDownloadAvatarScriptPdf = useCallback(() => {
+    downloadAvatarScriptPdf(script, pdfMeta);
+  }, [script, pdfMeta]);
 
   const returnToPresentation = useCallback(() => {
-    setFollow(true);
-    setOwnPointId(livePointId);
-    setExploreMode("follow");
-    setSheetReturnId(null);
-    setPeekPointId(null);
-    setReviewOpen(false);
-    trackAnalytics("explore.returned_to_presentation", {
-      chart_id: c.chartFocus,
+    void refreshGlobalState().then((row) => {
+      const pointId = row?.current_point_id ?? livePointId;
+      setFollow(true);
+      setOwnPointId(pointId);
+      setExploreMode("follow");
+      setSheetReturnId(null);
+      setPeekPointId(null);
+      setReviewOpen(false);
+      trackAnalytics("explore.returned_to_presentation", {
+        chart_id: c.chartFocus,
+        metadata: { pointId },
+      });
     });
-  }, [livePointId, trackAnalytics, c.chartFocus]);
+  }, [livePointId, refreshGlobalState, trackAnalytics, c.chartFocus]);
+
+  const liveSectionOrder = useMemo(() => {
+    const point = getPointById(script, livePointId);
+    if (!point) return -1;
+    return sectionForPoint(script, point)?.order ?? -1;
+  }, [script, livePointId]);
+
+  const prevLiveSectionOrderRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (isPresenter) {
+      prevLiveSectionOrderRef.current = liveSectionOrder;
+      return;
+    }
+    const prev = prevLiveSectionOrderRef.current;
+    if (prev !== null && liveSectionOrder > prev) {
+      returnToPresentation();
+    }
+    prevLiveSectionOrderRef.current = liveSectionOrder;
+  }, [liveSectionOrder, isPresenter, returnToPresentation]);
 
   const goLocal = useCallback(
     (pointId: string, mode: LocalExploreMode) => {
@@ -211,8 +364,102 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
     [script, unlockedStep, trackAnalytics, c.chartFocus],
   );
 
+  useEffect(() => {
+    if (!isPresenter || !presenterDashboardReady(sessionPhase)) return;
+    if (presentationStatus === "paused") {
+      setRecovery(recoveryNotice("paused_pending"));
+      return;
+    }
+    const point = getPointById(script, livePointId);
+    if (!point) return;
+    setRecovery(null);
+    const text =
+      point.narrative ||
+      (point.kind === "chart" && point.chartRefs[0]
+        ? chapterMeta(point.chartRefs[0].chapterIndex)?.sub
+        : "");
+    const execId = `narr-${livePointId}-${Date.now()}`;
+    narrationExecRef.current = execId;
+    const ms = Math.max(estimateNarrationDurationMs(text), 1_200);
+    const timer = window.setTimeout(() => {
+      if (narrationExecRef.current !== execId) return;
+      setRecovery(recoveryNotice("narration_unconfirmed"));
+    }, ms);
+    return () => window.clearTimeout(timer);
+  }, [isPresenter, sessionPhase, livePointId, script, presentationStatus]);
+
+  useEffect(() => {
+    if (!isPresenter) return;
+    const point = getPointById(script, livePointId);
+    const sectionClosePoint =
+      point?.kind === "clarity_check" || point?.kind === "full_sheet";
+    if (sectionClosePoint && point.sectionId) {
+      const alreadyForSection =
+        groupAwaitingModerator && globalView.sectionAwaitSectionId === point.sectionId;
+      if (!alreadyForSection) {
+        const sec = script.sections.find((s) => s.id === point.sectionId);
+        void publishGlobalViewPatch({
+          awaitingModerator: true,
+          sectionAwaitSectionId: point.sectionId,
+          sectionAwaitSectionLabel: sec?.name ?? null,
+        });
+      }
+    }
+    const holdsSectionWait =
+      scriptPointAwaitingModerator(point) || point?.kind === "full_sheet";
+    if (point && !holdsSectionWait && groupAwaitingModerator) {
+      sectionDedupRef.current = null;
+      void publishGlobalViewPatch({
+        awaitingModerator: false,
+        sectionAwaitSectionId: null,
+        sectionAwaitSectionLabel: null,
+        sectionClosedPointId: null,
+      });
+    }
+  }, [
+    isPresenter,
+    livePointId,
+    script,
+    groupAwaitingModerator,
+    globalView.sectionAwaitSectionId,
+    publishGlobalViewPatch,
+  ]);
+
+  const continueSection = useCallback(async () => {
+    if (!isPresenter || shouldBlockDuplicateContinue(lastContinueAtRef.current)) return;
+    if (presentationStatus === "paused") {
+      setRecovery(recoveryNotice("paused_pending"));
+      return;
+    }
+    const target = scriptContinueTarget(script, livePointId);
+    if (!target.ok || !target.pointId) return;
+    lastContinueAtRef.current = Date.now();
+    sectionDedupRef.current = null;
+    await publishGlobalViewPatch({
+      awaitingModerator: false,
+      sectionAwaitSectionId: null,
+      sectionAwaitSectionLabel: null,
+      sectionClosedPointId: null,
+    });
+    await publishPoint(target.pointId);
+  }, [isPresenter, script, livePointId, publishGlobalViewPatch, publishPoint, presentationStatus]);
+
   const next = () => {
+    if (presenterPreMeetingReview) {
+      const idx = getPointIndex(script, currentPoint.id);
+      const nxt = adjacentNavigableIndex(script, idx, 1);
+      const wrap = nxt === idx;
+      const target = wrap ? 0 : nxt;
+      setPresenterPreviewPointId(getPointAt(script, target).id);
+      return;
+    }
     if (isPresenter) {
+      if (groupAwaitingModerator) return;
+      if (presentationStatus === "paused") {
+        setRecovery(recoveryNotice("paused_pending"));
+        return;
+      }
+      setRecovery(null);
       const nxt = adjacentNavigableIndex(script, liveStep, 1);
       const wrap = nxt === liveStep;
       void publishStep(wrap ? 0 : nxt, wrap);
@@ -223,6 +470,12 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
   };
 
   const prev = () => {
+    if (presenterPreMeetingReview) {
+      const idx = getPointIndex(script, currentPoint.id);
+      const p = adjacentNavigableIndex(script, idx, -1);
+      setPresenterPreviewPointId(getPointAt(script, p).id);
+      return;
+    }
     if (isPresenter) {
       void publishStep(adjacentNavigableIndex(script, liveStep, -1));
       return;
@@ -384,6 +637,7 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
     }
     if (data.answer) {
       setAiReply(data.answer);
+      setAiReplySeq((n) => n + 1);
       await logMeetingActivity({
         meetingId,
         eventType: "AI_RESPONSE",
@@ -401,20 +655,45 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
     setAskOk("Pregunta enviada. Respuesta del asistente abajo.");
   };
 
-  const voteClarity = async (vote: ClarityVote) => {
-    const sectionKey = section?.id ?? c.chartFocus;
-    const res = await fetch(`/api/meeting/${meetingId}/clarity`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        participantId: actorRef.current.id,
-        sectionKey,
-        vote,
-      }),
-    });
-    if (res.ok) setClarityVote(vote);
-    return res.ok;
+  const voteClarity = async (vote: ClarityVote, sectionIdOverride?: string | null) => {
+    const sectionKey =
+      sectionIdOverride ??
+      clarityAwaitSectionId ??
+      livePoint?.sectionId ??
+      section?.id ??
+      c.chartFocus;
+    setClarityVote(vote);
+    setClarityPromptDismissed(true);
+    try {
+      await fetch(`/api/meeting/${meetingId}/clarity`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          participantId: actorRef.current.id,
+          sectionKey,
+          vote,
+        }),
+      });
+    } catch {
+      /* persist best-effort; the local vote and exploration still proceed */
+    }
+    return true;
   };
+
+  const exploreAfterClarityVote = useCallback(() => {
+    const secId = clarityAwaitSectionId ?? livePoint?.sectionId ?? section?.id;
+    if (!secId) return;
+    const sheetId = specialPointId(script, secId, "full_sheet");
+    if (sheetId) goLocal(sheetId, "explore");
+  }, [clarityAwaitSectionId, livePoint?.sectionId, section?.id, script, goLocal]);
+
+  useEffect(() => {
+    if (isPresenter) return;
+    if (!follow) return;
+    if (!liveSheetOrClarity) return;
+    setClarityVote(null);
+    setClarityPromptDismissed(false);
+  }, [follow, livePointId, liveSheetOrClarity, isPresenter]);
 
   const syncBadge = useMemo(() => {
     if (supabaseLoading) return "Comprobando Supabase…";
@@ -432,7 +711,12 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
   const jumpKind = (kind: "full_sheet" | "clarity_check") => {
     if (!section) return;
     const id = specialPointId(script, section.id, kind);
-    if (id) void publishPoint(id);
+    if (!id) return;
+    if (presenterPreMeetingReview) {
+      setPresenterPreviewPointId(id);
+      return;
+    }
+    void publishPoint(id);
   };
 
   const rail = (
@@ -440,9 +724,15 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
       script={script}
       livePointId={livePointId}
       currentPointId={currentPoint.id}
-      unlockedIndex={unlockedStep}
+      unlockedIndex={
+        presenterPreMeetingReview ? script.points.length - 1 : unlockedStep
+      }
       isPresenter={isPresenter}
       onSelectPoint={(id) => {
+        if (presenterPreMeetingReview) {
+          setPresenterPreviewPointId(id);
+          return;
+        }
         if (isPresenter) void publishPoint(id);
         else goLocal(id, "explore");
       }}
@@ -464,6 +754,22 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
   );
 
   const renderStage = () => {
+    if (!isPresenter && !visitorSeesMeeting(sessionPhase)) {
+      return <VisitorWaitingView />;
+    }
+    if (isPresenter && sessionPhase === "preparacion") {
+      return (
+        <PresenterPreparationView
+          fileName={prepFileName}
+          busy={prepBusy}
+          onFile={setPrepFileName}
+          onNext={() => void runSimulatedReportGeneration()}
+        />
+      );
+    }
+    if (isPresenter && sessionPhase === "generando_informe") {
+      return <PresenterGeneratingView message={genMessage || "Generando informe…"} />;
+    }
     if (reviewOpen) {
       return (
         <ConceptReviewView
@@ -477,42 +783,67 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
       return <IntroductionView script={script} />;
     }
     if (currentPoint.kind === "closing") {
-      return <ClosingView script={script} />;
+      return (
+        <ClosingView
+          script={script}
+          isPresenter={isPresenter}
+          onDownloadCatch={isPresenter ? onDownloadCatchPdf : undefined}
+          onDownloadClient={onDownloadClientPdf}
+        />
+      );
     }
-    if (currentPoint.kind === "full_sheet") {
+    if (visitorClarityPrompt) {
+      const secId = clarityAwaitSectionId ?? livePoint?.sectionId ?? section?.id;
+      const claritySection = secId
+        ? script.sections.find((s) => s.id === secId)
+        : section;
+      const clarityChapterIndex = claritySection?.order ?? chapterIndex;
+      return (
+        <ClarityStepView
+          sectionLabel={claritySection?.name ?? c.t}
+          chapterIndex={clarityChapterIndex}
+          voted={clarityVote}
+          onClear={() => {
+            void voteClarity("claro", secId).then(() => exploreAfterClarityVote());
+          }}
+          onDoubts={() => {
+            void voteClarity("duda", secId).then(() => {
+              setPrivateAskOpen(true);
+              exploreAfterClarityVote();
+            });
+          }}
+          onReview={() => {
+            void voteClarity("glosario", secId).then(() => setReviewOpen(true));
+          }}
+          onExplore={() => {
+            void voteClarity("explorar", secId).then(() => exploreAfterClarityVote());
+          }}
+        />
+      );
+    }
+    const fullSheetPoint =
+      currentPoint.kind === "full_sheet"
+        ? currentPoint
+        : isPresenter && currentPoint.kind === "clarity_check" && currentPoint.sectionId
+          ? (() => {
+              const sheetId = specialPointId(script, currentPoint.sectionId, "full_sheet");
+              return sheetId ? getPointById(script, sheetId) : null;
+            })()
+          : null;
+    if (fullSheetPoint) {
       return (
         <FullSheetView
-          point={currentPoint}
+          point={fullSheetPoint}
           script={script}
           unlockedIndex={unlockedStep}
           isPresenter={isPresenter}
           onOpenItem={(item) => {
-            setSheetReturnId(currentPoint.id);
+            setSheetReturnId(fullSheetPoint.id);
             setPeekPointId(item.pointId);
             setChartHighlight(true);
             window.setTimeout(() => setChartHighlight(false), 1400);
             if (isPresenter) return;
             goLocal(item.pointId, "summary_origin");
-          }}
-        />
-      );
-    }
-    if (currentPoint.kind === "clarity_check") {
-      return (
-        <ClarityStepView
-          sectionLabel={section?.name ?? c.t}
-          chapterIndex={chapterIndex}
-          voted={clarityVote}
-          onClear={() => {
-            void voteClarity("claro");
-          }}
-          onDoubts={() => {
-            void voteClarity("duda");
-            setPrivateAskOpen(true);
-          }}
-          onReview={() => {
-            void voteClarity("glosario");
-            setReviewOpen(true);
           }}
         />
       );
@@ -556,9 +887,19 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
     (isPresenter ? liveStep : currentIndex);
 
   const shellClass = `app-shell ${isPresenter ? "presentador" : "cliente"}`;
+  const presenterLiveDashboard = isPresenter && presenterDashboardReady(sessionPhase);
+  const showRailContent = isPresenter
+    ? presenterSeesDashboard(sessionPhase)
+    : visitorSeesMeeting(sessionPhase);
 
   return (
-    <div className={shellClass}>
+    <TavusCviProvider
+      meetingId={meetingId}
+      presenterToken={presenterToken}
+      canStartTavus={presenterLiveDashboard}
+    >
+      {isPresenter && <TavusAiEcho answer={aiReply} echoId={aiReplySeq} />}
+      <div className={shellClass}>
       <header className="top">
         <div className="brand">
           <Link href="/" aria-label="Inicio">
@@ -582,11 +923,15 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
                 type="button"
                 className="pill"
                 onClick={() => void setPresentationPaused(presentationStatus !== "paused")}
+                disabled={presenterPreMeetingReview}
               >
                 {presentationStatus === "paused" ? "Reanudar" : "Pausar"}
               </button>
               <span className="pill live-pill">
-                <span className="dot" /> En vivo · presentador
+                <span className="dot" />{" "}
+                {presenterPreMeetingReview
+                  ? "Previsualización · presentador"
+                  : "En vivo · presentador"}
               </span>
             </>
           ) : (
@@ -612,13 +957,94 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
       <div className="body">
         {showLeftRail && (
           <aside className="rail">
-            {rail}
-            {showDockVideo && <AvatarDockVideo active />}
+            {showRailContent ? (
+              rail
+            ) : (
+              <p className="sub" style={{ padding: "12px 14px", margin: 0 }}>
+                {isPresenter
+                  ? "El guion aparecerá después de preparar la sesión."
+                  : "El guion estará disponible cuando comience la reunión."}
+              </p>
+            )}
+            {showDockVideo && <AvatarDockVideo active {...avatarVideoProps} />}
           </aside>
         )}
 
         <main className="main">
-          {!isPresenter && !showLeftRail && <div className="script-mobile">{rail}</div>}
+          {isPresenter && recovery && (
+            <div className="banner" style={{ marginBottom: "12px" }}>
+              <span>
+                <strong>{recovery.title}</strong>
+                <span className="muted">
+                  {" "}
+                  · {recovery.detail} {recovery.actionHint}
+                </span>
+              </span>
+              <span className="banner-actions">
+                <button type="button" className="btn-small" onClick={() => setRecovery(null)}>
+                  Entendido
+                </button>
+              </span>
+            </div>
+          )}
+
+          {isPresenter && groupAwaitingModerator && (
+            <div className="banner banner--await" style={{ marginBottom: "12px" }}>
+              <span>
+                <strong>
+                  Sección completada: {globalView.sectionAwaitSectionLabel ?? section?.name}
+                </strong>
+                <span className="muted">
+                  {" "}
+                  · La presentación espera su autorización. Atienda preguntas en Participación y
+                  pulse «Continuar sección» cuando el grupo esté listo.
+                </span>
+              </span>
+              <span className="banner-actions">
+                <button type="button" className="btn-small solid" onClick={() => void continueSection()}>
+                  Continuar sección
+                </button>
+              </span>
+            </div>
+          )}
+
+          {!isPresenter && groupAwaitingModerator && follow && (
+            <div className="banner banner--await" style={{ marginBottom: "12px" }}>
+              <span>
+                <strong>El grupo espera al moderador</strong>
+                <span className="muted">
+                  {" "}
+                  · Puede indicar si quedó claro o enviar una pregunta privada. La presentación no
+                  avanza hasta que el moderador continúe.
+                </span>
+              </span>
+            </div>
+          )}
+
+          {presenterPreMeetingReview && (
+            <div className="banner" style={{ marginBottom: "12px" }}>
+              <span>
+                <strong>Informe listo.</strong> Explore el guion a la izquierda: la vista
+                previa no se comparte hasta que pulse «Iniciar reunión».
+              </span>
+              <span className="banner-actions">
+                <button type="button" className="btn-small" onClick={onDownloadAvatarScriptPdf}>
+                  Descargar guion en PDF
+                </button>
+                <button
+                  type="button"
+                  className="btn-small solid"
+                  onClick={() => void startMeetingFromReady()}
+                >
+                  Iniciar reunión
+                </button>
+              </span>
+            </div>
+          )}
+
+          {!isPresenter && !showLeftRail && showRailContent && (
+            <div className="script-mobile">{rail}</div>
+          )}
 
           {!isPresenter && (
             <div className="banner">
@@ -734,12 +1160,19 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
                 type="button"
                 className="solid"
                 onClick={next}
-                disabled={!isPresenter && (waitingOnPresenter || !localCanMove)}
+                disabled={
+                  (isPresenter && groupAwaitingModerator) ||
+                  (!isPresenter && (waitingOnPresenter || !localCanMove))
+                }
               >
-                {isPresenter
-                  ? atLastNavigable
-                    ? "Reiniciar para todos"
-                    : "Siguiente para todos"
+                {presenterPreMeetingReview
+                  ? "Siguiente en vista previa"
+                  : isPresenter
+                  ? groupAwaitingModerator
+                    ? "Esperando autorización"
+                    : atLastNavigable
+                      ? "Reiniciar para todos"
+                      : "Siguiente para todos"
                   : waitingOnPresenter
                     ? presentationStatus === "paused"
                       ? "Presentación en pausa"
@@ -794,7 +1227,10 @@ export function LiveMeetingApp({ meetingId, role, presenterToken }: Props) {
         </main>
       </div>
 
-      {showFloatingAvatar && <PresenterAvatarWidget mobileMode={isMobile} />}
-    </div>
+      {showFloatingAvatar && (
+        <PresenterAvatarWidget mobileMode={isMobile} {...avatarVideoProps} />
+      )}
+      </div>
+    </TavusCviProvider>
   );
 }

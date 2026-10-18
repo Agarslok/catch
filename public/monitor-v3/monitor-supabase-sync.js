@@ -11,16 +11,50 @@
 
   let lastApplied = -1;
   let lastUnlocked = -1;
+  let lastEventSeq = -1;
   let lastPublished = -1;
   let lastPublishedHighlight = "";
+  let lastPublishedPhase = "";
   let publishInFlight = false;
+  /** Último paso pendiente de publicar (evita perder avances rápidos mientras publishInFlight). */
+  let pendingPublish = null;
   let highlightPublishInFlight = false;
+  let phasePublishInFlight = false;
   let supabaseClient = null;
   let realtimeChannel = null;
 
   function setSyncLabel(html) {
     const el = document.getElementById("estadoSync");
     if (el) el.innerHTML = html;
+  }
+
+  function shouldApplyRemoteRow(row) {
+    const seq = row && row.event_seq;
+    if (typeof seq !== "number") return true;
+    if (lastEventSeq < 0) return true;
+    return seq > lastEventSeq;
+  }
+
+  function markRemoteRowApplied(row) {
+    const seq = row && row.event_seq;
+    if (typeof seq === "number") lastEventSeq = Math.max(lastEventSeq, seq);
+  }
+
+  function applySectionAwaitFromGlobalView(gv) {
+    if (!gv || typeof gv.awaitingModerator !== "boolean") return;
+    const data = {
+      narracionEsperaAutorizacion: gv.awaitingModerator,
+      sectionClaridadLista: gv.awaitingModerator,
+    };
+    try {
+      window.dispatchEvent(new CustomEvent("catch-monitor-estado", { detail: data }));
+    } catch {
+      /* ignore */
+    }
+    bc?.postMessage({
+      tipo: "estado",
+      data,
+    });
   }
 
   function applySession(pos, unlockedStep) {
@@ -47,6 +81,47 @@
     bc?.postMessage({ tipo: "resaltado", data: highlight ?? null, _remote: true });
   }
 
+  let lastTavusSessionKey = "";
+  function applyMonitorSessionPhase(phase, fromRemote) {
+    if (!phase || typeof phase !== "string") return;
+    if (fromRemote && phase === lastPublishedPhase) return;
+    if (fromRemote) lastPublishedPhase = phase;
+    bc?.postMessage({ tipo: "faseSesion", data: { fase: phase }, _remote: !!fromRemote });
+  }
+
+  async function publishSessionPhase(phase) {
+    if (!cfg.presenterToken || cfg.role !== "moderador") return;
+    if (!phase || phasePublishInFlight || phase === lastPublishedPhase) return;
+    phasePublishInFlight = true;
+    lastPublishedPhase = phase;
+    try {
+      await fetch(`/api/monitor/${encodeURIComponent(cfg.meetingId)}/state`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-presenter-token": cfg.presenterToken,
+        },
+        body: JSON.stringify({ sessionPhase: phase }),
+      });
+    } catch {
+      /* ignore */
+    } finally {
+      phasePublishInFlight = false;
+    }
+  }
+
+  window.__CATCH_MONITOR_SYNC_API__ = {
+    publishSessionPhase,
+  };
+
+  function applyTavusSession(session, fromRemote) {
+    const key = JSON.stringify(session ?? null);
+    if (fromRemote && key === lastTavusSessionKey) return;
+    if (fromRemote) lastTavusSessionKey = key;
+    bc?.postMessage({ tipo: "tavusSession", data: session ?? null, _remote: !!fromRemote });
+    window.__CATCH_TAVUS_CVI__?.applyViewerSession?.(session);
+  }
+
   async function fetchStep() {
     try {
       const res = await fetch(`/api/monitor/${encodeURIComponent(cfg.meetingId)}/state`);
@@ -57,26 +132,37 @@
     }
   }
 
-  async function publishStep(pos, reset) {
+  async function flushPublishQueue() {
     if (!cfg.presenterToken || cfg.role !== "moderador") return;
     if (publishInFlight) return;
-    if (!reset && pos === lastPublished) return;
-    lastPublished = pos;
-    publishInFlight = true;
-    try {
-      await fetch(`/api/monitor/${encodeURIComponent(cfg.meetingId)}/state`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-presenter-token": cfg.presenterToken,
-        },
-        body: JSON.stringify({ step: pos, reset: Boolean(reset) }),
-      });
-    } catch {
-      /* ignore */
-    } finally {
-      publishInFlight = false;
+    while (pendingPublish) {
+      const job = pendingPublish;
+      pendingPublish = null;
+      if (!job.reset && job.pos === lastPublished) continue;
+      publishInFlight = true;
+      lastPublished = job.pos;
+      try {
+        await fetch(`/api/monitor/${encodeURIComponent(cfg.meetingId)}/state`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-presenter-token": cfg.presenterToken,
+          },
+          body: JSON.stringify({ step: job.pos, reset: job.reset }),
+        });
+      } catch {
+        /* ignore */
+      } finally {
+        publishInFlight = false;
+      }
     }
+    if (pendingPublish) void flushPublishQueue();
+  }
+
+  function publishStep(pos, reset) {
+    if (!cfg.presenterToken || cfg.role !== "moderador") return Promise.resolve();
+    pendingPublish = { pos, reset: Boolean(reset) };
+    return flushPublishQueue();
   }
 
   async function publishHighlight(highlight) {
@@ -119,6 +205,8 @@
         },
         (payload) => {
           const row = payload.new || {};
+          if (!shouldApplyRemoteRow(row)) return;
+          markRemoteRowApplied(row);
           if (typeof row.current_step === "number") {
             applySession(row.current_step, row.unlocked_step);
           }
@@ -129,6 +217,13 @@
           if (gv.monitorHighlight !== undefined) {
             applyMonitorHighlight(gv.monitorHighlight, true);
           }
+          if (gv.monitorTavusSession !== undefined) {
+            applyTavusSession(gv.monitorTavusSession, true);
+          }
+          if (gv.monitorSessionPhase !== undefined) {
+            applyMonitorSessionPhase(gv.monitorSessionPhase, true);
+          }
+          applySectionAwaitFromGlobalView(gv);
         },
       )
       .subscribe((status) => {
@@ -149,9 +244,22 @@
       }
       return;
     }
+    if (tipo === "faseSesion" && data?.fase) {
+      if (cfg.role === "moderador" && !_remote) {
+        void publishSessionPhase(data.fase);
+      }
+      return;
+    }
     if (tipo === "resaltado") {
       if (cfg.role === "moderador" && !_remote) {
-        void publishHighlight(data ?? null);
+        const coerce = window.__CATCH_MONITOR_CHART__?.coerceHighlight;
+        let payload = data ?? null;
+        if (coerce) {
+          const normalized = coerce(payload);
+          if (normalized === undefined) return;
+          payload = normalized;
+        }
+        void publishHighlight(payload);
       }
     }
   });
@@ -179,8 +287,16 @@
       if (resetDev) {
         window.__CATCH_MONITOR_DEV_FRESH__ = false;
         lastPublished = -1;
-        void publishStep(0, true).then(() => applySession(0, 0));
+        void publishStep(0, true)
+          .then(() => publishSessionPhase("preparacion"))
+          .then(() => {
+            applySession(0, 0);
+            applyMonitorSessionPhase("preparacion", true);
+          });
         return;
+      }
+      if (data && typeof data.eventSeq === "number") {
+        lastEventSeq = data.eventSeq;
       }
       if (data && typeof data.step === "number") {
         applySession(data.step, data.unlockedStep);
@@ -188,8 +304,17 @@
       } else if (cfg.role === "moderador" && cfg.presenterToken) {
         void publishStep(0, true);
       }
+      if (data && data.sessionPhase) {
+        applyMonitorSessionPhase(data.sessionPhase, true);
+      }
       if (data && data.monitorHighlight !== undefined) {
         applyMonitorHighlight(data.monitorHighlight, true);
+      }
+      if (data && data.monitorTavusSession !== undefined) {
+        applyTavusSession(data.monitorTavusSession, true);
+      }
+      if (data && typeof data.awaitingModerator === "boolean") {
+        applySectionAwaitFromGlobalView({ awaitingModerator: data.awaitingModerator });
       }
       if (!hasSb) {
         setSyncLabel(
