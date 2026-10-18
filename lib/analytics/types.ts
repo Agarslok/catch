@@ -3,6 +3,7 @@ export const ANALYTICS_SCHEMA_VERSION = "1.0";
 export const INTERACTION_EVENT_TYPES = [
   "session.join",
   "session.leave",
+  "session.heartbeat",
   "chart.viewed",
   "element.clicked",
   "detail.opened",
@@ -11,7 +12,12 @@ export const INTERACTION_EVENT_TYPES = [
   "chart_type.changed",
   "explore.started",
   "explore.returned_to_presentation",
+  "presentation.navigated_forward",
+  "presentation.navigated_back",
+  "presentation.section_selected",
   "question.asked",
+  "question.answered",
+  "question.private_opened",
 ] as const;
 
 export type InteractionEventType = (typeof INTERACTION_EVENT_TYPES)[number];
@@ -48,5 +54,7 @@ export type SessionRegistryRow = {
   participant_role: ParticipantRole;
   joined_at: string;
   left_at: string | null;
+  last_seen_at?: string | null;
+  display_name?: string | null;
   schema_version: string;
 };

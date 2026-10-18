@@ -8,8 +8,25 @@ import {
   sheetIndexItems,
   type SheetIndexItem,
 } from "@/lib/meeting/script";
+import {
+  PRESENTATION_HANDOFF_HEADLINE,
+  PRESENTATION_HANDOFF_NARRATIVE,
+  PRESENTATION_HANDOFF_SUBLABEL,
+} from "@/lib/meeting/presentation-handoff";
 import type { ScriptPoint, SessionScript } from "@/lib/meeting/script-types";
 import type { ClarityVote } from "@/lib/meeting/session-types";
+
+export function PresentationHandoffBanner() {
+  return (
+    <div className="presentation-handoff-banner" role="status" aria-live="polite">
+      <div className="presentation-handoff-banner__labels">
+        <strong>{PRESENTATION_HANDOFF_HEADLINE}</strong>
+        <span>{PRESENTATION_HANDOFF_SUBLABEL}</span>
+      </div>
+      <p>{PRESENTATION_HANDOFF_NARRATIVE}</p>
+    </div>
+  );
+}
 
 export function IntroductionView({ script }: { script: SessionScript }) {
   return (
@@ -255,6 +272,10 @@ export function PresenterPreparationView({
           Prepara la información para iniciar tu reunión. Puedes continuar sin
           subir archivos; se usará el informe de demostración.
         </p>
+        <p className="sub">
+          En el panel derecho elija la <strong>plantilla visual</strong> del informe. Las preguntas
+          frecuentes se preparan en el siguiente paso.
+        </p>
         <label className="clarity-btn clarity-btn--review" style={{ display: "block", cursor: "pointer" }}>
           <input
             type="file"
@@ -301,6 +322,7 @@ export function ClosingView({
 }) {
   return (
     <section className="stage stage--copy">
+      <PresentationHandoffBanner />
       <div className="text">
         <p className="chapter">Cierre</p>
         <h1 className="headline">Gracias. Así quedó la sesión</h1>

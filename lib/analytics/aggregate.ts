@@ -97,6 +97,10 @@ export function aggregateMeetingInteractions(
     "chart_type.changed",
     "explore.started",
     "question.asked",
+    "question.answered",
+    "presentation.navigated_forward",
+    "presentation.navigated_back",
+    "presentation.section_selected",
   ]);
   const participantsInteractive = unique(
     sorted.filter((e) => interactiveTypes.has(e.event_type)).map((e) => e.participant_id),

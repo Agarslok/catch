@@ -2,6 +2,7 @@
 
 import type { InteractionEventInput, InteractionEventType, ParticipantRole } from "./types";
 import { ANALYTICS_SCHEMA_VERSION } from "./types";
+import { getVisitorAnalyticsAuth } from "./participant-auth";
 import { buildClientEventId, getOrCreateSessionId } from "./session";
 
 const QUEUE_KEY = "catch:analytics:pending";
@@ -37,13 +38,30 @@ function savePending(events: InteractionEventInput[]) {
   }
 }
 
+function authPayload(events?: InteractionEventInput[]) {
+  const auth = getVisitorAnalyticsAuth();
+  const participantId =
+    auth?.participantId ?? events?.find((e) => e.participant_role === "visitor")?.participant_id;
+  const participant_token = auth?.token;
+  if (!participantId && !participant_token) return { headers: {} as Record<string, string> };
+  return {
+    headers: {
+      ...(participantId ? { "x-participant-id": participantId } : {}),
+      ...(participant_token ? { "x-participant-token": participant_token } : {}),
+    },
+    participant_token,
+    participant_id: participantId,
+  };
+}
+
 async function postBatch(meetingId: string, events: InteractionEventInput[]): Promise<boolean> {
   if (events.length === 0) return true;
+  const { headers = {}, participant_token, participant_id } = authPayload(events);
   try {
     const res = await fetch(`/api/meeting/${meetingId}/analytics/events`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ events }),
+      headers: { "Content-Type": "application/json", ...headers },
+      body: JSON.stringify({ events, participant_token, participant_id }),
       keepalive: true,
     });
     return res.ok;
@@ -90,7 +108,14 @@ export function enqueueInteractionEvent(
   };
 
   memoryQueue.push(row);
-  if (memoryQueue.length >= BATCH_SIZE) {
+  const urgent =
+    row.event_type === "session.join" ||
+    row.event_type === "session.leave" ||
+    row.event_type === "question.asked" ||
+    row.event_type === "question.answered" ||
+    row.event_type === "element.clicked" ||
+    row.event_type.startsWith("presentation.");
+  if (memoryQueue.length >= BATCH_SIZE || urgent) {
     void flushInteractionQueue(ctx.meetingId);
   } else {
     scheduleFlush(ctx.meetingId);
@@ -132,7 +157,8 @@ export function sendBeaconLeave(ctx: TrackContext): void {
     metadata: {},
     timestamp: new Date().toISOString(),
   };
-  const body = JSON.stringify({ events: [row] });
+  const { participant_token, participant_id } = authPayload([row]);
+  const body = JSON.stringify({ events: [row], participant_token, participant_id });
   if (typeof navigator !== "undefined" && navigator.sendBeacon) {
     navigator.sendBeacon(
       `/api/meeting/${ctx.meetingId}/analytics/events`,
