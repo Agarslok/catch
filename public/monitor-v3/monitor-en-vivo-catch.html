@@ -15,6 +15,7 @@
   --navy:#5B9BD5; --azul:#2778B1; --cyan:#38AECB; --cielo:#EEF5FA; --ambar:#F2C879; --vivo:#E0453A; --profundo:#1B4F7A; --gris-azul:#C9D6E2;
   --fondo:#FFFFFF; --superficie:#FFFFFF; --pista:#F7F9FB; --borde:#E6E7E8; --tinta:#232222; --suave:#5B6168; --rail1:#0B5FB4; --rail2:#1B86DA;
   --display:'Comfortaa','Nunito Sans',system-ui,sans-serif; --texto:'Nunito Sans','Helvetica Neue',system-ui,sans-serif;
+  --catch-avatar-fab-clearance: calc(56px + 20px + 16px + env(safe-area-inset-bottom, 0px));
   color-scheme: light; box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
@@ -58,7 +59,17 @@ h1,h2,h3{font-family:var(--display); letter-spacing:-.01em}
 .cabeza{display:flex; align-items:center; gap:16px; padding:22px 40px 10px}
 .cabeza h1{margin:2px 0 0; font-size:30px; color:var(--tinta); font-weight:700}
 .cabeza .ruta{color:var(--azul); font-size:14px; font-weight:700}
-.cabeza .derecha{margin-left:auto; display:flex; gap:6px; align-items:center}
+.cabeza .derecha,.cabeza-acciones{margin-left:auto; display:flex; gap:6px; align-items:center; flex-wrap:wrap}
+.cabeza-principal{display:flex; align-items:center; gap:10px; min-width:0; flex:1 1 12rem}
+.titulo-monitor{display:inline; font-weight:400; font-size:15px; color:var(--suave); line-height:1.3}
+.edicion-monitor{display:inline; font-size:15px; color:var(--suave)}
+.edicion-monitor::before{content:" · "}
+.btn-menu,.nav-velo,.rail-cabeza-movil{display:none}
+.btn-menu{flex:none; width:44px; height:44px; border:1px solid var(--borde); border-radius:12px; background:var(--superficie); align-items:center; justify-content:center; padding:0}
+.btn-menu-ico,.btn-menu-ico::before,.btn-menu-ico::after{display:block; width:18px; height:2px; background:var(--azul); border-radius:1px; position:relative}
+.btn-menu-ico::before,.btn-menu-ico::after{content:""; position:absolute; left:0}
+.btn-menu-ico::before{top:-6px}
+.btn-menu-ico::after{top:6px}
 .btn{border:1px solid var(--borde); background:var(--superficie); padding:8px 16px; border-radius:999px; font-weight:700; font-size:14px; color:var(--tinta); transition:border-color .2s, transform .2s}
 .btn:hover{border-color:var(--azul)}
 .btn.prim{background:var(--azul); color:#fff; border-color:var(--azul)}
@@ -302,7 +313,20 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .interruptor{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--suave); margin-bottom:12px}
 
 @media (max-width:1180px){ .moderador{grid-template-columns:230px minmax(0,1fr)} .moderador .mod-col:last-child{grid-column:1/-1; border-left:0; border-top:1px solid var(--borde); max-height:none} .explica{gap:32px} }
-@media (max-width:900px){ .cliente{grid-template-columns:1fr} .rail{flex-direction:row; overflow-x:auto; padding:10px} .rail .marca,.rail .pie{display:none} .rail button span.nom{white-space:nowrap}
+@media (max-width:900px){ .cliente{grid-template-columns:1fr}
+  .btn-menu{display:inline-flex}
+  .rail-cabeza-movil{display:flex; justify-content:space-between; align-items:center; gap:8px; padding:4px 4px 12px; font-weight:700; color:var(--profundo)}
+  .cliente .rail{position:fixed; top:0; left:0; bottom:0; width:min(288px,88vw); max-width:100%; height:100dvh; z-index:80; flex-direction:column; overflow:auto; padding:16px 12px calc(16px + env(safe-area-inset-bottom,0px)); transform:translateX(-110%); transition:transform .2s ease; box-shadow:none; background:var(--superficie); border-right:1px solid var(--borde)}
+  .cliente.menu-secciones-abierto .rail{transform:none; box-shadow:12px 0 40px rgba(27,79,122,.2)}
+  .nav-velo{display:none; position:fixed; inset:0; z-index:75; width:100%; height:100%; border:0; padding:0; margin:0; background:rgba(15,47,72,.35); border-radius:0}
+  .cliente.menu-secciones-abierto .nav-velo{display:block}
+  .cliente .cabeza{flex-direction:column; align-items:stretch; gap:10px; padding:12px 16px 8px}
+  .cliente .cabeza-acciones{margin-left:0; width:100%; justify-content:flex-start}
+  .cliente .cabeza .paso,.cliente .cabeza .btn.flecha{display:none}
+  .titulo-monitor{display:block; font-weight:700; font-size:16px; color:var(--tinta)}
+  .edicion-monitor{display:block; font-size:12px; line-height:1.35}
+  .edicion-monitor::before{content:none}
+  .cliente .cuerpo{padding:10px 16px calc(20px + var(--catch-avatar-fab-clearance)); scroll-padding-bottom:var(--catch-avatar-fab-clearance)}
   .explica,.hoja{grid-template-columns:1fr} .agenda{grid-template-columns:repeat(2,1fr)} .moderador{grid-template-columns:1fr} .mod-col{max-height:none} .cabeza{padding:16px 18px 6px} .cuerpo{padding:10px 18px 90px} }
 /* ===== zona central del cliente, estructura del demo "Capital Humano Live" ===== */
 .cliente .escena{min-height:calc(100vh - 46px)}
@@ -353,6 +377,10 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .visitor-roster__list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .visitor-roster__card{padding:12px 14px;border-radius:14px;border:1px solid rgba(39,120,177,.18);background:#fff}
 .visitor-roster__name{margin:0;font-size:1.05rem;font-weight:700;color:var(--tinta)}
+.visitor-roster__status{display:inline-flex;align-items:center;gap:6px;margin:6px 0 0;font-size:13px;font-weight:700;color:var(--suave)}
+.visitor-roster__status::before{content:'';width:8px;height:8px;border-radius:50%;background:#9aa7b5}
+.visitor-roster__status--on{color:#2f9e44}
+.visitor-roster__status--on::before{background:#2f9e44}
 .visitor-roster__duration{margin:4px 0 0;font-size:1.45rem;font-weight:700;color:var(--azul)}
 .visitor-roster__times,.visitor-roster__sections,.visitor-roster__meta{margin:6px 0 0;font-size:13px;line-height:1.4}
 .narracion-bar .ctrl{margin-left:auto; display:flex; gap:10px; align-items:center; flex:none}
@@ -540,6 +568,81 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .espera-cliente h2{margin:0; font-size:clamp(24px,3.5vw,32px); color:var(--profundo)}
 .espera-cliente .espera-pulso{width:10px; height:10px; border-radius:50%; background:var(--cyan); animation:parpadeo 1.6s infinite}
 @media (max-width:900px){ .narracion-bar{flex-direction:column; align-items:flex-start} .narracion-bar .ctrl{margin-left:0} .cliente .cuerpo{padding:8px 18px 24px} .cliente .rail .avatar-rail{display:none} .cliente-avatar-en-vivo{display:block} }
+
+html,body{max-width:100%; overflow-x:hidden}
+#app,main,#capaModal{max-width:100%; min-width:0}
+.cliente,.moderador,.escena,.cuerpo,.central{max-width:100%; min-width:0}
+.lienzo,canvas{max-width:100%}
+.cabeza{flex-wrap:wrap; row-gap:8px}
+.cabeza .contexto{min-width:0; overflow-wrap:anywhere}
+.cabeza .derecha{flex-wrap:wrap}
+.rail{max-width:100%; -webkit-overflow-scrolling:touch}
+.fila-ia{flex-wrap:wrap}
+.fila-ia input{min-width:0; flex:1 1 160px}
+.pregunta-ia{padding-bottom:0}
+.modal{max-height:min(90dvh,720px); overflow:auto; width:min(520px,calc(100vw - 24px))}
+html.catch-embed .cliente,html.catch-embed .cliente .escena,html.catch-embed .movil.real{min-height:100dvh}
+html.catch-embed .demo{display:none!important}
+
+@media (max-width:700px){
+  .demo{gap:8px; padding:8px 12px}
+  .estado-sync{margin-left:0; flex:1 1 100%; overflow-wrap:anywhere}
+  .mod-centro .titulo{flex-wrap:wrap; align-items:flex-start}
+  .mod-centro .titulo h2{overflow-wrap:anywhere; max-width:100%}
+  .cabeza .contexto{flex:1 1 12rem}
+  .cabeza .derecha{flex:1 1 100%; justify-content:flex-start; margin-left:0}
+  .cabeza .btn,.cabeza .pill-vivo,.cabeza .btn.texto{min-height:44px}
+  .cabeza .btn.texto{padding:10px 12px}
+  .rail button{min-height:44px}
+  .fila-ia input{font-size:16px}
+  .velo{padding:12px; padding-bottom:max(12px,env(safe-area-inset-bottom,0px)); align-items:end}
+  .fuente{max-height:min(50dvh,360px); overflow:auto}
+  .fuente dl{grid-template-columns:minmax(0,1fr)}
+  .avatar-w{max-width:calc(100vw - 16px); left:8px; right:auto}
+  .fab{max-width:calc(100vw - 16px)}
+  .panel-av{width:min(380px,calc(100vw - 16px)); max-height:min(70dvh,520px)}
+  .cliente-avatar-en-vivo__media .avatar-video-media{min-height:0; max-height:36vh}
+  .agenda{grid-template-columns:1fr}
+  .recorrido{flex-wrap:wrap}
+  .grande{font-size:clamp(40px,18vw,72px)}
+  .titular{font-size:clamp(22px,6vw,32px)}
+  .portada .grande{font-size:clamp(32px,12vw,52px)}
+  .cliente .cabeza{padding:10px 12px 6px}
+  .cliente .cuerpo{padding:8px 12px calc(16px + var(--catch-avatar-fab-clearance))}
+  .cuerpo{padding:10px 12px 90px}
+  .lienzo{height:min(280px,52vh); max-width:100%}
+  .livebar,.narracion-bar{padding:12px}
+  .narracion-bar p{font-size:15px}
+  .movil header .linea{flex-wrap:wrap; gap:4px}
+  .movil header h2,.movil header p{overflow-wrap:anywhere}
+  .movil .acciones{grid-template-columns:1fr; position:sticky; bottom:0; padding-bottom:max(12px,env(safe-area-inset-bottom,0px))}
+  .movil .acciones button{min-height:44px}
+  .movil .grande{font-size:clamp(36px,16vw,56px)}
+  .movil .lienzo{height:200px}
+  .hoja--preview{grid-template-columns:1fr}
+  .seg-graf{grid-template-columns:1fr}
+  .kpis{grid-template-columns:1fr 1fr}
+  .banner-iniciar-reunion{flex-direction:column; align-items:stretch}
+  .banner-iniciar-reunion .btn{width:100%; min-height:44px}
+  .moderador{grid-template-columns:1fr; padding-bottom:88px}
+  .mod-col,.pasos,.lista,.notas{padding-bottom:72px}
+  .prep-centro{padding:20px 12px; min-height:0}
+  .tabs{overflow-x:auto; flex-wrap:nowrap; -webkit-overflow-scrolling:touch}
+  .tabs button{min-height:44px; flex:none}
+  .controles .siguiente{margin-left:0; flex:1 1 100%}
+}
+@media (max-width:380px){
+  .kpis{grid-template-columns:1fr}
+  .rail button span.nom{font-size:12px}
+  .cliente .cabeza-acciones .btn.texto,.cliente .cabeza-acciones .pill-vivo,.cliente .cabeza-acciones .btn.prim{flex:1 1 calc(50% - 8px); justify-content:center; text-align:center}
+}
+@media (max-width:900px){
+  .cliente .cabeza{flex-direction:column; align-items:stretch; gap:10px; padding:12px 16px 8px}
+  .cliente .cabeza .paso,.cliente .cabeza .btn.flecha,.cliente .narracion-bar .redondo{display:none!important}
+  .cliente .cuerpo{padding:10px 16px calc(20px + var(--catch-avatar-fab-clearance)); scroll-padding-bottom:var(--catch-avatar-fab-clearance)}
+  .cliente .rail{position:fixed; flex-direction:column; overflow:auto; transform:translateX(-110%); visibility:hidden; pointer-events:none}
+  .cliente.menu-secciones-abierto .rail{transform:none; visibility:visible; pointer-events:auto}
+}
 </style>
 </head>
 <body>
@@ -578,6 +681,96 @@ const PALETA_GRAFICOS = {'--azul': '#8FC3E3'};   // líneas de referencia en azu
 const col = n => PALETA_GRAFICOS[n] || (modoPDF ? CLARO_PDF[n] : css(n));
 const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 const leer = k => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
+function meetingIdPrepFaqs() { return String(window.__CATCH_MONITOR_SYNC__?.meetingId || 'local'); }
+function clavePrepFaqs() { return 'catch:' + meetingIdPrepFaqs() + ':prepFaqs'; }
+function normalizarPrepFaqsArray(raw) {
+  if (!Array.isArray(raw)) return [];
+  return raw.map(r => {
+    if (!r || typeof r !== 'object') return null;
+    const id = typeof r.id === 'string' ? r.id.trim() : '';
+    if (!id) return null;
+    const pregunta = typeof r.question === 'string' ? r.question : (typeof r.pregunta === 'string' ? r.pregunta : '');
+    const respuesta = typeof r.answer === 'string' ? r.answer : (typeof r.respuesta === 'string' ? r.respuesta : '');
+    return { id, pregunta, respuesta };
+  }).filter(Boolean);
+}
+function leerPrepFaqsReunion() { return normalizarPrepFaqsArray(leer(clavePrepFaqs())); }
+function cachePrepFaqsLocal(items) {
+  const serial = (items || []).map(r => ({ id: r.id, question: r.pregunta || r.question || '', answer: r.respuesta || r.answer || '' }));
+  guardar(clavePrepFaqs(), serial);
+}
+function guardarPrepFaqsReunion(items) {
+  cachePrepFaqsLocal(items);
+  programarPersistirPrepFaqsServidor();
+}
+function recargarPrepFaqsDesdeStorage() { S.prepFaqs = leerPrepFaqsReunion(); }
+function urlPrepFaqsReunion() {
+  return '/api/meeting/' + encodeURIComponent(meetingIdPrepFaqs()) + '/prep-faqs';
+}
+let prepFaqSaveTimer = null;
+let prepFaqsPollTimer = null;
+function aplicarPrepFaqsServidor(items) {
+  S.prepFaqs = normalizarPrepFaqsArray(items);
+  cachePrepFaqsLocal(S.prepFaqs);
+}
+async function cargarPrepFaqsDesdeServidor() {
+  const id = meetingIdPrepFaqs();
+  if (!id || id === 'local') return false;
+  try {
+    const res = await fetch(urlPrepFaqsReunion());
+    if (!res.ok) return false;
+    const data = await res.json();
+    const items = normalizarPrepFaqsArray(data.items || []);
+    const cfg = window.__CATCH_MONITOR_SYNC__;
+    const esMod = cfg?.role === 'moderador' || S.rol === 'moderador';
+    if (esMod && items.length === 0 && prepFaqsVisibles(S.prepFaqs).length) {
+      void persistirPrepFaqsServidor();
+      return true;
+    }
+    aplicarPrepFaqsServidor(items);
+    return true;
+  } catch {
+    return false;
+  }
+}
+function programarPersistirPrepFaqsServidor() {
+  if (prepFaqSaveTimer) clearTimeout(prepFaqSaveTimer);
+  prepFaqSaveTimer = setTimeout(() => { void persistirPrepFaqsServidor(); }, 500);
+}
+async function persistirPrepFaqsServidor() {
+  const cfg = window.__CATCH_MONITOR_SYNC__;
+  if (!cfg?.meetingId || !cfg.presenterToken || cfg.role !== 'moderador') return;
+  const items = (S.prepFaqs || []).map(r => ({
+    id: r.id,
+    question: r.pregunta || r.question || '',
+    answer: r.respuesta || r.answer || '',
+  }));
+  try {
+    await fetch(urlPrepFaqsReunion(), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'x-presenter-token': cfg.presenterToken },
+      body: JSON.stringify({ items }),
+    });
+  } catch { /* ignore */ }
+}
+function iniciarPollPrepFaqs() {
+  if (prepFaqsPollTimer) return;
+  void cargarPrepFaqsDesdeServidor().then(ok => {
+    if (!ok) recargarPrepFaqsDesdeStorage();
+    if (S.rol === 'moderador' && (S.tabMod === 'preguntas' || typeof vistaPrepPresentador === 'function' && vistaPrepPresentador())) {
+      if (typeof refrescarPanelPrepFaqs === 'function') refrescarPanelPrepFaqs();
+      else if (typeof actualizarPanelModeradorParcial === 'function') actualizarPanelModeradorParcial();
+    }
+  });
+  prepFaqsPollTimer = setInterval(() => {
+    const cfg = window.__CATCH_MONITOR_SYNC__;
+    if (cfg?.role === 'moderador' || S.rol === 'moderador') return;
+    void cargarPrepFaqsDesdeServidor();
+  }, 3000);
+}
+function prepFaqsVisibles(items) {
+  return (items || []).filter(r => (r.pregunta || '').trim() || (r.respuesta || '').trim());
+}
 
 // ======================= datos =======================
 const EMP = DATOS.empresas;
@@ -1104,7 +1297,7 @@ const PLANTILLAS_VISUALES = [
 ];
 const plantillaVisualInicial = (id) => (PLANTILLAS_VISUALES.some(p => p.id === id) ? id : 'mml');
 const S = {pos: 0, unlockedStep: 0, rol: 'moderador', faseSesion: 'preparacion', generacionInformeEnCurso: false, mensajeGeneracionInforme: '', prepArchivoNombre: '', plantillaVisual: plantillaVisualInicial(guardado.plantillaVisual), plantillaVisualExpandida: null, monitorHighlight: null, fuenteClave: null, avatarVideoPaused: false, narracionEsperaAutorizacion: false, sectionCloseDedup: null, sectionNarracionTimer: null, sectionClaridadLista: false, lastSectionContinueAt: null, advanceInFlight: false, narracionSinConfirmar: false, narracionRuntime: { execId: null, status: 'idle', stepIndex: -1, echoId: null, startedAt: null, paused: false, errorReason: null }, cola: migrarColaDesdeLegacy(guardado), toques: guardado.toques || {}, claridad: guardado.claridad || {},
-  vistas: {cliente: {live: true, pos: 0, resp: {}, exploreSection: null, exploreClaritySource: null, peekExplica: null}, movil: {live: true, pos: 0, resp: {}, exploreSection: null, exploreClaritySource: null, peekExplica: null}}, peekPreview: null, tabMod: 'plantillas', prepFaqs: [], sala: null, conectados: 0, modoEdicionPreviewSim: false, histPrepPaso: null, histPrepAplicando: false};
+  vistas: {cliente: {live: true, pos: 0, resp: {}, exploreSection: null, exploreClaritySource: null, peekExplica: null}, movil: {live: true, pos: 0, resp: {}, exploreSection: null, exploreClaritySource: null, peekExplica: null}}, peekPreview: null, tabMod: 'plantillas', prepFaqs: leerPrepFaqsReunion(), sala: null, conectados: 0, modoEdicionPreviewSim: false, histPrepPaso: null, histPrepAplicando: false};
 const persistir = () => guardar('catch-live-v1', {cola: S.cola, toques: S.toques, claridad: S.claridad, plantillaVisual: S.plantillaVisual});
 const FASES_SESION = ['preparacion', 'generando_informe', 'revision_previa', 'listo_para_iniciar', 'reunion_activa', 'cierre'];
 function faseSesionValida(f) { return FASES_SESION.includes(f); }
@@ -1186,7 +1379,7 @@ function panelModeradorDerecho(pendientes) {
   if (S.tabMod === 'participantes') return panelParticipantes();
   if (S.tabMod === 'preguntas') return panelPreguntas();
   if (S.tabMod === 'intereses') return panelIntereses();
-  return panelClaridad();
+  return panelParticipantes();
 }
 function aplicarFaseSesion(fase) {
   if (!faseSesionValida(fase) || S.faseSesion === fase) return;
@@ -1269,6 +1462,7 @@ async function iniciarGeneracionInformeSimulada() {
 }
 async function iniciarReunionDesdeListo() {
   if (!presentadorEnRevisionPrevia() || S.rol !== 'moderador') return;
+  await persistirPrepFaqsServidor();
   await publicarFaseSesion('reunion_activa');
   enviar('estado', payloadEstadoSesion());
 }
@@ -2146,9 +2340,17 @@ function panelPrepFaqs() {
       <label class="prep-faq-campo"><span>Respuesta</span><textarea data-faq-field="respuesta" data-faq-id="${esc(row.id)}" placeholder="Redacte la respuesta que dará en la reunión.">${esc(row.respuesta || '')}</textarea></label>
     </li>`).join('')}</ul>`;
   return `<p class="prep-faq-lead">Prepara preguntas y respuestas para facilitar la resolución de dudas durante la reunión.</p>
-    <ul class="prep-faq-tips"><li>Use lenguaje claro y respuestas breves.</li><li>Puede añadir tantas entradas como necesite.</li><li>No se guardan al recargar la página.</li></ul>
+    <ul class="prep-faq-tips"><li>Use lenguaje claro y respuestas breves.</li><li>Puede añadir tantas entradas como necesite.</li><li>Se guardan para esta reunión y permanecen al iniciar o recargar.</li></ul>
     ${lista}
     <button type="button" class="btn prim prep-faq-add" data-add-prep-faq>+ Añadir pregunta frecuente</button>`;
+}
+function htmlFaqsEnVivoLista(items) {
+  return `<ul class="prep-faq-lista prep-faq-lista--solo-lectura">${items.map((row, i) => `<li class="prep-faq-item"><div class="prep-faq-item-cabeza"><strong>Pregunta ${i + 1}</strong></div><p style="margin:0 0 6px;font-weight:600">${esc((row.pregunta || '').trim())}</p>${(row.respuesta || '').trim() ? `<p class="sub" style="margin:0;white-space:pre-wrap">${esc(row.respuesta.trim())}</p>` : ''}</li>`).join('')}</ul>`;
+}
+function panelFaqsEnVivo() {
+  const items = prepFaqsVisibles(S.prepFaqs);
+  if (!items.length) return '<p class="vacio">No hay preguntas frecuentes configuradas para esta reunión.</p>';
+  return htmlFaqsEnVivoLista(items);
 }
 let plantillaEscrituraGen = 0;
 function cancelarEscrituraPlantilla() { plantillaEscrituraGen += 1; }
@@ -2620,6 +2822,16 @@ function mostrarFuente(g, chart, el, M) {
     <dt>Fuente</dt><dd>Base histórica del Monitor de Mercado Laboral, edición ${esc(DATOS.edicion)}. Las empresas solo se identifican con un ID anónimo.</dd></dl>`;
   S.fuenteClave = claveFuenteElemento(g, el);
   caja.classList.add('abierta');
+  try {
+    const sec = seccionActual();
+    const sectionName = sec >= 0 && SECCIONES[sec] ? SECCIONES[sec].nombre : null;
+    window.__CATCH_MONITOR_API__?.trackFromTouch?.('grafico', g.id, sec, sectionName, {
+      chart_id: g.id,
+      element_id: String(etiqueta),
+      element_label: String(etiqueta),
+      metadata: { category: String(etiqueta), chart_title: g.titulo },
+    });
+  } catch { /* ignore */ }
   registrar('justificacion', g.titulo);
 }
 
@@ -2850,6 +3062,45 @@ function htmlAvatarRail() {   // avatar en rail solo para vista previa del moder
   return `<div class="avatar-rail"><button class="cab-av" data-avatar aria-expanded="${!!S.avatar}">Avatar IA <span class="pulso"></span></button>
     ${S.avatar ? `${htmlAvatarTavusToolbar()}<div class="video">${htmlAvatarVideoBlock(false)}</div>` : ''}</div>`;
 }
+function setMenuSecciones(open) {
+  const root = document.querySelector('.cliente');
+  if (!root) return;
+  root.classList.toggle('menu-secciones-abierto', !!open);
+  const btn = root.querySelector('[data-menu-secciones]');
+  if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  const nav = root.querySelector('#nav-secciones');
+  if (nav) nav.setAttribute('aria-hidden', open ? 'false' : 'true');
+  const velo = root.querySelector('.nav-velo');
+  if (velo) {
+    velo.hidden = !open;
+    velo.setAttribute('aria-hidden', open ? 'false' : 'true');
+  }
+}
+function htmlCabezaCliente(v, pos, opts = {}) {
+  const live = !!(v && v.live);
+  const paso = Number.isFinite(pos)
+    ? `<span class="paso">Paso ${pos + 1} de ${PASOS.length}</span><button class="btn flecha" data-flecha="-1" aria-label="Paso anterior" title="Anterior (flecha izquierda)" ${live ? 'disabled' : ''}>‹</button><button class="btn flecha" data-flecha="1" aria-label="Paso siguiente" title="Siguiente (flecha derecha)" ${live ? 'disabled' : ''}>›</button>`
+    : '';
+  const seguimiento = !live
+    ? `<button type="button" class="btn prim" data-vivo>Volver al moderador</button>`
+    : opts.esperando
+      ? `<span class="pill-vivo"><span class="punto vivo"></span>Siguiendo en vivo</span>`
+      : `<button class="pill-vivo" data-explorar title="Explorar por mi cuenta"><span class="punto vivo"></span>Siguiendo en vivo</button>`;
+  return `<div class="cabeza">
+    <div class="cabeza-principal">
+      <button type="button" class="btn-menu" data-menu-secciones aria-expanded="false" aria-controls="nav-secciones" aria-label="Menú de secciones"><span class="btn-menu-ico" aria-hidden="true"></span></button>
+      <div class="contexto">
+        <strong class="titulo-monitor">Monitor de Mercado Laboral</strong>
+        <span class="edicion-monitor">Edición ${esc(DATOS.edicion)}${CLIENTE ? ` · Su empresa ${CLIENTE}` : ''}</span>
+      </div>
+    </div>
+    <div class="cabeza-acciones">${paso}
+      <button class="btn texto" data-abrir="faqs">Preguntas frecuentes</button>
+      <button class="btn texto" data-abrir="presentador">Preguntar al presentador</button>
+      ${seguimiento}
+    </div>
+  </div>`;
+}
 function renderCliente(raiz, opciones = {}) {
   if (!opciones.preview && !visitanteVeReunion()) return renderClienteEspera(raiz);
   const rol = opciones.preview ? 'moderador' : 'cliente';
@@ -2862,14 +3113,13 @@ function renderCliente(raiz, opciones = {}) {
   if (peek) cuerpo = `<div class="hoja-detalle-nav"><button type="button" class="btn prim" data-volver-hoja>← Volver a hoja completa</button></div>${cuerpo}`;
   if (opciones.preview) { raiz.innerHTML = cuerpo; pintarGraficos(raiz, true); return; }
   const maxSec = maxSeccionAutorizada();
-  raiz.innerHTML = `<div class="cliente"><nav class="rail" aria-label="Secciones"><div class="marca">Catch<small>CONSULTING</small></div>
+  raiz.innerHTML = `<div class="cliente"><button type="button" class="nav-velo" data-cerrar-menu hidden aria-hidden="true" aria-label="Cerrar menú de secciones"></button>
+    <nav class="rail" id="nav-secciones" aria-label="Secciones" aria-hidden="true"><div class="rail-cabeza-movil"><span>Secciones</span><button type="button" class="btn texto" data-cerrar-menu>Cerrar</button></div>
+    <div class="marca">Catch<small>CONSULTING</small></div>
     <button data-ir="inicio" aria-current="${p.tipo === 'inicio'}" ${v.live ? 'disabled' : ''}>${ICON.casa}<span class="nom">Inicio</span></button>
     ${SECCIONES.map((s, i) => `<button data-ir="${i}" aria-current="${p.s === i}" ${v.live || i > maxSec ? 'disabled' : ''}>${ICON[s.icono]}<span class="nom">${esc(s.nombre)}</span>${S.claridad[i] ? '<span class="avance">✓</span>' : ''}</button>`).join('')}
     ${htmlAvatarRail()}<div class="pie">HR Toolkit · Monitor de Mercado Laboral</div></nav>
-    <section class="escena"><div class="cabeza"><span class="contexto">Monitor de Mercado Laboral · Edición ${esc(DATOS.edicion)} · Su empresa ${CLIENTE}</span>
-      <div class="derecha"><span class="paso">Paso ${pos + 1} de ${PASOS.length}</span><button class="btn flecha" data-flecha="-1" aria-label="Paso anterior" title="Anterior (flecha izquierda)" ${v.live ? 'disabled' : ''}>‹</button><button class="btn flecha" data-flecha="1" aria-label="Paso siguiente" title="Siguiente (flecha derecha)" ${v.live ? 'disabled' : ''}>›</button>
-      <button class="btn texto" data-abrir="glosario">Glosario</button><button class="btn texto" data-abrir="presentador">Preguntar al presentador</button>
-      ${v.live ? `<button class="pill-vivo" data-explorar title="Explorar por mi cuenta"><span class="punto vivo"></span>Siguiendo en vivo</button>` : `<button class="btn prim" data-vivo>Volver al moderador</button>`}</div></div>
+    <section class="escena">${htmlCabezaCliente(v, pos)}
       <div class="cuerpo" id="cl-cuerpo">
         <div class="livebar">${v.live ? '<b>Sigues al presentador</b> · sincronizado con la sesión en vivo' : mensajeLivebarExploracion('cliente')}</div>
         <div class="central">${cuerpo}</div>
@@ -2885,9 +3135,46 @@ function limpiarBorradorVozIA(inp) {
   if (inp) inp.value = '';
   baseTranscripcionIA = '';
 }
+const chatIaPorReunion = Object.create(null);
+function idReunionChatIA() {
+  return String(window.__CATCH_MONITOR_SYNC__?.meetingId || 'local');
+}
+function hiloChatIA() {
+  const id = idReunionChatIA();
+  if (!Array.isArray(chatIaPorReunion[id])) chatIaPorReunion[id] = [];
+  return chatIaPorReunion[id];
+}
 function cajaHistorialIA() {
+  const modalChat = document.querySelector('#capaModal [data-chat-ia-historial], #capaModal #chat');
+  if (modalChat) return modalChat;
   const raiz = vozRaizActiva || document.getElementById('app') || document;
-  return raiz.querySelector('[data-chat-ia-historial]');
+  return raiz.querySelector('[data-chat-ia-historial]') || document.querySelector('#chat');
+}
+function guardarCajaIAEnHilo(caja) {
+  const hilo = hiloChatIA();
+  const last = hilo[hilo.length - 1];
+  if (!last || last.role !== 'ia' || !caja) return;
+  last.html = caja.innerHTML;
+  const textoNodo = caja.querySelector('.ia-respuesta-texto');
+  last.text = ((textoNodo ? textoNodo.textContent : caja.textContent) || '').trim();
+}
+function restaurarHistorialIA() {
+  const hist = cajaHistorialIA();
+  if (!hist) return;
+  const hilo = hiloChatIA();
+  hist.innerHTML = '';
+  hilo.forEach(m => {
+    if (m.role === 'yo') {
+      hist.insertAdjacentHTML('beforeend', `<div class="msg yo">${esc(m.text)}</div>`);
+      return;
+    }
+    const caja = document.createElement('div');
+    caja.className = 'msg ia';
+    caja.innerHTML = m.html || (m.text ? `<div class="ia-respuesta-texto">${esc(m.text)}</div>` : '');
+    hist.appendChild(caja);
+    if (m.text) adjuntarControlesHablaIA(caja, m.text, '');
+  });
+  hist.scrollTop = hist.scrollHeight;
 }
 function cajaRespuestaIA() {
   const raiz = vozRaizActiva || document.getElementById('app') || document;
@@ -2895,6 +3182,9 @@ function cajaRespuestaIA() {
 }
 function prepararEntradaHistorialIA(pregunta) {
   const hist = cajaHistorialIA();
+  const hilo = hiloChatIA();
+  hilo.push({ role: 'yo', text: pregunta });
+  hilo.push({ role: 'ia', text: '', html: '<span class="ia-cargando">Pensando…</span>' });
   if (!hist) return cajaRespuestaIA();
   hist.insertAdjacentHTML('beforeend', `<div class="msg yo">${esc(pregunta)}</div>`);
   const caja = document.createElement('div');
@@ -2907,7 +3197,8 @@ function prepararEntradaHistorialIA(pregunta) {
 }
 async function enviarIAPregunta(pregunta, opts) {
   const texto = String(pregunta || '').trim();
-  if (!texto || !cajaRespuestaIA()) return;
+  if (!texto) return;
+  if (!cajaHistorialIA() && !cajaRespuestaIA()) return;
   const navRepetible = S.rol === 'moderador' && !!instruccionNavegacionModerador(texto);
   if (texto === ultimaPreguntaEnviadaIA && !opts?.force && !navRepetible) return;
   if (vozEnvioEnCurso) return;
@@ -3345,7 +3636,7 @@ function renderMovil(raiz, real) {
     <h2>${esc(p.s !== undefined ? SECCIONES[p.s].nombre : p.tipo === 'cierre' ? 'Cierre' : 'Inicio')}</h2><p>${esc(tituloPaso(p))}</p></header>
     <div class="contenido"><label class="interruptor"><input type="checkbox" data-seguir ${v.live ? 'checked' : ''}> Seguir al moderador</label>
     ${v.live ? '' : `<div class="fila" style="justify-content:space-between;margin:0 0 10px;flex-wrap:wrap;gap:8px"><button type="button" class="btn prim" data-vivo>Volver al moderador</button><button type="button" class="btn" data-mv="-1">Anterior</button><button type="button" class="btn" data-mv="1">Siguiente</button></div>`}${cont}</div>
-    <div class="acciones"><button data-abrir="presentador">Preguntar al presentador</button><button data-abrir="ia">Preguntar al avatar</button><button data-abrir="glosario">Glosario</button></div></div></div>`;
+    <div class="acciones"><button data-abrir="presentador">Preguntar al presentador</button><button data-abrir="ia">Preguntar al avatar</button><button data-abrir="faqs">Preguntas frecuentes</button></div></div></div>`;
   insertAvatarFlotanteVisitante(raiz);
   pintarGraficos(raiz, true); contarCifras(raiz);
   if (p.tipo === 'hoja' && !peek && v.live) programarClaridadSiCorresponde('movil', p.s);
@@ -3358,7 +3649,7 @@ function htmlModeradorTabs(pendientes, vacio) {
   if (vistaCarga) S.tabMod = 'plantillas';
   else if (vistaPrep) S.tabMod = 'prepFaqs';
   const tabs = visitanteVeReunion()
-    ? [['participantes', 'Participantes', (S.visitorRoster || []).length], ['preguntas', 'Preguntas', pendientes], ['intereses', 'Intereses', 0], ['claridad', 'Claridad', 0]]
+    ? [['participantes', 'Participantes', (S.visitorRoster || []).length], ['preguntas', 'Preguntas', pendientes], ['intereses', 'Intereses', 0]]
     : null;
   if (tabs && !tabs.some(t => t[0] === S.tabMod)) S.tabMod = 'participantes';
   const lista = panelModeradorDerecho(pendientes);
@@ -3442,6 +3733,8 @@ function htmlGuionAvatarInterno() {
 }
 function htmlDiagNarracionPrueba() {
   if (S.rol !== 'moderador' || typeof window.planMonitorNarration !== 'function') return '';
+  /* Conservado para depuración. No se muestra en la UI de producto. */
+  if (!window.__CATCH_SHOW_TAVUS_TEST_PANEL__) return '';
   return `<div class="diag-narracion" data-diag-narracion>
     <p>Modo prueba · envía <code>speakText</code> del plan a Tavus (sin cambiar paso ni sincronización).</p>
     <button type="button" class="btn suave" data-probar-narracion>Probar narración en Tavus (paso actual)</button>
@@ -3550,7 +3843,7 @@ function renderModeradorActivo(raiz) {
     ${htmlEstadoNarracionPaso()}
     ${htmlDiagNarracionPrueba()}
     <div class="notas"><h4>Notas para el moderador</h4>${g ? `<p style="margin:0 0 6px">${esc(g.nota)}</p><p class="sub" style="margin:0">Términos que conviene aclarar: ${g.glos.map(esc).join(', ')}.</p>`
-      : p.tipo === 'hoja' ? '<p style="margin:0">Al mostrar la hoja, el cliente ve los gráficos en miniatura y se abre la ventana «¿Quedó claro?» (si aún no respondió). Revise la pestaña «Claridad» antes de pasar a la siguiente sección.</p>'
+      : p.tipo === 'hoja' ? '<p style="margin:0">Al mostrar la hoja, el cliente ve los gráficos en miniatura y se abre la ventana «¿Quedó claro?» (si aún no respondió). Los votos de claridad se conservan para el cierre de la sesión.</p>'
       : p.tipo === 'cierre' ? `<p style="margin:0">${esc(PRESENTATION_HANDOFF_NARRATIVE)} Use la pestaña «Preguntas» para la conversación con la sala y los PDF debajo si corresponde.</p>` : '<p style="margin:0">Presente la agenda y explique que las preguntas son anónimas y se responden al final.</p>'}</div>
     ${p.tipo === 'cierre' ? `<div class="cierre-pdf-moderador">${htmlCierreDescargasModerador()}</div>` : ''}
     ${visitanteVeReunion() ? htmlBloquePreguntaIA() : ''}
@@ -3560,10 +3853,13 @@ function renderModeradorActivo(raiz) {
   raiz.insertAdjacentHTML('beforeend', htmlAvatar(p));   // la IA presenta: el avatar también está en la vista del moderador
 }
 function renderClienteEspera(raiz) {
-  raiz.innerHTML = `<div class="cliente"><nav class="rail" aria-label="Secciones"><div class="marca">Catch<small>CONSULTING</small></div>
+  const vEspera = { live: true };
+  raiz.innerHTML = `<div class="cliente"><button type="button" class="nav-velo" data-cerrar-menu hidden aria-hidden="true" aria-label="Cerrar menú de secciones"></button>
+    <nav class="rail" id="nav-secciones" aria-label="Secciones" aria-hidden="true"><div class="rail-cabeza-movil"><span>Secciones</span><button type="button" class="btn texto" data-cerrar-menu>Cerrar</button></div>
+    <div class="marca">Catch<small>CONSULTING</small></div>
     <div class="prep-vacio" style="padding:16px 12px"><p>El guion estará disponible cuando comience la reunión.</p></div>
     <div class="pie">HR Toolkit · Monitor de Mercado Laboral</div></nav>
-    <section class="escena"><div class="cabeza"><span class="contexto">Monitor de Mercado Laboral · ${esc(DATOS.edicion)}</span></div>
+    <section class="escena">${htmlCabezaCliente(vEspera, null, { esperando: true })}
       <div class="cuerpo" id="cl-cuerpo"><div class="central espera-cliente">
         <h2>Bienvenido a Catch</h2>
         <span class="espera-pulso" aria-hidden="true"></span>
@@ -3572,7 +3868,7 @@ function renderClienteEspera(raiz) {
       </div></div></section></div>`;
   insertAvatarFlotanteVisitante(raiz);
 }
-function panelPreguntas() {
+function panelColaPreguntasHtml() {
   if (!S.cola.length) return '<p class="vacio">Cola vacía. Llegan aquí preguntas escritas, escalaciones del asistente, turnos orales y señales de duda.</p>';
   const ordenada = [...S.cola].sort(ordenCola);
   return ordenada.map(q => {
@@ -3587,6 +3883,12 @@ function panelPreguntas() {
       <div class="meta">${esc(q.seccionNombre)} · ${new Date(q.ts).toLocaleTimeString('es-MX', {hour: '2-digit', minute: '2-digit'})} · ${esc(etiquetaParticipante(q))} · ${esc(q.source)}${q.status !== 'pending' ? ' · ' + (q.status === 'attended' ? 'Atendida' : 'Descartada') : ''}</div>${cuerpo}
     ${q.respuesta ? `<div class="resp">${esc(q.respuesta)}</div>` : ''}<div class="acc">${accPend}</div></div>`;
   }).join('');
+}
+function panelPreguntas() {
+  const faqItems = prepFaqsVisibles(S.prepFaqs);
+  const faqBlock = `<section class="panel-rail-seccion"><h4 style="margin:0 0 10px">Preguntas frecuentes</h4>${faqItems.length ? htmlFaqsEnVivoLista(faqItems) : '<p class="vacio">No hay preguntas frecuentes configuradas para esta reunión.</p>'}</section>`;
+  const colaBlock = `<section class="panel-rail-seccion" style="margin-top:16px"><h4 style="margin:0 0 10px">Preguntas de la reunión</h4>${panelColaPreguntasHtml()}</section>`;
+  return faqBlock + colaBlock;
 }
 function fmtHoraRoster(iso) {
   if (!iso) return '—';
@@ -3619,12 +3921,41 @@ function cargarRosterVisitantes() {
     S.visitorRosterError = 'Error de conexión al cargar participantes';
   });
 }
+function mostrarHistorialParticipacion() {
+  return S.faseSesion === 'cierre' || PASOS[S.pos]?.tipo === 'cierre';
+}
+function htmlTarjetaParticipanteMonitor(v, historial) {
+  const on = v.presence === 'connected';
+  const label = historial
+    ? (v.left_at ? 'Salida registrada' : (on ? 'Conectado al cierre' : 'Desconectado (sin salida registrada)'))
+    : (v.presence_label || (on ? 'Conectado' : 'Desconectado'));
+  const statusCls = !historial && on ? ' visitor-roster__status--on' : '';
+  if (!historial) {
+    return `<li class="visitor-roster__card"><p class="visitor-roster__name">${esc(v.display_name)}</p><p class="visitor-roster__status${statusCls}">${esc(label)}</p></li>`;
+  }
+  const dur = v.left_at
+    ? `<p class="visitor-roster__duration">Permanencia: ${esc(v.duration_label)}</p>`
+    : '<p class="visitor-roster__duration sub">Permanencia no confirmada (sin salida registrada)</p>';
+  const salida = v.left_at ? ' · Salida ' + esc(fmtHoraRoster(v.left_at)) : '';
+  const secc = v.sections && v.sections.length
+    ? esc(v.sections.slice(0, 4).join(' · '))
+    : 'Sin secciones registradas en eventos';
+  const clar = Array.isArray(v.clarity_votes) && v.clarity_votes.length
+    ? `<ul class="visitor-roster__clarity">${v.clarity_votes.map(cv => `<li>${esc(cv.section_key)}: ${esc(cv.label || cv.vote)}</li>`).join('')}</ul>`
+    : '<p class="visitor-roster__sections sub">Sin votos de claridad registrados</p>';
+  return `<li class="visitor-roster__card"><p class="visitor-roster__name">${esc(v.display_name)}</p><p class="visitor-roster__status">${esc(label)}</p>${dur}<p class="visitor-roster__times">Ingreso ${esc(fmtHoraRoster(v.joined_at))}${salida}</p><p class="visitor-roster__sections">Intereses / secciones: ${secc}</p><p class="visitor-roster__meta">${v.questions_asked || 0} preguntas · ${v.clicks || 0} clics</p>${clar}</li>`;
+}
 function panelParticipantes() {
   cargarRosterVisitantes();
   const items = S.visitorRoster || [];
   if (S.visitorRosterError) return `<p class="vacio">${esc(S.visitorRosterError)}</p>`;
-  if (!items.length) return '<p class="vacio">Aún no hay visitantes con actividad registrada. Cuando un cliente ingrese y explore, aparecerán aquí el nombre y el tiempo en sesión.</p>';
-  return `<section class="visitor-roster" aria-label="Participantes de la sesión"><h4 class="visitor-roster__heading">Participantes</h4><ul class="visitor-roster__list">${items.map(v => `<li class="visitor-roster__card"><p class="visitor-roster__name">${esc(v.display_name)}</p><p class="visitor-roster__duration">${esc(v.duration_label)}</p><p class="visitor-roster__times">Ingreso ${esc(fmtHoraRoster(v.joined_at))}${v.left_at ? ' · Salida ' + esc(fmtHoraRoster(v.left_at)) : ' · En sesión'}</p><p class="visitor-roster__sections">${v.sections && v.sections.length ? esc(v.sections.slice(0, 3).join(' · ')) : 'Sin secciones exploradas aún'}</p><p class="visitor-roster__meta">${v.questions_asked || 0} preguntas · ${v.clicks || 0} clics</p></li>`).join('')}</ul></section>`;
+  if (!items.length) return '<p class="vacio">Aún no hay visitantes con actividad registrada. Cuando un cliente ingrese, aparecerán aquí con su estado de conexión.</p>';
+  const historial = mostrarHistorialParticipacion();
+  const titulo = historial ? 'Historial de participación' : 'Participantes';
+  const lead = historial
+    ? '<p class="sub" style="margin:0 0 12px">Resumen al cierre de la reunión (datos en Supabase). Los clics son los persistidos en el servidor; no se reconstruyen toques locales anteriores.</p>'
+    : '<p class="sub" style="margin:0 0 12px">Estado de conexión en vivo. El historial consolidado aparece al finalizar.</p>';
+  return `<section class="visitor-roster" aria-label="${esc(titulo)}"><h4 class="visitor-roster__heading">${esc(titulo)}</h4>${lead}<ul class="visitor-roster__list">${items.map(v => htmlTarjetaParticipanteMonitor(v, historial)).join('')}</ul></section>`;
 }
 function panelIntereses() {
   const t = Object.values(S.toques); if (!t.length) return '<p class="vacio">Aquí aparece lo que el cliente consulta: filtros, gráficos que toca, términos del glosario y preguntas al asistente.</p>';
@@ -3659,7 +3990,10 @@ function htmlCierreDescargasModerador() {
 }
 function htmlCierre() {
   const filas = SECCIONES.map((s, i) => { const c = S.claridad[i]; return `<div><b>${esc(s.nombre)}</b><span>${c ? `${c.claro} «quedó claro» · ${c.duda} con dudas` : 'Sin respuesta de claridad'}</span></div>`; }).join('');
-  return `${htmlPresentationHandoffBanner()}<div class="portada"><h2 class="grande">Gracias. Así quedó la sesión</h2><div class="agenda">${filas}</div><h3 style="margin-top:32px">Preguntas de la sala</h3>${listaRespuestas()}
+  const roster = mostrarHistorialParticipacion() && (S.visitorRoster || []).length
+    ? `<h3 style="margin-top:28px">Participación</h3>${panelParticipantes()}`
+    : '';
+  return `${htmlPresentationHandoffBanner()}<div class="portada"><h2 class="grande">Gracias. Así quedó la sesión</h2><div class="agenda">${filas}</div>${roster}<h3 style="margin-top:32px">Preguntas de la sala</h3>${listaRespuestas()}
     ${htmlCierreDescargasCliente()}</div>`;
 }
 
@@ -4104,6 +4438,7 @@ async function orquestarRespuestaIA(caja, pregunta, s, turnoCaja) {
     caja.innerHTML = '<p>No puedo usar el asistente en esta vista ahora. Cuando está disponible, solo responde con las cifras del contexto de la presentación.</p>';
     adjuntarOfertaEscalamiento(caja, pregunta);
   } finally {
+    guardarCajaIAEnHilo(caja);
     iaRespuestaActiva = Math.max(0, iaRespuestaActiva - 1);
     lanzarRenderPendienteIA();
   }
@@ -4134,6 +4469,15 @@ function abrirGlosario(s, termino) {
   const terms = s !== undefined ? [...new Set(SECCIONES[s].graficos.flatMap(g => g.glos))] : Object.keys(GLOSARIO);
   const lista = termino ? [termino, ...terms.filter(t => t !== termino)] : terms;
   modal(`<h3>Glosario${s !== undefined ? ' · ' + esc(SECCIONES[s].nombre) : ''}</h3><dl class="glosario">${lista.map(t => `<dt>${esc(t)}</dt><dd>${esc(GLOSARIO[t] || '')}</dd>`).join('')}</dl><div class="fila"><button class="btn prim" data-cerrar>Cerrar</button></div>`);
+}
+async function abrirPreguntasFrecuentes() {
+  const ok = await cargarPrepFaqsDesdeServidor();
+  if (!ok) recargarPrepFaqsDesdeStorage();
+  const items = prepFaqsVisibles(S.prepFaqs);
+  const cuerpo = items.length
+    ? htmlFaqsEnVivoLista(items)
+    : '<p class="vacio">No hay preguntas frecuentes configuradas para esta reunión.</p>';
+  modal(`<h3>Preguntas frecuentes</h3>${cuerpo}<div class="fila"><button class="btn prim" data-cerrar>Cerrar</button></div>`);
 }
 function contextoIA(s) {   // D-07: referencia local / futura; el chat usa tools en servidor (sin enviar este bloque)
   if (s === undefined) return `Sesión del Monitor de Mercado Laboral, edición ${DATOS.edicion}. Secciones: ${SECCIONES.map(x => x.nombre).join(', ')}.`;
@@ -4512,16 +4856,12 @@ function enfocarEntradaGemini() {
 }
 function abrirIA() {
   const s = seccionActual(); registrar('ia', 'Abrió el asistente', s);
-  const {capa} = modal(`<h3>Asistente IA</h3><p class="nota-anon">Responde con las cifras de esta presentación. Sus preguntas son anónimas.</p><div class="chat" id="chat"></div>
+  const {capa} = modal(`<h3>Asistente IA</h3><p class="nota-anon">Responde con las cifras de esta presentación. Sus preguntas son anónimas.</p><div class="chat" id="chat" data-chat-ia-historial></div>
     <textarea id="txtIA" placeholder="Por ejemplo: ¿qué significa rotación no controlada?"></textarea><div class="fila"><button class="btn" data-cerrar>Cerrar</button><button class="btn prim" id="btnIA">Preguntar</button></div>`);
+  restaurarHistorialIA();
   $('#btnIA', capa).addEventListener('click', async () => {
     const t = $('#txtIA', capa).value.trim(); if (!t) return; $('#txtIA', capa).value = '';
-    const chat = $('#chat', capa); chat.insertAdjacentHTML('beforeend', `<div class="msg yo">${esc(t)}</div><div class="msg ia">Pensando…</div>`);
-    const caja = chat.lastElementChild; registrar('ia', t.slice(0, 60), s);
-    const wrap = document.createElement('div');
-    caja.replaceWith(wrap);
-    wrap.className = 'msg ia';
-    await renderRespuestaAsistente(wrap, t, s);
+    await enviarIAPregunta(t);
     $('#chat', capa).scrollTop = $('#chat', capa).scrollHeight;
   });
 }
@@ -4861,6 +5201,7 @@ function render(opts) {
   limpiarGraficos();
   enlazarAudioAvatar(app);
   enlazarVozIA(app);
+  restaurarHistorialIA();
   try {
     const tavus = window.__CATCH_TAVUS_CVI__;
     tavus?.refreshUi?.();
@@ -4878,6 +5219,7 @@ document.addEventListener('input', e => {
   if (!row) return;
   if (field === 'pregunta') row.pregunta = t.value;
   if (field === 'respuesta') row.respuesta = t.value;
+  guardarPrepFaqsReunion(S.prepFaqs);
 });
 document.addEventListener('click', e => {
   const b = e.target.closest('button, [data-tocar], [data-volver-anterior]'); if (!b) return;
@@ -4894,6 +5236,11 @@ document.addEventListener('click', e => {
     S.modoEdicionPreviewSim = !S.modoEdicionPreviewSim;
     return programarRender();
   }
+  if (d.menuSecciones !== undefined) {
+    const root = document.querySelector('.cliente');
+    return setMenuSecciones(!(root && root.classList.contains('menu-secciones-abierto')));
+  }
+  if (d.cerrarMenu !== undefined) return setMenuSecciones(false);
   if (d.probarNarracion !== undefined) return probarNarracionPlanEnTavus();
   if (d.continuarSeccion !== undefined) return continuarSeccionModerador();
   if (d.mod) return moverModerador(S.pos + (+d.mod));
@@ -4933,11 +5280,13 @@ document.addEventListener('click', e => {
   if (d.addPrepFaq !== undefined) {
     if (!S.prepFaqs) S.prepFaqs = [];
     S.prepFaqs.push({ id: nuevaPrepFaqId(), pregunta: '', respuesta: '' });
+    guardarPrepFaqsReunion(S.prepFaqs);
     if (refrescarPanelPrepFaqs()) return;
     return render();
   }
   if (d.removePrepFaq) {
     S.prepFaqs = (S.prepFaqs || []).filter(r => r.id !== d.removePrepFaq);
+    guardarPrepFaqsReunion(S.prepFaqs);
     if (refrescarPanelPrepFaqs()) return;
     return render();
   }
@@ -5020,6 +5369,7 @@ document.addEventListener('click', e => {
     });
     return;
   }
+  if (d.abrir === 'faqs') return abrirPreguntasFrecuentes();
   if (d.abrir === 'glosario') { registrar('glosario', 'Abrió el glosario'); return abrirGlosario(seccionActual()); }
   if (d.glos) { registrar('glosario', d.glos); return abrirGlosario(seccionActual(), d.glos); }
   if (d.escuchar) { const [s, g] = d.escuchar.split('|').map(Number); return hablar(SECCIONES[s].graficos[g].texto(EMP)); }
@@ -5247,12 +5597,24 @@ document.addEventListener('mousedown', e => {
   cerrarPopoverSeleccionIA();
 });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') cerrarPopoverSeleccionIA();
+  if (e.key === 'Escape') {
+    setMenuSecciones(false);
+    cerrarPopoverSeleccionIA();
+  }
   if (e.key === 'Enter' && e.target.id === 'inIA') { e.preventDefault(); return enviarIA(); }
   if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
   if (e.target.closest('input, textarea, select') || $('#capaModal').innerHTML || S.rol === 'movil') return;
   e.preventDefault(); pasoFlecha(e.key === 'ArrowRight' ? 1 : -1);
 });
+window.addEventListener('storage', e => {
+  if (e.key !== clavePrepFaqs()) return;
+  S.prepFaqs = leerPrepFaqsReunion();
+  if (S.rol === 'moderador' && (S.tabMod === 'preguntas' || vistaPrepPresentador())) {
+    if (refrescarPanelPrepFaqs()) return;
+    actualizarPanelModeradorParcial();
+  }
+});
+iniciarPollPrepFaqs();
 window.addEventListener('hashchange', () => { S.rol = vistaDesdeHash(); render(); });
 window.addEventListener('popstate', e => {
   const step = e.state && e.state[PREP_HIST_KEY];

@@ -8,6 +8,8 @@ type Props = {
   meetingId: string;
   presenterToken: string;
   active: boolean;
+  /** Oculta la pestaña de claridad en vivo; los votos siguen registrándose en el flujo del visitante. */
+  showClarityTab?: boolean;
 };
 
 type ClaritySummary = Record<
@@ -34,7 +36,12 @@ function sortQueue(rows: MeetingQuestionRow[]) {
   });
 }
 
-export function PresenterEngagementPanel({ meetingId, presenterToken, active }: Props) {
+export function PresenterEngagementPanel({
+  meetingId,
+  presenterToken,
+  active,
+  showClarityTab = false,
+}: Props) {
   const [tab, setTab] = useState<"preguntas" | "claridad">("preguntas");
   const [questions, setQuestions] = useState<MeetingQuestionRow[]>([]);
   const [clarity, setClarity] = useState<ClaritySummary>({});
@@ -49,21 +56,21 @@ export function PresenterEngagementPanel({ meetingId, presenterToken, active }: 
   const refresh = useCallback(async () => {
     if (!active) return;
     setError("");
-    const [qRes, cRes] = await Promise.all([
-      fetch(`/api/meeting/${meetingId}/questions`, { headers }),
-      fetch(`/api/meeting/${meetingId}/clarity`, { headers }),
-    ]);
+    const qRes = await fetch(`/api/meeting/${meetingId}/questions`, { headers });
     if (qRes.ok) {
       const data = await qRes.json();
       setQuestions(sortQueue((data.questions ?? []) as MeetingQuestionRow[]));
     } else if (qRes.status === 503) {
       setError("Configure SUPABASE_SERVICE_ROLE_KEY para ver la cola del moderador.");
     }
-    if (cRes.ok) {
-      const data = await cRes.json();
-      setClarity((data.summary ?? {}) as ClaritySummary);
+    if (showClarityTab) {
+      const cRes = await fetch(`/api/meeting/${meetingId}/clarity`, { headers });
+      if (cRes.ok) {
+        const data = await cRes.json();
+        setClarity((data.summary ?? {}) as ClaritySummary);
+      }
     }
-  }, [active, meetingId, headers]);
+  }, [active, meetingId, headers, showClarityTab]);
 
   useEffect(() => {
     void refresh();
@@ -93,24 +100,28 @@ export function PresenterEngagementPanel({ meetingId, presenterToken, active }: 
 
   return (
     <div className="engagement-panel">
-      <div className="engagement-tabs" role="tablist">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === "preguntas"}
-          onClick={() => setTab("preguntas")}
-        >
-          Cola {openCount > 0 && <span className="badge">{openCount}</span>}
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === "claridad"}
-          onClick={() => setTab("claridad")}
-        >
-          Claridad
-        </button>
-      </div>
+      {showClarityTab ? (
+        <div className="engagement-tabs" role="tablist">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === "preguntas"}
+            onClick={() => setTab("preguntas")}
+          >
+            Cola {openCount > 0 && <span className="badge">{openCount}</span>}
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === "claridad"}
+            onClick={() => setTab("claridad")}
+          >
+            Claridad
+          </button>
+        </div>
+      ) : (
+        <h4 className="analytics-subhead">Preguntas de la reunión</h4>
+      )}
       {error && <p className="pill pill--warn">{error}</p>}
       {tab === "preguntas" && (
         <ul className="engagement-list">
@@ -191,7 +202,7 @@ export function PresenterEngagementPanel({ meetingId, presenterToken, active }: 
           })}
         </ul>
       )}
-      {tab === "claridad" && (
+      {showClarityTab && tab === "claridad" && (
         <ul className="engagement-list">
           {CHAPTERS.map((ch) => {
             const c =

@@ -16,6 +16,7 @@ import {
   type MonitorPaso,
   type MonitorPasoTipo,
 } from "./monitor-pasos";
+import { PRESENTATION_HANDOFF_NARRATIVE } from "./presentation-handoff";
 
 export type MonitorNarrationHighlightInput = {
   chartId: MonitorChartId;
@@ -45,9 +46,9 @@ export function monitorBarNarrationText(paso: MonitorPaso): string | null {
       return `${ui.title}: ${ui.subtitle.toLowerCase()}. Toque cualquier dato para ver de dónde sale.`;
     }
     case "hoja":
-      return "Hoja completa: gráficos en tamaño resumido. «Ver más detalles» abre la explicación de cada uno. Confirme si esta sección quedó clara.";
+      return "Este es el resumen de la sección. Confirma si quedó clara. De lo contrario este es el momento para resolver las duda con el presentador";
     case "cierre":
-      return "Gracias. Aquí están las respuestas a las preguntas de la sala.";
+      return PRESENTATION_HANDOFF_NARRATIVE;
     default:
       return null;
   }

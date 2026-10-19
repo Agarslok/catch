@@ -105,11 +105,15 @@ export async function checkSupabaseHealth(): Promise<SupabaseHealth> {
       .from("meeting_questions")
       .select("id")
       .limit(1);
+    const { error: faqsError } = await admin
+      .from("meeting_prep_faqs")
+      .select("id")
+      .limit(1);
 
-    if (stateExtError || questionsError) {
+    if (stateExtError || questionsError || faqsError) {
       schemaExtended = false;
       schemaHint =
-        "Faltan migraciones de sesión (meeting_questions / columnas de meeting_state). Ejecuta: npm run db:push";
+        "Faltan migraciones de sesión (meeting_questions / meeting_prep_faqs / columnas de meeting_state). Aplica supabase/migrations en el SQL Editor o npm run db:push";
     }
   }
 

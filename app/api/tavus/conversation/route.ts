@@ -10,14 +10,23 @@ import {
   endTavusConversation,
   TavusApiError,
 } from "@/lib/tavus/client";
-import { tavusIsConfigured } from "@/lib/tavus/config";
+import { tavusConfigPresence, tavusIsConfigured } from "@/lib/tavus/config";
 import {
   getSupabaseServerClient,
   getSupabaseServiceClient,
 } from "@/lib/supabase/server";
 
 export async function GET() {
-  return NextResponse.json({ configured: tavusIsConfigured() });
+  const configured = tavusIsConfigured();
+  if (configured) {
+    return NextResponse.json({ configured: true });
+  }
+  return NextResponse.json({
+    configured: false,
+    error:
+      "Tavus no está configurado en el servidor. Defina TAVUS_API_KEY, TAVUS_REPLICA_ID y TAVUS_PERSONA_ID en el entorno de Netlify (solo servidor).",
+    checks: tavusConfigPresence(),
+  });
 }
 
 export async function POST(request: Request) {

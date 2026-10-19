@@ -7,6 +7,11 @@ import { mergeChartOption, statusOverlayGraphic } from "@/lib/charts/options";
 import { CATCH_ECHARTS_THEME, registerCatchChartTheme } from "@/lib/charts/theme";
 import { usePrefersReducedMotion } from "@/lib/charts/motion";
 import type { ChartPanelStatus } from "@/lib/charts/types";
+import {
+  applyEChartsCategoryHighlight,
+  clearEChartsHighlight,
+} from "@/lib/monitor-charts/echarts-highlight-runtime";
+import type { PresentationHighlightRef } from "@/lib/monitor-charts/chart-highlight-visual";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), {
   ssr: false,
@@ -17,6 +22,8 @@ type Props = {
   height?: number;
   onEvents?: Record<string, (params: unknown) => void>;
   status?: ChartPanelStatus;
+  /** Resaltado de presentación / IA (no muta datos; usa emphasis de ECharts). */
+  presentationHighlight?: PresentationHighlightRef | null;
 };
 
 export function EChartPanel({
@@ -24,6 +31,7 @@ export function EChartPanel({
   height = 280,
   onEvents,
   status = "ready",
+  presentationHighlight = null,
 }: Props) {
   const reducedMotion = usePrefersReducedMotion();
   const instanceRef = useRef<ECharts | null>(null);
@@ -42,6 +50,21 @@ export function EChartPanel({
     }
     return mergeChartOption(reducedMotion, option);
   }, [option, reducedMotion, status]);
+
+  useEffect(() => {
+    const chart = instanceRef.current;
+    if (!chart || status !== "ready") return;
+    if (!presentationHighlight?.category) {
+      clearEChartsHighlight(chart);
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      applyEChartsCategoryHighlight(chart, {
+        category: presentationHighlight.category!,
+      });
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [presentationHighlight, status, mergedOption]);
 
   useEffect(() => {
     const chart = instanceRef.current;

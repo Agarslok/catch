@@ -57,10 +57,20 @@ async function main() {
   const now = new Date().toISOString();
 
   for (const meetingId of ids) {
+    const { data: existing } = await supabase
+      .from("meeting_state")
+      .select("global_view")
+      .eq("meeting_id", meetingId)
+      .maybeSingle();
+    const prev =
+      existing?.global_view && typeof existing.global_view === "object"
+        ? existing.global_view
+        : {};
     const { error } = await supabase.from("meeting_state").upsert({
       meeting_id: meetingId,
       current_step: 0,
       unlocked_step: 0,
+      global_view: { ...prev, monitorSessionPhase: "preparacion" },
       updated_at: now,
     });
     if (error) {

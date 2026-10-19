@@ -42,7 +42,16 @@ import { excerptText, presentationNavMetadata } from "@/lib/analytics/track-pres
 import { MeetingVisitorTools } from "@/components/catch/MeetingVisitorTools";
 import { PresenterVisitorRoster } from "@/components/catch/PresenterVisitorRoster";
 import type { PresenterPrepFaqItem } from "@/components/catch/PresenterFaqPrepSection";
-import { PresenterRightPanel } from "@/components/catch/PresenterRightPanel";
+import {
+  PREP_FAQS_POLL_MS,
+  normalizePrepFaqs,
+  readStoredPrepFaqs,
+  writeStoredPrepFaqs,
+} from "@/lib/meeting/prep-faqs";
+import {
+  PresenterRightPanel,
+  type PresenterLiveRailTab,
+} from "@/components/catch/PresenterRightPanel";
 import { PrivateQuestionPanel } from "@/components/catch/PrivateQuestionPanel";
 import { applyChartActionToGlobalView } from "@/lib/meeting/global-view";
 import {
@@ -141,18 +150,26 @@ export function LiveMeetingApp({
   const [askOk, setAskOk] = useState("");
   const [aiReply, setAiReply] = useState("");
   const [aiReplySeq, setAiReplySeq] = useState(0);
+  const [chatThread, setChatThread] = useState<
+    { role: "user" | "assistant"; text: string }[]
+  >([]);
   const [clarityVote, setClarityVote] = useState<ClarityVote | null>(null);
   const [clarityPromptDismissed, setClarityPromptDismissed] = useState(false);
-  const [presenterRightTab, setPresenterRightTab] = useState<"participacion">("participacion");
-  const [prepFaqs, setPrepFaqs] = useState<PresenterPrepFaqItem[]>([]);
+  const [presenterRightTab, setPresenterRightTab] =
+    useState<PresenterLiveRailTab>("participantes");
+  const [prepFaqs, setPrepFaqs] = useState<PresenterPrepFaqItem[]>(() =>
+    readStoredPrepFaqs(meetingId),
+  );
+  const [prepFaqsHydrated, setPrepFaqsHydrated] = useState(false);
   const [presenterVisualTemplate, setPresenterVisualTemplate] =
     useState<PresenterVisualTemplateId>("mml");
   const prepGenAbortRef = useRef(false);
   const presenterHistStepRef = useRef<PresenterHistoryStep | null>(null);
   const presenterHistApplyingRef = useRef(false);
   const [recovery, setRecovery] = useState<RecoveryNotice | null>(null);
+  const [sectionNavOpen, setSectionNavOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 860px)");
-  const showLeftRail = !isMobile || isPresenter;
+  const showLeftRail = !isMobile;
   const showDockVideo = !isMobile;
   const showFloatingAvatar = isMobile;
   const avatarVideoPaused = globalView.avatarVideoPaused ?? false;
@@ -161,6 +178,19 @@ export function LiveMeetingApp({
     canControlPause: isPresenter,
     onTogglePause: () => void setAvatarVideoPaused(!avatarVideoPaused),
   };
+
+  useEffect(() => {
+    if (!isMobile) setSectionNavOpen(false);
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (!sectionNavOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSectionNavOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [sectionNavOpen]);
   const chatRef = useRef<HTMLInputElement>(null);
   const narrationExecRef = useRef<string | null>(null);
   const sectionDedupRef = useRef<string | null>(null);
@@ -211,6 +241,78 @@ export function LiveMeetingApp({
       setSheetReturnId(null);
     }
   }, [livePointId, follow, isPresenter]);
+
+  useEffect(() => {
+    setChatThread([]);
+  }, [meetingId]);
+
+  const loadPrepFaqs = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/meeting/${meetingId}/prep-faqs`);
+      if (!res.ok) return false;
+      const data = (await res.json()) as { items?: unknown };
+      const items = normalizePrepFaqs(data.items);
+      if (isPresenter && items.length === 0) {
+        const local = readStoredPrepFaqs(meetingId);
+        if (local.length > 0) {
+          setPrepFaqs(local);
+          return true;
+        }
+      }
+      setPrepFaqs(items);
+      writeStoredPrepFaqs(meetingId, items);
+      return true;
+    } catch {
+      return false;
+    }
+  }, [meetingId, isPresenter]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setPrepFaqsHydrated(false);
+    void (async () => {
+      const ok = await loadPrepFaqs();
+      if (cancelled) return;
+      if (!ok) setPrepFaqs(readStoredPrepFaqs(meetingId));
+      setPrepFaqsHydrated(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [meetingId, loadPrepFaqs]);
+
+  useEffect(() => {
+    if (isPresenter) return;
+    const fromSync = normalizePrepFaqs(globalView.prepFaqs);
+    if (fromSync.length) {
+      setPrepFaqs(fromSync);
+      writeStoredPrepFaqs(meetingId, fromSync);
+    }
+  }, [isPresenter, globalView.prepFaqs, meetingId]);
+
+  useEffect(() => {
+    if (isPresenter) return;
+    const id = window.setInterval(() => {
+      void loadPrepFaqs();
+    }, PREP_FAQS_POLL_MS);
+    return () => window.clearInterval(id);
+  }, [isPresenter, loadPrepFaqs]);
+
+  useEffect(() => {
+    if (!isPresenter || !prepFaqsHydrated || !presenterToken) return;
+    const timer = window.setTimeout(() => {
+      writeStoredPrepFaqs(meetingId, prepFaqs);
+      void fetch(`/api/meeting/${meetingId}/prep-faqs`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-presenter-token": presenterToken,
+        },
+        body: JSON.stringify({ items: prepFaqs }),
+      });
+    }, 500);
+    return () => window.clearTimeout(timer);
+  }, [isPresenter, prepFaqsHydrated, presenterToken, meetingId, prepFaqs]);
 
   useEffect(() => {
     if (isPresenter) return;
@@ -420,6 +522,13 @@ export function LiveMeetingApp({
     await publishSessionPhase("reunion_activa");
     await publishStep(liveStep);
   }, [isPresenter, liveStep, publishSessionPhase, publishStep, sessionPhase]);
+
+  const atClosingStep = currentPoint.kind === "closing";
+
+  useEffect(() => {
+    if (!isPresenter || !atClosingStep) return;
+    if (sessionPhase !== "cierre") void publishSessionPhase("cierre");
+  }, [isPresenter, atClosingStep, sessionPhase, publishSessionPhase]);
 
   const onDownloadAvatarScriptPdf = useCallback(() => {
     downloadAvatarScriptPdf(script, pdfMeta);
@@ -802,6 +911,13 @@ export function LiveMeetingApp({
         }
       }
     }
+    setChatThread((prev) => [
+      ...prev,
+      { role: "user", text },
+      ...(data.answer
+        ? [{ role: "assistant" as const, text: String(data.answer) }]
+        : []),
+    ]);
     if (data.answer) {
       setAiReply(data.answer);
       setAiReplySeq((n) => n + 1);
@@ -906,10 +1022,12 @@ export function LiveMeetingApp({
       onSelectPoint={(id) => {
         if (presenterPreMeetingReview) {
           setPresenterPreviewPointId(id);
+          setSectionNavOpen(false);
           return;
         }
         if (isPresenter) void publishPoint(id);
-        else goLocal(id, "explore", "section");
+        else if (!follow) goLocal(id, "explore", "section");
+        setSectionNavOpen(false);
       }}
       onGenerateScript={
         presenterToken
@@ -972,6 +1090,7 @@ export function LiveMeetingApp({
               presenterToken={presenterToken}
               active={true}
               variant="closing"
+              showParticipationHistory={true}
             />
           ) : null}
         </>
@@ -1088,42 +1207,60 @@ export function LiveMeetingApp({
       canStartTavus={presenterLiveDashboard}
     >
       {isPresenter && <TavusAiEcho answer={aiReply} echoId={aiReplySeq} />}
-      <div className={shellClass}>
+      <div className={`${shellClass}${sectionNavOpen ? " menu-secciones-abierto" : ""}`}>
       <header className="top">
-        <div className="brand">
-          <Link href="/" aria-label="Inicio">
-            <Image src="/favicon.png" alt="Catch Consulting" width={40} height={40} />
-          </Link>
-          <span className="sep" aria-hidden="true" />
-          <span className="edition">
-            Monitor de Mercado Laboral · Guanajuato · Ene–Feb 2026
-          </span>
+        <div className="cabeza-principal">
+          {isMobile ? (
+            <button
+              type="button"
+              className="btn-menu"
+              aria-expanded={sectionNavOpen}
+              aria-controls="nav-secciones"
+              aria-label="Menú de secciones"
+              onClick={() => setSectionNavOpen((open) => !open)}
+            >
+              <span className="btn-menu-ico" aria-hidden="true" />
+            </button>
+          ) : null}
+          <div className="brand">
+            <Link href="/" aria-label="Inicio">
+              <Image src="/favicon.png" alt="Catch Consulting" width={40} height={40} />
+            </Link>
+            <span className="sep" aria-hidden="true" />
+            <span className="edition">
+              Monitor de Mercado Laboral · Guanajuato · Ene–Feb 2026
+            </span>
+          </div>
         </div>
-        <div className="top-right">
-          <span className="step-label">
-            Paso {currentIndex + 1} de {totalPoints}
-          </span>
-          {!supabaseLoading && supabaseHealth && !supabaseHealth.ok && (
-            <span className="pill pill--warn" title={syncBadge}>Sin sync</span>
-          )}
-          {isPresenter ? (
-            <>
-              <button
-                type="button"
-                className="pill"
-                onClick={() => void setPresentationPaused(presentationStatus !== "paused")}
-                disabled={presenterPreMeetingReview}
-              >
-                {presentationStatus === "paused" ? "Reanudar" : "Pausar"}
-              </button>
-              <span className="pill live-pill">
-                <span className="dot" />{" "}
-                {presenterPreMeetingReview
-                  ? "Previsualización · presentador"
-                  : "En vivo · presentador"}
+        {!isPresenter ? (
+          <div className="cabeza-acciones">
+            {!isMobile ? (
+              <span className="step-label">
+                Paso {currentIndex + 1} de {totalPoints}
               </span>
-            </>
-          ) : (
+            ) : null}
+            {!supabaseLoading && supabaseHealth && !supabaseHealth.ok && (
+              <span className="pill pill--warn" title={syncBadge}>Sin sync</span>
+            )}
+            <MeetingVisitorTools
+              meetingId={meetingId}
+              participantId={actorRef.current.id}
+              sectionKey={section?.id ?? c.chartFocus}
+              sectionLabel={section?.name ?? c.t}
+              chartFocus={c.chartFocus}
+              participantToken={participantToken}
+              prepFaqs={prepFaqs}
+              showClarityButton={false}
+              onAskPrivate={() => {
+                setPrivateAskOpen(true);
+                trackAnalytics("question.private_opened", {
+                  chart_id: c.chartFocus,
+                  metadata: { point_id: currentPoint.id },
+                });
+              }}
+              onReviewConcepts={() => setReviewOpen(true)}
+              onClarityVote={setClarityVote}
+            />
             <button
               type="button"
               className="pill"
@@ -1139,8 +1276,31 @@ export function LiveMeetingApp({
               />
               {follow ? "Siguiendo en vivo" : "Explorando"}
             </button>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="top-right">
+            <span className="step-label">
+              Paso {currentIndex + 1} de {totalPoints}
+            </span>
+            {!supabaseLoading && supabaseHealth && !supabaseHealth.ok && (
+              <span className="pill pill--warn" title={syncBadge}>Sin sync</span>
+            )}
+            <button
+              type="button"
+              className="pill"
+              onClick={() => void setPresentationPaused(presentationStatus !== "paused")}
+              disabled={presenterPreMeetingReview}
+            >
+              {presentationStatus === "paused" ? "Reanudar" : "Pausar"}
+            </button>
+            <span className="pill live-pill">
+              <span className="dot" />{" "}
+              {presenterPreMeetingReview
+                ? "Previsualización · presentador"
+                : "En vivo · presentador"}
+            </span>
+          </div>
+        )}
       </header>
 
       <div className="body">
@@ -1231,9 +1391,38 @@ export function LiveMeetingApp({
             </div>
           )}
 
-          {!isPresenter && !showLeftRail && showRailContent && (
-            <div className="script-mobile">{rail}</div>
-          )}
+          {isMobile && sectionNavOpen ? (
+            <>
+              <button
+                type="button"
+                className="nav-velo"
+                aria-label="Cerrar menú de secciones"
+                onClick={() => setSectionNavOpen(false)}
+              />
+              <div
+                id="nav-secciones"
+                className="section-nav-drawer"
+                role="dialog"
+                aria-label="Secciones"
+              >
+                <div className="rail-cabeza-movil">
+                  <span>Secciones</span>
+                  <button type="button" className="btn-small" onClick={() => setSectionNavOpen(false)}>
+                    Cerrar
+                  </button>
+                </div>
+                {showRailContent ? (
+                  rail
+                ) : (
+                  <p className="sub" style={{ padding: "12px 14px", margin: 0 }}>
+                    {isPresenter
+                      ? "El guion aparecerá después de preparar la sesión."
+                      : "El guion estará disponible cuando comience la reunión."}
+                  </p>
+                )}
+              </div>
+            </>
+          ) : null}
 
           {!isPresenter && (
             <div className="banner">
@@ -1298,13 +1487,32 @@ export function LiveMeetingApp({
               {isPresenter && (
                 <>
                   {visitorSeesMeeting(sessionPhase) && (
-                    <button
-                      type="button"
-                      className="ghost"
-                      onClick={() => setPresenterRightTab("participacion")}
-                    >
-                      Participación <span className="badge">{activity.length}</span>
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        className="ghost"
+                        onClick={() => setPresenterRightTab("participantes")}
+                      >
+                        Participantes
+                      </button>
+                      <button
+                        type="button"
+                        className="ghost"
+                        onClick={() => setPresenterRightTab("preguntas")}
+                      >
+                        Preguntas
+                      </button>
+                      <button
+                        type="button"
+                        className="ghost"
+                        onClick={() => setPresenterRightTab("intereses")}
+                      >
+                        Intereses
+                        {activity.length > 0 && (
+                          <span className="badge">{activity.length}</span>
+                        )}
+                      </button>
+                    </>
                   )}
                   {section && (
                     <>
@@ -1327,7 +1535,7 @@ export function LiveMeetingApp({
                   )}
                 </>
               )}
-              {(!isPresenter && !follow) || isPresenter ? (
+              {((!isPresenter && !follow) || isPresenter) && !(isMobile && !isPresenter) ? (
                 <button type="button" className="ghost round" onClick={prev} aria-label="Anterior">
                   ←
                 </button>
@@ -1364,24 +1572,6 @@ export function LiveMeetingApp({
 
           {!isPresenter && (
             <>
-              <MeetingVisitorTools
-                meetingId={meetingId}
-                participantId={actorRef.current.id}
-                sectionKey={section?.id ?? c.chartFocus}
-                sectionLabel={section?.name ?? c.t}
-                chartFocus={c.chartFocus}
-                participantToken={participantToken}
-                showClarityButton={false}
-                onAskPrivate={() => {
-                  setPrivateAskOpen(true);
-                  trackAnalytics("question.private_opened", {
-                    chart_id: c.chartFocus,
-                    metadata: { point_id: currentPoint.id },
-                  });
-                }}
-                onReviewConcepts={() => setReviewOpen(true)}
-                onClarityVote={setClarityVote}
-              />
               <PrivateQuestionPanel
                 meetingId={meetingId}
                 participantId={actorRef.current.id}
@@ -1394,6 +1584,18 @@ export function LiveMeetingApp({
               />
               <form className="ask" onSubmit={submitQuestion} id="session-chat">
                 <label htmlFor="q">Pregúntale al asistente sobre lo que estás viendo.</label>
+                {chatThread.length > 0 ? (
+                  <div className="ask-thread" aria-live="polite">
+                    {chatThread.map((m, i) => (
+                      <div
+                        key={`${m.role}-${i}`}
+                        className={m.role === "user" ? "ask-thread__user" : "ask-thread__ai"}
+                      >
+                        {m.text}
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
                 <div className="ask-row">
                   <input
                     id="q"
@@ -1422,6 +1624,7 @@ export function LiveMeetingApp({
             onPrepFaqsChange={setPrepFaqs}
             visualTemplate={presenterVisualTemplate}
             onVisualTemplateChange={setPresenterVisualTemplate}
+            atClosingStep={atClosingStep}
           />
         )}
       </div>

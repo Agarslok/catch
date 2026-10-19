@@ -1,4 +1,5 @@
 import { CHAPTERS } from "@/lib/data/guanajuato-2026";
+import { PRESENTATION_HANDOFF_NARRATIVE } from "@/lib/meeting/presentation-handoff";
 import { resolveDatasetKeyFromChartFocus } from "@/lib/visualization/datasets";
 import { SCRIPT_POINT_KINDS, type PresentedChart, type ScriptPoint, type ScriptPointKind, type ScriptSection, type SessionScript } from "./script-types";
 
@@ -99,8 +100,7 @@ export function generateSessionScript(meetingId: string): SessionScript {
     kind: "closing",
     title: "Cierre, preguntas y exportación",
     order: order++,
-    narrative:
-      "Gracias. Aquí se concentran las preguntas de la sala y el cierre de la sesión.",
+    narrative: PRESENTATION_HANDOFF_NARRATIVE,
     chartRefs: [],
   });
 

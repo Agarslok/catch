@@ -1,12 +1,16 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { getDemoClientId } from "@/lib/monitor-data/dataset";
+import { MONITOR_CHART_IDS } from "./catalog";
 import {
+  chartHasHighlightCatalog,
   demoClientRotcompHighlight,
+  enumerateHighlightElements,
   resolveMonitorHighlightTarget,
 } from "./highlight-catalog";
 import {
   authorizeHighlightRequest,
+  buildClearActionFromProposal,
   buildHighlightActionFromProposal,
   hasOnlyAllowedHighlightKeys,
   mergeHighlightAction,
@@ -43,6 +47,25 @@ describe("highlight catalog", () => {
     assert.ok(ref);
     assert.equal(ref!.datasetIndex, 1);
     assert.equal(ref!.seriesKey, "Su empresa");
+  });
+
+  it("cada chartId del monitor tiene catálogo de resaltado", () => {
+    for (const id of MONITOR_CHART_IDS) {
+      assert.equal(chartHasHighlightCatalog(id), true, id);
+      assert.ok(enumerateHighlightElements(id).length > 0, id);
+    }
+  });
+
+  it("resalta proceso y negociación (incl. No aplica)", () => {
+    const proc = resolveMonitorHighlightTarget("procesos", { category: "Metalmecánica" });
+    assert.ok(proc);
+    const neg = resolveMonitorHighlightTarget("negociacion", { category: "No aplica" });
+    assert.ok(neg);
+  });
+
+  it("rechaza categoría inexistente en gráfica actual", () => {
+    const ref = resolveMonitorHighlightTarget("plantilla", { category: "Comercial" });
+    assert.equal(ref, null);
   });
 });
 
@@ -108,6 +131,20 @@ describe("highlight validation", () => {
     }
   });
 
+  it("clear reemplaza highlight en la misma respuesta", () => {
+    const hi = buildHighlightActionFromProposal({
+      chartId: "rotcomp",
+      category: getDemoClientId(),
+    });
+    const clr = buildClearActionFromProposal({});
+    assert.equal(hi.ok, true);
+    assert.equal(clr.ok, true);
+    if (hi.ok && clr.ok) {
+      const merged = mergeHighlightAction(hi.action, clr.action);
+      assert.equal(merged?.type, "clear_highlight");
+    }
+  });
+
   it("no adopta un segundo resaltado (duplicado en la misma respuesta)", () => {
     const first = buildHighlightActionFromProposal({
       chartId: "rotcomp",
@@ -121,7 +158,8 @@ describe("highlight validation", () => {
     assert.equal(second.ok, true);
     if (first.ok && second.ok) {
       const merged = mergeHighlightAction(first.action, second.action);
-      assert.equal(merged?.target.chartId, "rotcomp");
+      assert.ok(merged?.target);
+      if (merged?.target) assert.equal(merged.target.chartId, "rotcomp");
     }
   });
 });

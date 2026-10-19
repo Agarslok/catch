@@ -43,7 +43,9 @@ export function applyChartActionToGlobalView(
         },
       });
     case "reset_view":
-      return emptyGlobalView();
+      return view.prepFaqs?.length
+        ? mergeGlobalView(emptyGlobalView(), { prepFaqs: view.prepFaqs })
+        : emptyGlobalView();
     default:
       return view;
   }

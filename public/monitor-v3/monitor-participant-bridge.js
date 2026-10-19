@@ -273,18 +273,28 @@
     }
   }
 
-  function trackFromTouch(tipo, detalle, seccion, sectionName) {
+  function trackFromTouch(tipo, detalle, seccion, sectionName, extra) {
+    const extraFields = extra && typeof extra === "object" ? extra : {};
+    const extraMeta = extraFields.metadata && typeof extraFields.metadata === "object" ? extraFields.metadata : {};
     const meta = {
       section_name: sectionName || null,
       section_index: seccion,
       detail: String(detalle || "").slice(0, 180),
     };
+    Object.assign(meta, extraMeta);
     if (tipo === "ia") {
       track("question.asked", { metadata: Object.assign({ question_text: excerpt(detalle, 240) }, meta) });
       return;
     }
     if (tipo === "grafico") {
-      track("element.clicked", { chart_id: String(detalle || ""), element_label: String(detalle || ""), metadata: meta });
+      const chartId = extraFields.chart_id || String(detalle || "");
+      const category = extraFields.element_id || extraMeta.category || "";
+      track("element.clicked", {
+        chart_id: String(chartId || ""),
+        element_id: extraFields.element_id || (category ? String(category) : null),
+        element_label: extraFields.element_label || String(category || detalle || ""),
+        metadata: meta,
+      });
       return;
     }
     if (tipo === "filtro") {

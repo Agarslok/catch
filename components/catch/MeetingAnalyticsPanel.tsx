@@ -81,6 +81,10 @@ export function MeetingAnalyticsPanel({ meetingId, active, presenterToken }: Pro
           <span>Eventos totales</span>
         </div>
         <div className="analytics-stat">
+          <strong>{summary.actions.by_event_type["element.clicked"] ?? 0}</strong>
+          <span>Clics en gráficas</span>
+        </div>
+        <div className="analytics-stat">
           <strong>{summary.actions.detail_opened}</strong>
           <span>Detalles abiertos</span>
         </div>

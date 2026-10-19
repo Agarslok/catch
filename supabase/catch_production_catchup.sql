@@ -42,8 +42,15 @@ create table if not exists public.meeting_session_registry (
   participant_role text not null check (participant_role in ('presenter', 'visitor')),
   joined_at timestamptz not null default now(),
   left_at timestamptz,
+  last_seen_at timestamptz,
+  display_name text,
   schema_version text not null default '1.0'
 );
+
+alter table public.meeting_session_registry
+  add column if not exists last_seen_at timestamptz;
+alter table public.meeting_session_registry
+  add column if not exists display_name text;
 
 create index if not exists idx_msr_meeting_joined
   on public.meeting_session_registry (meeting_id, joined_at desc);
@@ -172,8 +179,12 @@ create table if not exists public.meeting_participants (
   participant_id text not null,
   token_hash text not null,
   created_at timestamptz not null default now(),
+  display_name text,
   primary key (meeting_id, participant_id)
 );
+
+alter table public.meeting_participants
+  add column if not exists display_name text;
 
 create unique index if not exists idx_meeting_participants_token
   on public.meeting_participants (meeting_id, token_hash);
@@ -249,3 +260,31 @@ create unique index if not exists idx_meeting_questions_idempotency
 
 create index if not exists idx_meeting_questions_meeting_status_created
   on public.meeting_questions (meeting_id, status, created_at asc);
+
+-- ========== 20260323120000_meeting_prep_faqs.sql ==========
+-- Netlify no ejecuta migraciones. Pegar en SQL Editor o npm run db:push.
+
+create table if not exists public.meeting_prep_faqs (
+  meeting_id text not null,
+  id text not null,
+  sort_order integer not null default 0,
+  question text not null default '',
+  answer text not null default '',
+  updated_at timestamptz not null default now(),
+  primary key (meeting_id, id)
+);
+
+create index if not exists idx_meeting_prep_faqs_meeting_sort
+  on public.meeting_prep_faqs (meeting_id, sort_order);
+
+alter table public.meeting_prep_faqs enable row level security;
+
+drop policy if exists "meeting_prep_faqs_select_denied_client" on public.meeting_prep_faqs;
+create policy "meeting_prep_faqs_select_denied_client"
+  on public.meeting_prep_faqs for select to anon, authenticated
+  using (false);
+
+drop policy if exists "meeting_prep_faqs_write_denied_client" on public.meeting_prep_faqs;
+create policy "meeting_prep_faqs_write_denied_client"
+  on public.meeting_prep_faqs for all to anon, authenticated
+  using (false) with check (false);

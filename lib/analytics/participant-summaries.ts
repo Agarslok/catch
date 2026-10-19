@@ -1,5 +1,12 @@
 import type { InteractionEventRow, SessionRegistryRow } from "./types";
 
+/** Intervalo de heartbeat del visitante (monitor + React). */
+export const VISITOR_HEARTBEAT_MS = 20_000;
+/** Sin señal reciente: 2 heartbeats + margen. No equivale a `session.leave`. */
+export const VISITOR_PRESENCE_STALE_MS = 45_000;
+
+export type VisitorPresence = "connected" | "away" | "left";
+
 export type VisitorSessionSummary = {
   participant_id: string;
   display_name: string;
@@ -9,11 +16,29 @@ export type VisitorSessionSummary = {
   duration_seconds: number;
   duration_label: string;
   still_active: boolean;
+  presence: VisitorPresence;
+  presence_label: "Conectado" | "Desconectado";
   sections: string[];
   questions_asked: number;
   clicks: number;
   event_count: number;
+  /** Votos de claridad asociados al participante (solo si el servidor los expone). */
+  clarity_votes?: { section_key: string; vote: string; label: string }[];
 };
+
+export function resolveVisitorPresence(input: {
+  latestLeftAt: string | null;
+  lastSeenAt: string | null;
+  nowMs?: number;
+  staleMs?: number;
+}): VisitorPresence {
+  if (input.latestLeftAt) return "left";
+  const lastSeenMs = input.lastSeenAt ? Date.parse(input.lastSeenAt) : NaN;
+  const now = input.nowMs ?? Date.now();
+  const stale = input.staleMs ?? VISITOR_PRESENCE_STALE_MS;
+  if (Number.isFinite(lastSeenMs) && now - lastSeenMs <= stale) return "connected";
+  return "away";
+}
 
 export function formatDurationSeconds(totalSeconds: number): string {
   const sec = Math.max(0, Math.round(totalSeconds));
@@ -65,15 +90,20 @@ export function buildVisitorSessionSummaries(
 
     const firstEvent = ownEvents[0]?.created_at ?? null;
     const lastEvent = ownEvents[ownEvents.length - 1]?.created_at ?? null;
+    const latestSession = ownSessions[ownSessions.length - 1];
     const joinedAt = ownSessions[0]?.joined_at ?? firstEvent;
-    const leftAt =
-      ownSessions.map((s) => s.left_at).filter(Boolean).sort().at(-1) ?? null;
+    const leftAt = latestSession?.left_at ?? null;
     const lastSeen =
       (ownSessions as Array<SessionRegistryRow & { last_seen_at?: string | null }>)
         .map((s) => s.last_seen_at)
         .filter(Boolean)
         .sort()
         .at(-1) ?? lastEvent;
+    const presence = resolveVisitorPresence({
+      latestLeftAt: leftAt,
+      lastSeenAt: lastSeen,
+      nowMs,
+    });
 
     const startMs = joinedAt ? Date.parse(joinedAt) : NaN;
     const endMs = leftAt
@@ -107,7 +137,9 @@ export function buildVisitorSessionSummaries(
       last_seen_at: lastSeen,
       duration_seconds: durationSeconds,
       duration_label: formatDurationSeconds(durationSeconds),
-      still_active: !leftAt,
+      still_active: presence === "connected",
+      presence,
+      presence_label: presence === "connected" ? "Conectado" : "Desconectado",
       sections: sectionSet.slice(0, 4),
       questions_asked: ownEvents.filter((e) => e.event_type === "question.asked").length,
       clicks: ownEvents.filter((e) => e.event_type === "element.clicked").length,

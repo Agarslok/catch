@@ -19,6 +19,8 @@ export type MeetingGlobalView = {
   sectionAwaitSectionLabel?: string | null;
   /** Último punto presentado antes del cierre de sección. */
   sectionClosedPointId?: string | null;
+  /** FAQ de preparación compartidas con visitantes (no es vista de gráfica). */
+  prepFaqs?: { id: string; question: string; answer: string }[];
 };
 
 export type MeetingStateRow = {

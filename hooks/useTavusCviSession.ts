@@ -45,12 +45,30 @@ export function useTavusCviSession(canStart: boolean) {
   useEffect(() => {
     let cancelled = false;
     void fetch("/api/tavus/conversation")
-      .then((r) => r.json())
-      .then((d: { configured?: boolean }) => {
-        if (!cancelled) setConfigured(Boolean(d.configured));
+      .then(async (r) => {
+        const raw = await r.text();
+        try {
+          return JSON.parse(raw) as { configured?: boolean; error?: string };
+        } catch {
+          throw new Error("No se pudo leer /api/tavus/conversation");
+        }
       })
-      .catch(() => {
-        if (!cancelled) setConfigured(false);
+      .then((d) => {
+        if (cancelled) return;
+        setConfigured(Boolean(d.configured));
+        if (!d.configured) {
+          setStatus("error");
+          setError(
+            d.error ||
+              "Tavus no está configurado en el servidor (TAVUS_API_KEY, TAVUS_REPLICA_ID, TAVUS_PERSONA_ID).",
+          );
+        }
+      })
+      .catch((e) => {
+        if (cancelled) return;
+        setConfigured(false);
+        setStatus("error");
+        setError(e instanceof Error ? e.message : "No se pudo comprobar Tavus");
       });
     return () => {
       cancelled = true;
@@ -169,7 +187,14 @@ export function useTavusCviSession(canStart: boolean) {
 
   const startSession = useCallback(
     async (opts?: StartOptions) => {
-      if (!canStart || !configured || !opts?.meetingId) return;
+      if (!canStart || !opts?.meetingId) return;
+      if (!configured) {
+        setStatus("error");
+        setError(
+          "Tavus no está configurado en el servidor. Defina las variables TAVUS_* en Netlify.",
+        );
+        return;
+      }
       if (startingRef.current || status === "starting") return;
       if (callRef.current) return;
 

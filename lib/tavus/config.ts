@@ -20,3 +20,16 @@ export function getTavusServerConfig(): TavusServerConfig | null {
 export function tavusIsConfigured(): boolean {
   return getTavusServerConfig() !== null;
 }
+
+/** Diagnóstico seguro: no incluye valores de las variables. */
+export function tavusConfigPresence(): {
+  hasApiKey: boolean;
+  hasReplicaId: boolean;
+  hasPersonaId: boolean;
+} {
+  return {
+    hasApiKey: Boolean(process.env.TAVUS_API_KEY?.trim()),
+    hasReplicaId: Boolean(process.env.TAVUS_REPLICA_ID?.trim()),
+    hasPersonaId: Boolean(process.env.TAVUS_PERSONA_ID?.trim()),
+  };
+}

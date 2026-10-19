@@ -278,7 +278,11 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .avatar-rail .video{aspect-ratio:4/3; background:linear-gradient(160deg,#E9F3F9,#CFE4F1); display:grid; place-items:center; text-align:center; font-size:12.5px; color:var(--suave); padding:10px}
 .avatar-rail .video .cara{width:58px; height:58px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#7FD3E6,#38AECB 55%,#2778B1); margin:0 auto 6px; position:relative}
 .avatar-rail .video .cara.habla::after{content:""; position:absolute; inset:-6px; border-radius:50%; border:2px solid #7FD3E6; animation:aiPulse 1.2s infinite}
-.avatar-rail .escuchar{width:100%; border:0; border-top:1px solid var(--borde); background:var(--superficie); padding:9px; font-weight:700; color:var(--azul); border-radius:0}
+.avatar-rail .video{aspect-ratio:4/3; background:#0f2f48; display:block; position:relative; padding:0}
+.avatar-rail .avatar-video{width:100%; height:100%; object-fit:cover; display:block; aspect-ratio:4/3; vertical-align:top}
+.avatar-rail .audio-ctrl{display:flex; align-items:center; gap:10px; padding:9px 12px; border-top:1px solid var(--borde); background:var(--superficie)}
+.avatar-rail .audio-ctrl button{border:0; background:transparent; font-size:18px; cursor:pointer; padding:4px 8px; line-height:1}
+.avatar-rail .audio-ctrl input[type=range]{flex:1; min-width:0; accent-color:var(--azul)}
 @media (max-width:900px){ .narracion-bar{flex-direction:column; align-items:flex-start} .narracion-bar .ctrl{margin-left:0} .cliente .cuerpo{padding:8px 18px 24px} .avatar-rail{display:none} }
 </style>
 </head>
@@ -569,12 +573,17 @@ const primerPaso = si => PASOS.findIndex(p => p.s === si);
 
 // ======================= estado y sincronización =======================
 const guardado = leer('catch-live-v1') || {};
-const S = {pos: 0, rol: 'moderador', preguntas: guardado.preguntas || [], toques: guardado.toques || {}, claridad: guardado.claridad || {},
+const S = {pos: 0, rol: 'moderador', avatarVideoPaused: false, preguntas: guardado.preguntas || [], toques: guardado.toques || {}, claridad: guardado.claridad || {},
   vistas: {cliente: {live: true, pos: 0, resp: {}}, movil: {live: true, pos: 0, resp: {}}}, tabMod: 'preguntas', sala: null, conectados: 0};
 const persistir = () => guardar('catch-live-v1', {preguntas: S.preguntas, toques: S.toques, claridad: S.claridad});
 const canal = ('BroadcastChannel' in window) ? new BroadcastChannel('catch-live-v1') : null;
 function enviar(tipo, data) { aplicar(tipo, data); try { canal && canal.postMessage({tipo, data}); } catch (e) {} if (S.sala) S.sala.emit(tipo, data).catch(() => {}); }
 function aplicar(tipo, d) {
+  if (tipo === 'avatarVideo') {
+    S.avatarVideoPaused = !!d.paused;
+    sincronizarPausaAvatarVideo();
+    return;
+  }
   if (tipo === 'estado') { if (typeof d.pos === 'number') S.pos = d.pos; }
   else if (tipo === 'pregunta') { if (!S.preguntas.some(q => q.id === d.id)) S.preguntas.push(d); }
   else if (tipo === 'respuesta') { const q = S.preguntas.find(q => q.id === d.id); if (q) Object.assign(q, d); }
@@ -589,7 +598,7 @@ async function conectarSala() {
   try {
     const sala = await window.claude?.use?.('room'); if (!sala) return;
     S.sala = sala;
-    ['estado', 'pregunta', 'respuesta', 'toque', 'claridad'].forEach(t => sala.on(t, m => { if (!m.isMe) aplicar(t, m.data); }));
+    ['estado', 'pregunta', 'respuesta', 'toque', 'claridad', 'avatarVideo'].forEach(t => sala.on(t, m => { if (!m.isMe) aplicar(t, m.data); }));
     sala.onPeers(ch => { S.conectados = ch.peers.length; pintarSync(); });
     pintarSync();
   } catch (e) {}
@@ -711,15 +720,26 @@ function textoNarracion(p) {
   return p.tipo === 'explica' ? `${SECCIONES[p.s].graficos[p.g].titulo}: ${SECCIONES[p.s].graficos[p.g].sub.toLowerCase()}. Toque cualquier dato para ver de dónde sale.` : p.tipo === 'hoja' ? 'Esta es la hoja completa. Use los filtros para compararse con empresas de su Tier, tamaño o proceso.'
     : p.tipo === 'claro' ? 'Antes de seguir, cuéntenos si esta sección quedó clara.' : p.tipo === 'cierre' ? 'Gracias. Aquí están las respuestas a las preguntas de la sala.' : 'Hola, soy el avatar de Catch. Le acompaño durante la presentación.';
 }
+function htmlAvatarAudioCtrl(withPause) {
+  const pauseBtn = withPause
+    ? `<button type="button" data-avatar-pause aria-pressed="${S.avatarVideoPaused}" aria-label="${S.avatarVideoPaused ? 'Reanudar video' : 'Pausar video'}">${S.avatarVideoPaused ? '▶' : '⏸'}</button>`
+    : '';
+  return `${pauseBtn}<button type="button" data-avatar-mute aria-pressed="true" aria-label="Activar sonido">🔇</button><input type="range" data-avatar-volume min="0" max="1" step="0.05" value="1" aria-label="Volumen">`;
+}
+function htmlAvatarVideoBlock(withPause) {
+  return `<div class="avatar-video-slot"><video class="avatar-video" src="/avatar_video.mp4" autoplay muted loop playsinline preload="metadata"></video>
+    <div class="audio-ctrl" role="group" aria-label="Audio del avatar">${htmlAvatarAudioCtrl(withPause)}</div></div>`;
+}
 function htmlAvatar(p) {
   const texto = textoNarracion(p);
-  return `<div class="avatar-w">${S.avatar ? `<div class="panel-av" role="dialog" aria-label="Avatar Catch"><div class="video"><div><div class="cara" id="cara"></div>Aquí va el video de LiveAvatar</div></div>
+  const withPause = S.rol === 'moderador';
+  return `<div class="avatar-w">${S.avatar ? `<div class="panel-av" role="dialog" aria-label="Avatar Catch"><div class="video">${htmlAvatarVideoBlock(withPause)}</div>
     <div class="dentro"><p>${esc(texto)}</p><div class="acc"><button class="lleno" data-escuchar-texto>Escuchar</button><button data-abrir="ia">Preguntar al avatar</button><button data-abrir="glosario">Glosario</button></div></div></div>` : ''}
     <button class="fab" data-avatar aria-expanded="${!!S.avatar}"><span class="pulso"></span>${S.avatar ? 'Ocultar avatar' : 'Avatar Catch'}</button></div>`;
 }
 function htmlAvatarRail() {   // avatar desplegable en la columna izquierda, como la tarjeta "Avatar IA" del demo
   return `<div class="avatar-rail"><button class="cab-av" data-avatar aria-expanded="${!!S.avatar}">Avatar IA <span class="pulso"></span></button>
-    ${S.avatar ? `<div class="video"><div><div class="cara" id="cara"></div>Aquí va el video de LiveAvatar</div></div><button class="escuchar" data-escuchar-texto>Escuchar narración</button>` : ''}</div>`;
+    ${S.avatar ? `<div class="video">${htmlAvatarVideoBlock(false)}</div>` : ''}</div>`;
 }
 function renderCliente(raiz, opciones = {}) {
   const rol = opciones.preview ? 'moderador' : 'cliente';
@@ -957,6 +977,61 @@ async function exportarPDF() {
 // ======================= render general y eventos =======================
 function vistaDesdeHash() { const h = location.hash.replace('#', ''); return ['moderador', 'cliente', 'movil'].includes(h) ? h : 'moderador'; }
 let ultimaVista = '';
+const AVATAR_VOL_KEY = 'catch-avatar-volume';
+function leerVolAvatar() {
+  try { const n = parseFloat(sessionStorage.getItem(AVATAR_VOL_KEY)); return Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 1; } catch { return 1; }
+}
+function guardarVolAvatar(v) { try { sessionStorage.setItem(AVATAR_VOL_KEY, String(v)); } catch { /* ignore */ } }
+function sincronizarPausaAvatarVideo() {
+  document.querySelectorAll('[data-avatar-pause]').forEach(btn => {
+    btn.setAttribute('aria-pressed', String(S.avatarVideoPaused));
+    btn.textContent = S.avatarVideoPaused ? '▶' : '⏸';
+    btn.setAttribute('aria-label', S.avatarVideoPaused ? 'Reanudar video' : 'Pausar video');
+  });
+  document.querySelectorAll('.avatar-video').forEach(v => {
+    if (S.avatarVideoPaused) v.pause();
+    else v.play().catch(() => {});
+  });
+}
+function enlazarAudioAvatar(raiz) {
+  const root = raiz || document;
+  root.querySelectorAll('.avatar-video-slot').forEach(slot => {
+    const v = slot.querySelector('.avatar-video');
+    const muteBtn = slot.querySelector('[data-avatar-mute]');
+    const slider = slot.querySelector('[data-avatar-volume]');
+    const pauseBtn = slot.querySelector('[data-avatar-pause]');
+    if (!v || !muteBtn || !slider) return;
+    const vol = leerVolAvatar();
+    slider.value = String(vol);
+    v.volume = vol;
+    v.muted = true;
+    const syncMute = () => {
+      muteBtn.setAttribute('aria-pressed', String(v.muted));
+      muteBtn.textContent = v.muted ? '🔇' : '🔊';
+      muteBtn.setAttribute('aria-label', v.muted ? 'Activar sonido' : 'Silenciar');
+    };
+    syncMute();
+    if (!S.avatarVideoPaused) v.play().catch(() => {});
+    muteBtn.addEventListener('click', async () => {
+      if (v.muted) {
+        v.muted = false;
+        try { await v.play(); syncMute(); } catch { v.muted = true; syncMute(); }
+      } else { v.muted = true; syncMute(); }
+    });
+    slider.addEventListener('input', () => {
+      v.volume = parseFloat(slider.value);
+      guardarVolAvatar(v.volume);
+    });
+    if (pauseBtn) {
+      pauseBtn.addEventListener('click', () => {
+        if (S.rol !== 'moderador') return;
+        S.avatarVideoPaused = !S.avatarVideoPaused;
+        enviar('avatarVideo', { paused: S.avatarVideoPaused });
+      });
+    }
+  });
+  sincronizarPausaAvatarVideo();
+}
 function render() {
   const app = $('#app'); limpiarGraficos();
   const vista = S.rol + '|' + posVista(S.rol); if (vista !== ultimaVista) $('#fuente')?.classList.remove('abierta'); ultimaVista = vista;
@@ -964,6 +1039,7 @@ function render() {
   const real = window.innerWidth < 600 && S.rol === 'movil';
   if (S.rol === 'moderador') renderModerador(app); else if (S.rol === 'cliente') renderCliente(app); else renderMovil(app, real);
   limpiarGraficos();
+  enlazarAudioAvatar(app);
 }
 document.addEventListener('click', e => {
   const b = e.target.closest('button, [data-tocar]'); if (!b) return;

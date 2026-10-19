@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { GLOSSARY, glossaryTermsForChapter } from "@/lib/data/glossary";
+import { useEffect, useState } from "react";
+import { MeetingSessionFaqsPanel } from "@/components/catch/MeetingSessionFaqsPanel";
+import { normalizePrepFaqs, type PrepFaqItem } from "@/lib/meeting/prep-faqs";
 import type { ClarityVote } from "@/lib/meeting/session-types";
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
   sectionLabel: string;
   chartFocus: string;
   participantToken?: string;
+  prepFaqs: PrepFaqItem[];
   showClarityButton?: boolean;
   onAskPrivate?: () => void;
   onReviewConcepts?: () => void;
@@ -18,23 +20,45 @@ type Props = {
 };
 
 export function MeetingVisitorTools({
-  sectionLabel,
-  chartFocus,
+  meetingId,
+  prepFaqs,
   showClarityButton = false,
   onAskPrivate,
   onReviewConcepts,
 }: Props) {
-  const [glossaryOpen, setGlossaryOpen] = useState(false);
-  const terms = glossaryTermsForChapter(chartFocus);
+  const [faqsOpen, setFaqsOpen] = useState(false);
+  const [remoteFaqs, setRemoteFaqs] = useState<PrepFaqItem[]>(prepFaqs);
+
+  useEffect(() => {
+    setRemoteFaqs(prepFaqs);
+  }, [prepFaqs]);
+
+  useEffect(() => {
+    if (!faqsOpen || !meetingId) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await fetch(`/api/meeting/${meetingId}/prep-faqs`);
+        if (!res.ok) return;
+        const data = (await res.json()) as { items?: unknown };
+        if (!cancelled) setRemoteFaqs(normalizePrepFaqs(data.items));
+      } catch {
+        /* keep last known list */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [faqsOpen, meetingId]);
 
   return (
     <>
       <div className="visitor-tools">
-        <button type="button" className="btn-small" onClick={() => setGlossaryOpen(true)}>
-          Glosario
+        <button type="button" className="btn-small" onClick={() => setFaqsOpen(true)}>
+          Preguntas frecuentes
         </button>
         <button type="button" className="btn-small" onClick={() => onAskPrivate?.()}>
-          Tengo dudas
+          Preguntar al presentador
         </button>
         <button type="button" className="btn-small" onClick={() => onReviewConcepts?.()}>
           Quiero repasar conceptos
@@ -46,26 +70,19 @@ export function MeetingVisitorTools({
         )}
       </div>
 
-      {glossaryOpen && (
-        <div className="catch-modal-veil" role="presentation" onClick={() => setGlossaryOpen(false)}>
+      {faqsOpen && (
+        <div className="catch-modal-veil" role="presentation" onClick={() => setFaqsOpen(false)}>
           <div
             className="catch-modal"
             role="dialog"
             aria-modal="true"
-            aria-label="Glosario"
+            aria-label="Preguntas frecuentes"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3>Glosario · {sectionLabel}</h3>
-            <dl className="catch-glossary">
-              {terms.map((term) => (
-                <div key={term}>
-                  <dt>{term}</dt>
-                  <dd>{GLOSSARY[term] ?? ""}</dd>
-                </div>
-              ))}
-            </dl>
+            <h3>Preguntas frecuentes</h3>
+            <MeetingSessionFaqsPanel items={remoteFaqs} variant="modal" />
             <div className="catch-modal-actions">
-              <button type="button" className="solid solid--on-light" onClick={() => setGlossaryOpen(false)}>
+              <button type="button" className="solid solid--on-light" onClick={() => setFaqsOpen(false)}>
                 Cerrar
               </button>
             </div>

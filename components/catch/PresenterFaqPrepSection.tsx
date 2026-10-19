@@ -1,15 +1,18 @@
 "use client";
 
 import { useCallback } from "react";
+import {
+  addPrepFaq,
+  newPrepFaqId,
+  removePrepFaq,
+  updatePrepFaq,
+  type PrepFaqItem,
+} from "@/lib/meeting/prep-faqs";
 
-export type PresenterPrepFaqItem = {
-  id: string;
-  question: string;
-  answer: string;
-};
+export type PresenterPrepFaqItem = PrepFaqItem;
 
 export function newPresenterPrepFaqId() {
-  return `faq-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  return newPrepFaqId();
 }
 
 type Props = {
@@ -20,19 +23,19 @@ type Props = {
 
 export function PresenterFaqPrepSection({ items, onChange, variant = "main" }: Props) {
   const addItem = useCallback(() => {
-    onChange([...items, { id: newPresenterPrepFaqId(), question: "", answer: "" }]);
+    onChange(addPrepFaq(items));
   }, [items, onChange]);
 
   const updateItem = useCallback(
     (id: string, patch: Partial<Pick<PresenterPrepFaqItem, "question" | "answer">>) => {
-      onChange(items.map((row) => (row.id === id ? { ...row, ...patch } : row)));
+      onChange(updatePrepFaq(items, id, patch));
     },
     [items, onChange],
   );
 
   const removeItem = useCallback(
     (id: string) => {
-      onChange(items.filter((row) => row.id !== id));
+      onChange(removePrepFaq(items, id));
     },
     [items, onChange],
   );
@@ -52,7 +55,7 @@ export function PresenterFaqPrepSection({ items, onChange, variant = "main" }: P
         <ul className="presenter-faq-prep__tips">
           <li>Use lenguaje claro y respuestas breves que pueda leer en voz alta.</li>
           <li>Puede añadir tantas entradas como necesite antes de iniciar.</li>
-          <li>Esta lista es de apoyo en preparación; no se guarda al recargar la página.</li>
+          <li>Se guarda para esta reunión y permanece al iniciar la sesión o recargar.</li>
         </ul>
       </header>
 

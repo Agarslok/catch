@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MeetingAnalyticsPanel } from "@/components/catch/MeetingAnalyticsPanel";
 import { PresenterVisitorRoster } from "@/components/catch/PresenterVisitorRoster";
 import { PresenterEngagementPanel } from "@/components/catch/PresenterEngagementPanel";
+import { MeetingSessionFaqsPanel } from "@/components/catch/MeetingSessionFaqsPanel";
 import {
   PresenterFaqPrepSection,
   type PresenterPrepFaqItem,
@@ -12,25 +13,27 @@ import { VisualTemplateExpandedDetails } from "@/components/catch/VisualTemplate
 import type { ActivityRow } from "@/lib/activity/types";
 import type { MonitorSessionPhase } from "@/lib/meeting/monitor-session-phase";
 import { visitorSeesMeeting } from "@/lib/meeting/monitor-session-phase";
+import { meetingParticipationHistoryVisible } from "@/lib/meeting/participant-roster-view";
 import { presenterRailPanel } from "@/lib/meeting/presenter-session-ui";
 import {
   PRESENTER_VISUAL_TEMPLATES,
   type PresenterVisualTemplateId,
 } from "@/lib/meeting/presenter-visual-templates";
 
-type TabId = "participacion";
+export type PresenterLiveRailTab = "participantes" | "preguntas" | "intereses";
 
 type Props = {
   meetingId: string;
   presenterToken?: string;
   sessionPhase: MonitorSessionPhase;
   activity: ActivityRow[];
-  activeTab: TabId;
-  onTabChange: (tab: TabId) => void;
+  activeTab: PresenterLiveRailTab;
+  onTabChange: (tab: PresenterLiveRailTab) => void;
   prepFaqs: PresenterPrepFaqItem[];
   onPrepFaqsChange: (items: PresenterPrepFaqItem[]) => void;
   visualTemplate: PresenterVisualTemplateId;
   onVisualTemplateChange: (id: PresenterVisualTemplateId) => void;
+  atClosingStep?: boolean;
 };
 
 export function PresenterRightPanel({
@@ -44,8 +47,13 @@ export function PresenterRightPanel({
   onPrepFaqsChange,
   visualTemplate,
   onVisualTemplateChange,
+  atClosingStep = false,
 }: Props) {
   const meetingLive = visitorSeesMeeting(sessionPhase);
+  const showParticipationHistory = meetingParticipationHistoryVisible(
+    sessionPhase,
+    atClosingStep,
+  );
   const activityCount = activity.length;
   const mode = presenterRailPanel(sessionPhase);
   const selectedMeta = PRESENTER_VISUAL_TEMPLATES.find((t) => t.id === visualTemplate);
@@ -62,7 +70,7 @@ export function PresenterRightPanel({
       ? "Plantillas"
       : mode === "faqs"
         ? "Preguntas frecuentes"
-        : "Participación";
+        : "Panel del presentador";
 
   return (
     <aside className="presenter-side-rail" aria-label="Panel del presentador">
@@ -71,10 +79,26 @@ export function PresenterRightPanel({
           <button
             type="button"
             role="tab"
-            aria-selected={tab === "participacion"}
-            onClick={() => setTab("participacion")}
+            aria-selected={tab === "participantes"}
+            onClick={() => setTab("participantes")}
           >
-            Participación
+            Participantes
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === "preguntas"}
+            onClick={() => setTab("preguntas")}
+          >
+            Preguntas
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === "intereses"}
+            onClick={() => setTab("intereses")}
+          >
+            Intereses
             {activityCount > 0 && <span className="badge">{activityCount}</span>}
           </button>
         </div>
@@ -151,20 +175,44 @@ export function PresenterRightPanel({
           />
         )}
 
-        {mode === "live" && meetingLive && (
+        {mode === "live" && meetingLive && tab === "participantes" && (
+          <div role="tabpanel">
+            {presenterToken ? (
+              <PresenterVisitorRoster
+                meetingId={meetingId}
+                presenterToken={presenterToken}
+                active={true}
+                showParticipationHistory={showParticipationHistory}
+              />
+            ) : (
+              <p className="muted">Sin token de presentador.</p>
+            )}
+          </div>
+        )}
+
+        {mode === "live" && meetingLive && tab === "preguntas" && (
           <div role="tabpanel">
             {presenterToken ? (
               <>
-                <PresenterVisitorRoster
-                  meetingId={meetingId}
-                  presenterToken={presenterToken}
-                  active={true}
-                />
+                <h4 className="analytics-subhead">Preguntas frecuentes</h4>
+                <MeetingSessionFaqsPanel items={prepFaqs} variant="rail" />
                 <PresenterEngagementPanel
                   meetingId={meetingId}
                   presenterToken={presenterToken}
                   active={true}
+                  showClarityTab={false}
                 />
+              </>
+            ) : (
+              <p className="muted">Sin token de presentador.</p>
+            )}
+          </div>
+        )}
+
+        {mode === "live" && meetingLive && tab === "intereses" && (
+          <div role="tabpanel">
+            {presenterToken ? (
+              <>
                 <MeetingAnalyticsPanel
                   meetingId={meetingId}
                   active={true}

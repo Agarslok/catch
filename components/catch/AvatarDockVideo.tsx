@@ -1,37 +1,36 @@
 "use client";
 
-import { AVATAR_VIDEO } from "@/lib/avatar/config";
-import { useAvatarVideoPlayback } from "@/hooks/useAvatarVideoPlayback";
+import { AvatarVisual } from "@/components/catch/AvatarVisual";
 
 type Props = {
   active?: boolean;
+  syncPaused?: boolean;
+  canControlPause?: boolean;
+  onTogglePause?: () => void;
 };
 
-export function AvatarDockVideo({ active = true }: Props) {
-  const { ref, play } = useAvatarVideoPlayback(active);
-
+export function AvatarDockVideo({
+  active = true,
+  syncPaused = false,
+  canControlPause = false,
+  onTogglePause,
+}: Props) {
   return (
     <section
       className="ai-dock"
       aria-label="Avatar IA de Catch"
-      style={{ ["--ai-ratio" as string]: AVATAR_VIDEO.ratio }}
+      style={{ ["--ai-ratio" as string]: "16/9" }}
     >
       <div className="ai-dock-head">
         <span>Avatar IA</span>
         <span className="dot" />
       </div>
-      <div className="ai-media">
-        <video
-          ref={ref}
-          src={AVATAR_VIDEO.src}
-          poster={AVATAR_VIDEO.poster || undefined}
-          playsInline
-          loop
-          preload="metadata"
-          controls={AVATAR_VIDEO.controls}
-          onClick={() => void play()}
-        />
-      </div>
+      <AvatarVisual
+        active={active}
+        syncPaused={syncPaused}
+        canControlPause={canControlPause}
+        onTogglePause={onTogglePause}
+      />
     </section>
   );
 }

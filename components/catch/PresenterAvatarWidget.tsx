@@ -1,8 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AVATAR_VIDEO } from "@/lib/avatar/config";
-import { useAvatarVideoPlayback } from "@/hooks/useAvatarVideoPlayback";
+import { AvatarVisual } from "@/components/catch/AvatarVisual";
 
 const KEY_POS = "catch-live-ai-pos";
 const KEY_POS_MOBILE = "catch-live-ai-pos-mobile";
@@ -12,6 +11,9 @@ type Props = {
   playWhenOpen?: boolean;
   /** Móvil: toque para abrir/cerrar, FAB arrastrable, sin hover. */
   mobileMode?: boolean;
+  syncPaused?: boolean;
+  canControlPause?: boolean;
+  onTogglePause?: () => void;
 };
 
 function getViewportBounds() {
@@ -32,6 +34,9 @@ function getViewportBounds() {
 export function PresenterAvatarWidget({
   playWhenOpen = true,
   mobileMode = false,
+  syncPaused = false,
+  canControlPause = false,
+  onTogglePause,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
@@ -46,8 +51,6 @@ export function PresenterAvatarWidget({
     moved: boolean;
   } | null>(null);
 
-  const shouldPlay = playWhenOpen && open;
-  const { ref: videoRef, play } = useAvatarVideoPlayback(shouldPlay);
   const storageKey = mobileMode ? KEY_POS_MOBILE : KEY_POS;
 
   const placePanel = useCallback(() => {
@@ -211,15 +214,6 @@ export function PresenterAvatarWidget({
     }
   };
 
-  const onVideoClick = () => {
-    if (mobileMode) {
-      setPinned(false);
-      setOpenState(false);
-      return;
-    }
-    void play();
-  };
-
   return (
     <div
       className={`ai-widget${open ? " open" : ""}${mobileMode ? " mobile-mode" : ""}`}
@@ -239,7 +233,7 @@ export function PresenterAvatarWidget({
           role="dialog"
           aria-label="Avatar IA de Catch"
           aria-hidden={!open}
-          style={{ ["--ai-ratio" as string]: AVATAR_VIDEO.ratio }}
+          style={{ ["--ai-ratio" as string]: "16/9" }}
         >
           <div className="ai-head">
             <span>Avatar Catch · IA</span>
@@ -257,20 +251,15 @@ export function PresenterAvatarWidget({
               </button>
             )}
           </div>
-          <div className="ai-media">
-            <video
-              ref={videoRef}
-              src={AVATAR_VIDEO.src}
-              poster={AVATAR_VIDEO.poster || undefined}
-              playsInline
-              loop
-              preload="metadata"
-              onClick={onVideoClick}
-            />
-            {mobileMode && open && (
-              <span className="ai-tap-hint">Toca el video para ocultar</span>
-            )}
-          </div>
+          <AvatarVisual
+            active={playWhenOpen && open}
+            syncPaused={syncPaused}
+            canControlPause={canControlPause}
+            onTogglePause={onTogglePause}
+          />
+          {mobileMode && open && (
+            <span className="ai-tap-hint">Toca el video para ocultar</span>
+          )}
         </div>
       </div>
       <button
