@@ -19,6 +19,8 @@ export type TavusCviStatus = "idle" | "starting" | "connected" | "error" | "ende
 type StartOptions = {
   meetingId?: string;
   presenterToken?: string;
+  /** Conversación Tavus propia: no escribe la sesión de una reunión. */
+  detached?: boolean;
 };
 
 export function useTavusCviSession(canStart: boolean) {
@@ -105,17 +107,25 @@ export function useTavusCviSession(canStart: boolean) {
       const id = conversationIdRef.current;
       await detachCall();
       if (id && canStart) {
+        const detached = opts?.detached === true;
         try {
-          await fetch(`/api/tavus/conversation/${encodeURIComponent(id)}/end`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              ...(opts?.presenterToken
-                ? { "x-presenter-token": opts.presenterToken }
-                : {}),
+          await fetch(
+            detached
+              ? `/api/async/avatar/${encodeURIComponent(id)}/end`
+              : `/api/tavus/conversation/${encodeURIComponent(id)}/end`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                ...(!detached && opts?.presenterToken
+                  ? { "x-presenter-token": opts.presenterToken }
+                  : {}),
+              },
+              body: JSON.stringify(
+                detached ? {} : { meetingId: opts?.meetingId ?? undefined },
+              ),
             },
-            body: JSON.stringify({ meetingId: opts?.meetingId ?? undefined }),
-          });
+          );
         } catch {
           /* ignore */
         }
@@ -129,19 +139,24 @@ export function useTavusCviSession(canStart: boolean) {
 
   const connectConversation = useCallback(
     async (opts: StartOptions, forceNew: boolean) => {
-      const res = await fetch("/api/tavus/conversation", {
+      const detached = opts.detached === true;
+      const res = await fetch(detached ? "/api/async/avatar" : "/api/tavus/conversation", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(opts.presenterToken
+          ...(!detached && opts.presenterToken
             ? { "x-presenter-token": opts.presenterToken }
             : {}),
         },
-        body: JSON.stringify({
-          meetingId: opts.meetingId,
-          conversationName: opts.meetingId ? `catch-${opts.meetingId}` : undefined,
-          forceNew,
-        }),
+        body: JSON.stringify(
+          detached
+            ? { conversationName: "catch-async", forceNew }
+            : {
+                meetingId: opts.meetingId,
+                conversationName: opts.meetingId ? `catch-${opts.meetingId}` : undefined,
+                forceNew,
+              },
+        ),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -187,7 +202,7 @@ export function useTavusCviSession(canStart: boolean) {
 
   const startSession = useCallback(
     async (opts?: StartOptions) => {
-      if (!canStart || !opts?.meetingId) return;
+      if (!canStart || (!opts?.detached && !opts?.meetingId)) return;
       if (!configured) {
         setStatus("error");
         setError(

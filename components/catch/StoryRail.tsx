@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { ASYNC_EXPLORE_SKIP_KINDS } from "@/lib/async/explore-nav";
 import {
   getPointIndex,
   isNavigableKind,
@@ -16,6 +17,8 @@ type Props = {
   isPresenter: boolean;
   onSelectPoint: (pointId: string) => void;
   onGenerateScript?: () => void;
+  /** Exploración libre (modo asincrónico): sin «en vivo». */
+  exploreMode?: boolean;
 };
 
 const KIND_LABEL: Record<ScriptPointKind, string> = {
@@ -45,8 +48,10 @@ export function StoryRail({
   isPresenter,
   onSelectPoint,
   onGenerateScript,
+  exploreMode = false,
 }: Props) {
   const liveIndex = getPointIndex(script, livePointId);
+  const currentIndex = getPointIndex(script, currentPointId);
   const current = script.points.find((p) => p.id === currentPointId);
 
   const sections = isPresenter
@@ -72,24 +77,33 @@ export function StoryRail({
   const renderPoint = (p: ScriptPoint, nested = false) => {
     const idx = getPointIndex(script, p.id);
     const unlocked = idx <= unlockedIndex;
-    const isLive = p.id === livePointId;
+    const isLive = !exploreMode && p.id === livePointId;
     const isCurrent = p.id === currentPointId;
-    const done = unlocked && idx < liveIndex && p.id !== livePointId;
+    const done = exploreMode
+      ? idx < currentIndex
+      : unlocked && idx < liveIndex && p.id !== livePointId;
     const upcoming = isPresenter && !unlocked;
 
     if (!isNavigableKind(p.kind)) return null;
+    if (exploreMode && ASYNC_EXPLORE_SKIP_KINDS.includes(p.kind)) return null;
     if (!isPresenter && !unlocked) return null;
 
     const clickable = isPresenter || unlocked;
-    const status = isLive
-      ? "En vivo ahora"
-      : done
-        ? "Ya presentado"
-        : upcoming
-          ? "Próximo"
-          : unlocked
-            ? "Habilitado"
-            : "Pendiente";
+    const status = exploreMode
+      ? isCurrent
+        ? "Viendo ahora"
+        : done
+          ? "Visitado"
+          : "Habilitado"
+      : isLive
+        ? "En vivo ahora"
+        : done
+          ? "Ya presentado"
+          : upcoming
+            ? "Próximo"
+            : unlocked
+              ? "Habilitado"
+              : "Pendiente";
 
     return (
       <button
@@ -125,7 +139,11 @@ export function StoryRail({
   };
 
   return (
-    <div className="story-rail">
+    <div className="story-rail catch-rail-scroll">
+      <div className="rail-brand" aria-label="Catch Consulting">
+        <span className="rail-brand__name">Catch</span>
+        <span className="rail-brand__tag">CONSULTING</span>
+      </div>
       <h2>Recorrido de la historia</h2>
       <div className="rail-list">
         {visibleStandalone

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { VisitorSessionSummary } from "@/lib/analytics/participant-summaries";
 import {
   rosterDurationDisplay,
+  rosterEngagementLabel,
   rosterPresenceLabel,
 } from "@/lib/meeting/participant-roster-view";
 
@@ -75,8 +76,8 @@ export function PresenterVisitorRoster({
         </p>
       ) : (
         <p className="muted visitor-roster__lead">
-          Estado de conexión en tiempo real. El historial consolidado aparece al finalizar la
-          reunión.
+          Estado de conexión, preguntas y clics por persona (datos en Supabase). El historial
+          detallado aparece al finalizar la reunión.
         </p>
       )}
       {error ? <p className="muted">{error}</p> : null}
@@ -95,6 +96,9 @@ export function PresenterVisitorRoster({
               >
                 {presence}
               </p>
+              {!showHistory ? (
+                <p className="visitor-roster__meta muted">{rosterEngagementLabel(v)}</p>
+              ) : null}
               {duration.kind === "confirmed" ? (
                 <p className="visitor-roster__duration">Permanencia: {duration.label}</p>
               ) : null}

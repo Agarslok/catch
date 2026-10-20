@@ -12,11 +12,12 @@ type Props = {
   narrative: PointNarrative | null;
   contentKey: string | null;
   onClose: () => void;
+  onAskIa?: () => void;
 };
 
 type PanelPhase = "hidden" | "enter" | "visible" | "exit";
 
-export function ChartDetailPanel({ narrative, contentKey, onClose }: Props) {
+export function ChartDetailPanel({ narrative, contentKey, onClose, onAskIa }: Props) {
   const reducedMotion = usePrefersReducedMotion();
   const [displayed, setDisplayed] = useState<PointNarrative | null>(null);
   const [phase, setPhase] = useState<PanelPhase>("hidden");
@@ -167,6 +168,13 @@ export function ChartDetailPanel({ narrative, contentKey, onClose }: Props) {
           {displayed.conclusion}
         </p>
         <p className="chart-detail__source">{displayed.sourceNote}</p>
+        {onAskIa ? (
+          <div className="chart-detail__ask">
+            <button type="button" className="solid solid--on-light" onClick={onAskIa}>
+              Preguntar a la IA
+            </button>
+          </div>
+        ) : null}
       </div>
     </aside>
   );

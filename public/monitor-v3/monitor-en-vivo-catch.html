@@ -44,23 +44,24 @@ h1,h2,h3{font-family:var(--display); letter-spacing:-.01em}
 @keyframes parpadeo{50%{opacity:.35}}
 
 /* ===== pantalla del cliente ===== */
-.cliente{display:grid; grid-template-columns:232px 1fr; min-height:calc(100vh - 46px)}
-.rail{background:#FFFFFF; color:var(--tinta); border-right:1px solid var(--borde); padding:24px 14px; display:flex; flex-direction:column; gap:4px}
-.rail .marca{font-family:var(--display); font-size:30px; font-weight:700; margin:2px 10px 22px; color:var(--azul)}
-.rail .marca small{display:block; font-family:var(--texto); font-size:11px; font-weight:600; letter-spacing:4px; color:var(--cyan)}
-.rail button{display:flex; align-items:center; gap:12px; border:0; background:transparent; color:var(--suave); padding:11px 12px; border-radius:12px; text-align:left; font-weight:600; transition:background .2s, color .2s}
-.rail button:hover{background:var(--pista); color:var(--azul)}
-.rail button svg{flex:none; width:22px; height:22px; color:var(--cyan)}
-.rail button[aria-current="true"]{background:var(--cielo); color:var(--azul)}
-.rail button[aria-current="true"] svg{color:var(--azul)}
-.rail button .avance{margin-left:auto; font-size:12px; opacity:.9}
-.rail .pie{margin-top:auto; font-size:12px; color:var(--suave); padding:0 10px}
+.cliente{display:grid; grid-template-columns:232px 1fr; min-height:calc(100vh - 46px); align-items:stretch}
+.rail{background:var(--profundo); color:#fff; border-right:1px solid rgba(255,255,255,.12); padding:24px 14px; display:flex; flex-direction:column; gap:4px; min-height:calc(100vh - 46px); align-self:stretch; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.55) rgba(255,255,255,.08)}
+.rail .marca{font-family:var(--display); font-size:30px; font-weight:700; margin:2px 10px 22px; color:#fff}
+.rail .marca small{display:block; font-family:var(--texto); font-size:11px; font-weight:600; letter-spacing:4px; color:#bfe3f0}
+.rail button{display:flex; align-items:center; gap:12px; border:0; background:transparent; color:rgba(255,255,255,.72); padding:11px 12px; border-radius:12px; text-align:left; font-weight:600; transition:background .2s, color .2s}
+.rail button:hover{background:rgba(255,255,255,.08); color:#fff}
+.rail button svg{flex:none; width:22px; height:22px; color:#7fd3e6}
+.rail button[aria-current="true"]{background:rgba(56,174,203,.2); color:#bfe3f0}
+.rail button[aria-current="true"] svg{color:#bfe3f0}
+.rail button .avance{margin-left:auto; font-size:12px; opacity:.9; color:#bfe3f0}
+.rail .pie{margin-top:auto; font-size:12px; color:rgba(255,255,255,.55); padding:0 10px}
+.rail-cabeza-movil span{color:#fff}
 .escena{display:flex; flex-direction:column; min-width:0; background:var(--fondo)}
 .cabeza{display:flex; align-items:center; gap:16px; padding:22px 40px 10px}
 .cabeza h1{margin:2px 0 0; font-size:30px; color:var(--tinta); font-weight:700}
 .cabeza .ruta{color:var(--azul); font-size:14px; font-weight:700}
 .cabeza .derecha,.cabeza-acciones{margin-left:auto; display:flex; gap:6px; align-items:center; flex-wrap:wrap}
-.cabeza-principal{display:flex; align-items:center; gap:10px; min-width:0; flex:1 1 12rem}
+.cabeza-principal{display:flex; align-items:center; gap:10px; min-width:0; flex:1 1 5rem}
 .titulo-monitor{display:inline; font-weight:400; font-size:15px; color:var(--suave); line-height:1.3}
 .edicion-monitor{display:inline; font-size:15px; color:var(--suave)}
 .edicion-monitor::before{content:" · "}
@@ -134,7 +135,7 @@ h1,h2,h3{font-family:var(--display); letter-spacing:-.01em}
 .aviso{font-size:13px; color:var(--vivo)}
 .leyenda-tuya{font-size:13px; color:var(--suave)}
 .leyenda-tuya i{display:inline-block; width:10px; height:10px; border-radius:50%; background:var(--ambar); margin-right:5px}
-.portada{max-width:900px; padding-top:4vh}
+.portada{max-width:900px; padding-top:0}
 .portada .grande{font-size:clamp(44px,5vw,72px); color:var(--tinta); letter-spacing:-.03em}
 .portada p.lede{font-size:21px; color:var(--suave); max-width:46ch; margin:18px 0 36px}
 .agenda{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; border-top:1px solid var(--borde)}
@@ -214,17 +215,27 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .msg.ia{background:var(--pista)}
 
 /* ===== moderador ===== */
-.moderador{display:grid; grid-template-columns:270px minmax(0,1fr) 350px; min-height:calc(100vh - 46px)}
-.mod-col{background:var(--superficie); overflow:auto; max-height:calc(100vh - 46px); border-right:1px solid var(--borde)}
-.mod-col:last-child{border-right:0; border-left:1px solid var(--borde)}
-.mod-col h3{margin:0; padding:18px 18px 8px; font-size:14px; color:var(--suave); font-family:var(--texto)}
+.moderador{display:grid; grid-template-columns:270px minmax(0,1fr) 350px; height:calc(100vh - 46px); max-height:calc(100vh - 46px); min-height:0; align-items:stretch; background:var(--fondo); overflow:hidden}
+html.catch-embed .moderador{height:100dvh; max-height:100dvh}
+body:has(.moderador){overflow:hidden}
+.mod-col{min-height:0; max-height:100%; align-self:stretch; overflow-x:hidden; overflow-y:auto}
+.mod-col:first-child{background:var(--profundo); color:#fff; border-right:1px solid rgba(255,255,255,.12); scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.55) rgba(255,255,255,.08)}
+.mod-col:last-child{background:var(--superficie); color:var(--tinta); border-right:0; border-left:1px solid var(--borde); scrollbar-width:thin; scrollbar-color:rgba(39,120,177,.5) rgba(39,120,177,.1)}
+.mod-col:first-child::-webkit-scrollbar,.rail::-webkit-scrollbar,.pasos::-webkit-scrollbar{width:8px}
+.mod-col:first-child::-webkit-scrollbar-track,.rail::-webkit-scrollbar-track,.pasos::-webkit-scrollbar-track{margin:10px 0; background:rgba(255,255,255,.07); border-radius:999px}
+.mod-col:first-child::-webkit-scrollbar-thumb,.rail::-webkit-scrollbar-thumb,.pasos::-webkit-scrollbar-thumb{background:rgba(255,255,255,.42); border-radius:999px; border:2px solid transparent; background-clip:padding-box}
+.mod-col:last-child::-webkit-scrollbar,.mod-centro::-webkit-scrollbar,.prep-faq-lista::-webkit-scrollbar{width:8px}
+.mod-col:last-child::-webkit-scrollbar-track,.mod-centro::-webkit-scrollbar-track,.prep-faq-lista::-webkit-scrollbar-track{margin:10px 0; background:rgba(39,120,177,.08); border-radius:999px}
+.mod-col:last-child::-webkit-scrollbar-thumb,.mod-centro::-webkit-scrollbar-thumb,.prep-faq-lista::-webkit-scrollbar-thumb{background:rgba(39,120,177,.38); border-radius:999px; border:2px solid transparent; background-clip:padding-box}
+.mod-col:first-child h3{margin:0; padding:18px 18px 8px; font-size:12.5px; font-weight:700; letter-spacing:.02em; color:#bfe3f0; font-family:var(--texto)}
+.mod-col:last-child h3{margin:0; padding:18px 18px 8px; font-size:12.5px; font-weight:700; letter-spacing:.02em; color:var(--azul); font-family:var(--texto)}
 .pasos{list-style:none; margin:0; padding:0 10px 18px}
-.pasos .grupo{padding:12px 8px 4px; font-weight:800; color:var(--tinta); font-size:14px}
-.pasos button{width:100%; text-align:left; border:0; background:transparent; padding:6px 10px; border-radius:10px; font-size:14px; color:var(--suave); display:flex; gap:8px; align-items:center}
-.pasos button:hover{color:var(--azul)}
-.pasos button[aria-current="true"]{background:var(--cielo); color:var(--azul); font-weight:700}
-.pasos button .ok{margin-left:auto; font-size:12px; color:var(--azul)}
-.mod-centro{padding:20px 26px; overflow:auto; max-height:calc(100vh - 46px); background:var(--pista)}
+.pasos .grupo{padding:12px 8px 4px; font-weight:800; color:#bfe3f0; font-size:14px}
+.pasos button{width:100%; text-align:left; border:0; background:transparent; padding:6px 10px; border-radius:10px; font-size:14px; color:rgba(255,255,255,.72); display:flex; gap:8px; align-items:center}
+.pasos button:hover{color:#fff; background:rgba(255,255,255,.06)}
+.pasos button[aria-current="true"]{background:rgba(56,174,203,.2); color:#bfe3f0; font-weight:700}
+.pasos button .ok{margin-left:auto; font-size:12px; color:#7fd3e6}
+.mod-centro{padding:20px 26px; overflow-x:hidden; overflow-y:auto; min-height:0; max-height:100%; align-self:stretch; background:var(--pista); scrollbar-width:thin; scrollbar-color:rgba(39,120,177,.5) rgba(39,120,177,.1)}
 .mod-centro .titulo{display:flex; align-items:center; gap:10px; margin-bottom:12px}
 .mod-centro .titulo h2{margin:0; font-size:20px}
 .pantalla{border:1px solid var(--borde); border-radius:16px; overflow:hidden; background:var(--superficie); transition:background .45s ease, box-shadow .45s ease, border-color .45s ease}
@@ -263,17 +274,17 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .notas h4{margin:0 0 6px; font-family:var(--display)}
 .tabs{display:flex; border-bottom:1px solid var(--borde); position:sticky; top:0; background:var(--superficie); z-index:2}
 .tabs button{flex:1; border:0; background:transparent; padding:14px 6px; font-weight:700; color:var(--suave); border-bottom:2px solid transparent}
-.tabs button[aria-selected="true"]{color:var(--azul); border-bottom-color:var(--azul)}
+.tabs button[aria-selected="true"]{color:var(--azul); border-bottom-color:var(--cyan); background:var(--cielo)}
 .badge{display:inline-block; min-width:20px; padding:0 6px; border-radius:999px; background:var(--vivo); color:#fff; font-size:12px; margin-left:4px}
 .lista{padding:14px 16px; display:grid; gap:12px}
-.pregunta{border:1px solid var(--borde); border-radius:14px; padding:12px 14px}
+.pregunta{border:1px solid var(--borde); border-radius:14px; padding:12px 14px; background:var(--superficie); color:var(--tinta)}
 .pregunta .meta{font-size:12px; color:var(--suave); margin-bottom:4px}
 .pregunta .acc{display:flex; gap:6px; margin-top:8px; flex-wrap:wrap}
 .pregunta.respondida,.pregunta.atendida,.pregunta.descartada{opacity:.72}
 .pregunta--oral{border-color:var(--vivo); border-width:2px}
 .pregunta .cola-tipo{display:inline-block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--azul); margin-bottom:6px}
 .pregunta .cola-tipo--oral{color:var(--vivo)}
-.pregunta .resp{margin-top:8px; padding:8px 10px; border-left:2px solid var(--cyan); background:var(--pista); font-size:14px}
+.pregunta .resp{margin-top:8px; padding:8px 10px; border-left:2px solid var(--cyan); background:var(--cielo); font-size:14px; color:var(--tinta)}
 .ia-cola-acc{margin-top:10px; gap:8px; flex-wrap:wrap}
 .ia-escala-oferta{margin-top:14px; padding:12px 14px; border-radius:12px; background:var(--cielo); border:1px solid var(--borde)}
 .ia-escala-oferta .ia-escala-preg{font-size:13px; color:var(--suave); margin:0 0 10px; font-style:italic}
@@ -293,6 +304,9 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .barra-h .pista i{display:block; height:100%; background:var(--cyan)}
 .sugerencia{background:var(--cielo); border-radius:14px; padding:12px 14px; font-size:14px}
 .vacio{color:var(--suave); font-size:14px; padding:6px 2px}
+.mod-col:first-child .vacio,.mod-col:first-child .panel-rail-seccion .vacio{color:rgba(255,255,255,.88)}
+.mod-col:first-child .panel-rail-seccion h4{color:#bfe3f0; font-size:12.5px; font-weight:700; letter-spacing:.02em}
+.lista .vacio{color:var(--suave)}
 
 /* ===== celular ===== */
 .movil-marco{display:flex; justify-content:center; padding:22px; background:var(--pista); min-height:calc(100vh - 46px)}
@@ -316,7 +330,7 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 @media (max-width:900px){ .cliente{grid-template-columns:1fr}
   .btn-menu{display:inline-flex}
   .rail-cabeza-movil{display:flex; justify-content:space-between; align-items:center; gap:8px; padding:4px 4px 12px; font-weight:700; color:var(--profundo)}
-  .cliente .rail{position:fixed; top:0; left:0; bottom:0; width:min(288px,88vw); max-width:100%; height:100dvh; z-index:80; flex-direction:column; overflow:auto; padding:16px 12px calc(16px + env(safe-area-inset-bottom,0px)); transform:translateX(-110%); transition:transform .2s ease; box-shadow:none; background:var(--superficie); border-right:1px solid var(--borde)}
+  .cliente .rail{position:fixed; top:0; left:0; bottom:0; width:min(288px,88vw); max-width:100%; height:100dvh; z-index:80; flex-direction:column; overflow:auto; padding:16px 12px calc(16px + env(safe-area-inset-bottom,0px)); transform:translateX(-110%); transition:transform .2s ease; box-shadow:none; background:var(--profundo); border-right:1px solid rgba(255,255,255,.12)}
   .cliente.menu-secciones-abierto .rail{transform:none; box-shadow:12px 0 40px rgba(27,79,122,.2)}
   .nav-velo{display:none; position:fixed; inset:0; z-index:75; width:100%; height:100%; border:0; padding:0; margin:0; background:rgba(15,47,72,.35); border-radius:0}
   .cliente.menu-secciones-abierto .nav-velo{display:block}
@@ -340,6 +354,11 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .livebar button{border:0; background:none; color:var(--azul); font-weight:700; padding:0 4px}
 .central{flex:1; display:flex; flex-direction:column; justify-content:center}
 .central .explica{min-height:0}
+.nav-flotante-dock{position:fixed; left:50%; bottom:max(20px, env(safe-area-inset-bottom,0px)); transform:translateX(-50%); z-index:58; display:flex; align-items:center; justify-content:center; gap:6px; padding:4px 6px; border-radius:999px; pointer-events:none; background:rgba(15,47,72,.18); backdrop-filter:blur(4px); box-shadow:0 4px 20px rgba(15,47,72,.12)}
+.nav-flotante-btn{pointer-events:auto; width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.38); background:rgba(15,47,72,.52); color:#fff; font-size:22px; line-height:1; display:grid; place-items:center; cursor:pointer; backdrop-filter:blur(6px); box-shadow:0 4px 14px rgba(15,47,72,.28); transition:background .2s,border-color .2s,transform .15s,opacity .2s}
+.nav-flotante-btn:hover:not(:disabled){background:rgba(39,120,177,.82); border-color:rgba(255,255,255,.55)}
+.nav-flotante-btn:active:not(:disabled){transform:scale(.96)}
+.nav-flotante-btn:disabled{opacity:.35; cursor:not-allowed}
 .copia .kicker{color:var(--azul); font-size:15px; font-weight:700; margin:0 0 8px}
 .titular{font-family:var(--display); font-size:clamp(30px,2.8vw,44px); line-height:1.15; color:var(--tinta); margin:0 0 16px; font-weight:700; letter-spacing:-.01em}
 .seg-graf{display:grid; grid-template-columns:1fr 1fr; background:var(--cielo); border-radius:12px; padding:4px; margin-bottom:14px}
@@ -352,7 +371,19 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .tabla-graf td.num,.tabla-graf th.num{text-align:right}
 .tabla-graf tr.tuya td{font-weight:800; color:var(--azul)}
 .tabla-graf .ref{font-size:13px; color:var(--suave); padding:8px 6px}
-.narracion-bar{display:flex; align-items:center; gap:16px; background:var(--profundo); color:#fff; border-radius:16px; padding:14px 18px}
+.section-context-ticker{background:#f2f8fc; color:var(--tinta); border:1px solid rgba(39,120,177,.14); border-radius:16px; padding:12px 16px 10px; margin-bottom:12px; box-shadow:0 1px 0 rgba(39,120,177,.04)}
+.section-context-ticker__head{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 12px; margin-bottom:6px}
+.section-context-ticker__label{font-size:12.5px; font-weight:700; color:var(--azul)}
+.section-context-ticker__actions{display:flex; flex-wrap:wrap; gap:6px; margin-left:auto}
+.section-context-ticker__actions .btn{font-size:12px; padding:6px 12px}
+.section-context-ticker__track{overflow:hidden; min-height:1.5em}
+.section-context-ticker__track--scroll{mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.section-context-ticker__marquee{display:flex; width:max-content; gap:3rem; animation:sectionContextScroll 32s linear infinite}
+.section-context-ticker__marquee span{font-size:17px; line-height:1.45; white-space:nowrap}
+.section-context-ticker__static{margin:0; font-size:17px; line-height:1.45}
+@keyframes sectionContextScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.section-context-ticker__marquee{animation:none; flex-wrap:wrap; width:auto; white-space:normal} .section-context-ticker__marquee span[aria-hidden=true]{display:none}}
+.narracion-bar{display:none}
 .narracion-bar small{display:block; font-size:12.5px; font-weight:700; opacity:.85}
 .narracion-bar p{margin:2px 0 0; font-size:18px; line-height:1.4}
 .presentation-handoff-banner{margin:0 0 16px;padding:14px 18px;border-radius:14px;border:1px solid rgba(37,99,235,.35);background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(14,165,233,.06))}
@@ -386,18 +417,27 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .narracion-bar .ctrl{margin-left:auto; display:flex; gap:10px; align-items:center; flex:none}
 .narracion-bar .redondo{width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.45); background:transparent; color:#fff; font-size:18px}
 .narracion-bar .estado{background:var(--gris-azul); color:var(--profundo); border-radius:999px; padding:11px 18px; font-weight:700; border:0}
-.pregunta-ia{position:relative}
-.pregunta-ia label{display:block; font-size:14px; color:var(--suave); margin-bottom:8px}
+.pregunta-ia{position:relative; margin-top:8px; padding-top:2px}
+.pregunta-ia::before{content:""; display:block; width:min(520px,78%); max-width:100%; height:1px; background:var(--borde); margin:16px 0 22px}
+.pregunta-ia label{display:none}
+.ia-chat-cabeza{display:flex; justify-content:space-between; align-items:baseline; gap:16px; flex-wrap:wrap; margin-bottom:10px}
+.ia-chat-titulo{margin:0; font-family:var(--display); font-size:clamp(30px,2.8vw,20px); padding-bottom: 10px;line-height:1.15; color:var(--tinta); font-weight:700; letter-spacing:-.01em; flex:1 1 auto}
+.ia-chat-pista{margin:0; font-size:13px; color:var(--suave); text-align:right; flex:0 1 min(360px,48%); margin-left:auto}
 .moderador .pregunta-ia{margin-top:16px}
 .diag-narracion{margin:12px 0 0; padding:12px 14px; border:1px dashed var(--borde); border-radius:12px; background:var(--superficie)}
 .diag-narracion p{margin:0 0 8px; font-size:13px; color:var(--suave)}
 .diag-narracion-out{margin:10px 0 0; max-height:220px; overflow:auto; padding:10px 12px; border-radius:10px; background:var(--pista); font-size:12px; line-height:1.45; white-space:pre-wrap; word-break:break-word}
 .fila-ia{display:flex; gap:8px; align-items:stretch; position:relative}
 .fila-ia input{flex:1; border:1px solid var(--borde); border-radius:12px; padding:12px 14px; background:var(--superficie); transition:border-color .2s, box-shadow .2s}
+.fila-ia input.ia-chat-input{border:1px solid rgba(27,79,122,.45); background:var(--profundo); color:#fff; caret-color:#fff}
+.fila-ia input.ia-chat-input::placeholder{color:rgba(255,255,255,.68); opacity:1}
+.fila-ia input.ia-chat-input:-webkit-autofill,.fila-ia input.ia-chat-input:-webkit-autofill:hover,.fila-ia input.ia-chat-input:-webkit-autofill:focus{-webkit-text-fill-color:#fff; box-shadow:0 0 0 1000px var(--profundo) inset; transition:background-color 99999s ease-out 0s}
 .fila-ia .btn{border-radius:12px; padding:0 22px}
+.fila-ia .btn.prim{background:var(--profundo); border-color:var(--profundo); color:#fff}
+.fila-ia .btn.prim:hover{background:#164063; border-color:#164063}
 .fila-ia .btn-mic{flex:none; width:48px; min-width:48px; height:48px; padding:0; display:inline-flex; align-items:center; justify-content:center; position:relative;
-  border:1px solid var(--borde); background:var(--superficie); color:var(--azul); border-radius:14px; overflow:visible; transition:background .2s, color .2s, border-color .2s, transform .15s}
-.fila-ia .btn-mic:hover:not(:disabled){background:var(--cielo); border-color:var(--cyan)}
+  border:1px solid rgba(27,79,122,.45); background:var(--profundo); color:#fff; border-radius:14px; overflow:visible; transition:background .2s, color .2s, border-color .2s, transform .15s}
+.fila-ia .btn-mic:hover:not(:disabled){background:#164063; border-color:#164063}
 .fila-ia .btn-mic:active:not(:disabled){transform:scale(.96)}
 .fila-ia .btn-mic .ia-mic-ico{display:flex; width:22px; height:22px}
 .fila-ia .btn-mic .ia-mic-ico svg{width:100%; height:100%; display:block}
@@ -433,8 +473,8 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .chat-ia-historial{display:flex; flex-direction:column; gap:8px; margin-top:10px; max-height:min(42vh,360px); overflow:auto}
 .chat-ia-historial:empty{display:none}
 .chat-ia-historial .msg{padding:9px 13px; border-radius:14px; max-width:100%; font-size:15px; line-height:1.45}
-.chat-ia-historial .msg.yo{background:var(--cielo); align-self:flex-end; max-width:92%}
-.chat-ia-historial .msg.ia{background:var(--pista); align-self:stretch}
+.chat-ia-historial .msg.yo{background:var(--profundo); color:#fff; align-self:flex-end; max-width:92%}
+.chat-ia-historial .msg.ia{background:var(--pista); color:var(--tinta); align-self:stretch}
 .popover-seleccion-ia{position:fixed; z-index:46; pointer-events:auto; transform:translate(-50%, calc(-100% - 10px))}
 .popover-seleccion-ia .btn{font-size:13px; padding:8px 16px; border-radius:999px; box-shadow:0 8px 22px rgba(27,79,122,.2); white-space:nowrap}
 .ia-habla-ctrl{display:flex; flex-direction:column; align-items:stretch; gap:10px; margin-top:12px; padding-top:12px; border-top:1px solid rgba(39,120,177,.15)}
@@ -536,8 +576,9 @@ textarea{width:100%; min-height:90px; border:1px solid var(--borde); background:
 .plantilla-utilidad{margin:0; font-size:12px; line-height:1.45; color:var(--suave)}
 .plantilla-guion{margin:0; padding:8px 10px; border-radius:8px; background:var(--cielo); font-size:12px; line-height:1.45; color:var(--profundo); font-style:italic}
 .plantilla-guion-etq{display:block; font-style:normal; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--azul); margin-bottom:4px}
-.mod-col .tabs--solo{padding:12px 16px; border-bottom:1px solid var(--borde)}
-.mod-col .tabs--solo .tabs-titulo{font-size:13px; font-weight:700; color:var(--profundo)}
+.mod-col:last-child .tabs--solo{padding:12px 16px; border-bottom:1px solid var(--borde)}
+.mod-col:last-child .tabs--solo .tabs-titulo{font-size:12.5px; font-weight:700; letter-spacing:.02em; color:var(--tinta)}
+.mod-col:first-child .prep-vacio{color:rgba(191,227,240,.78)}
 .prep-faq-lead{margin:0 0 10px; font-size:13px; line-height:1.45; color:var(--suave)}
 .prep-faq-tips{margin:0 0 14px; padding-left:18px; font-size:12px; line-height:1.45; color:var(--suave)}
 .prep-faq-tips li{margin-bottom:4px}
@@ -639,6 +680,7 @@ html.catch-embed .demo{display:none!important}
 @media (max-width:900px){
   .cliente .cabeza{flex-direction:column; align-items:stretch; gap:10px; padding:12px 16px 8px}
   .cliente .cabeza .paso,.cliente .cabeza .btn.flecha,.cliente .narracion-bar .redondo{display:none!important}
+  .nav-flotante-btn{width:40px; height:40px; font-size:20px}
   .cliente .cuerpo{padding:10px 16px calc(20px + var(--catch-avatar-fab-clearance)); scroll-padding-bottom:var(--catch-avatar-fab-clearance)}
   .cliente .rail{position:fixed; flex-direction:column; overflow:auto; transform:translateX(-110%); visibility:hidden; pointer-events:none}
   .cliente.menu-secciones-abierto .rail{transform:none; visibility:visible; pointer-events:auto}
@@ -1972,7 +2014,9 @@ function etiquetaEstadoNarracion() {
 function htmlEstadoNarracionPaso() {
   if (S.rol !== 'moderador' || typeof window.planMonitorNarration !== 'function') return '';
   if (!presentadorDashboardListo() || presentadorEnRevisionPrevia()) return '';
-  return `<p class="sub" data-estado-narracion style="margin:8px 0 0">${esc(etiquetaEstadoNarracion())}</p>`;
+  /* Estado de narración: lógica activa (etiquetaEstadoNarracion / sync); no se muestra en UI. */
+  void etiquetaEstadoNarracion();
+  return '';
 }
 function planActivoCoincideConPaso(plan, stepIndex) {
   return !!(plan && plan.stepIndex === stepIndex);
@@ -2936,14 +2980,14 @@ function htmlOpcionesGeminiModerador() {
 function htmlBloquePreguntaIA() {
   const autoTts = '';
   const autoVoz = S.rol === 'moderador' ? '' : `<label class="ia-auto-envio"><input type="checkbox" data-ia-voz-auto-envio ${leerAutoEnvioVozIA() ? 'checked' : ''} aria-label="Enviar pregunta a Gemini al terminar de hablar"> Enviar a Gemini al terminar de hablar</label>`;
-  const etiqueta = S.rol === 'moderador'
-    ? 'Escriba una instrucción para dirigir la presentación (avanzar, repetir, ir a una sección…).'
-    : 'Pregúntale al asistente sobre lo que estás viendo.';
   const placeholder = S.rol === 'moderador'
     ? 'Ej.: Avanza al siguiente punto · Repite la explicación · Ve a salarios'
     : '¿Qué significa rotación no controlada?';
-  return `<div class="pregunta-ia" data-ia-voz><label for="inIA">${etiqueta}</label>
-    <div class="fila-ia"><input id="inIA" placeholder="${placeholder}" autocomplete="off">${htmlBotonMicIA()}<button class="btn prim" data-enviar-ia>Enviar</button></div>
+  const cabecera = S.rol === 'moderador'
+    ? `<h2 class="titular ia-chat-titulo">Chatear con la IA</h2>`
+    : `<div class="ia-chat-cabeza"><h2 class="titular ia-chat-titulo">Chatear con la IA</h2><p class="ia-chat-pista">Toque cualquier barra para ver de dónde sale el dato.</p></div>`;
+  return `<div class="pregunta-ia" data-ia-voz>${cabecera}
+    <div class="fila-ia"><input id="inIA" class="ia-chat-input" placeholder="${placeholder}" autocomplete="off" aria-label="Chatear con la IA">${htmlBotonMicIA()}<button class="btn prim" data-enviar-ia>Enviar</button></div>
     ${autoVoz}
     ${autoTts}
     <p class="ia-voz-live" id="iaVozLive" hidden><span class="ia-voz-dot" aria-hidden="true"></span>Escuchando — la transcripción va a Gemini (no a Tavus)</p>
@@ -3021,7 +3065,7 @@ function contenidoPaso(p, pref, compacto, explorando, detalleDesdeHoja) {
   if (p.tipo === 'inicio') return `<div class="portada"><p class="nota-anon">Monitor de Mercado Laboral · edición ${esc(DATOS.edicion)}</p><h2 class="grande">Cómo está su empresa frente al mercado</h2>
     <p class="lede">Cuatro temas. En cada uno explicamos los gráficos uno por uno y, al llegar a la hoja completa, confirmamos si el contenido quedó claro antes de seguir.</p>
     <div class="agenda">${SECCIONES.map(s => `<div><b>${esc(s.nombre)}</b><span>${s.graficos.map(g => esc(g.titulo)).join(', ')}</span></div>`).join('')}</div>
-    <p class="nota-anon" style="margin-top:28px">Sus preguntas son anónimas y se responden al final. Toque cualquier barra o punto para ver de dónde sale el dato.</p></div>`;
+    </div>`;
   if (p.tipo === 'cierre') return htmlCierre();
   const s = SECCIONES[p.s];
   if (p.tipo === 'explica') {
@@ -3132,13 +3176,56 @@ function setMenuSecciones(open) {
     velo.setAttribute('aria-hidden', open ? 'false' : 'true');
   }
 }
+function debeMostrarNavFlotante() {
+  if (S.rol === 'cliente' || S.rol === 'movil') return visitanteVeReunion();
+  if (S.rol === 'moderador') return presentadorEnRevisionPrevia() || (visitanteVeReunion() && presentadorDashboardListo());
+  return false;
+}
+function estadoNavFlotante() {
+  if (S.rol === 'moderador') {
+    const prevDis = S.pos <= 0;
+    const nextDis = S.pos >= PASOS.length - 1 || !!S.narracionEsperaAutorizacion;
+    return { prevDis, nextDis, showPrev: true };
+  }
+  const rol = S.rol === 'movil' ? 'movil' : 'cliente';
+  const v = vistaParticipante(rol);
+  const pos = v.live ? S.pos : v.pos;
+  const live = v.live;
+  const prevDis = live || pos <= 0;
+  const nextPos = acotarPosExploracion(rol, pos + 1);
+  const nextDis = live || nextPos === pos;
+  return { prevDis, nextDis, showPrev: !live };
+}
+function htmlNavFlotante() {
+  if (!debeMostrarNavFlotante()) return '';
+  const st = estadoNavFlotante();
+  return `<div class="nav-flotante-dock" id="catch-nav-flotante-dock" role="group" aria-label="Navegación de diapositivas"><button type="button" class="nav-flotante-btn" data-flecha="-1" aria-label="Paso anterior" title="Anterior (flecha izquierda)" ${st.prevDis ? 'disabled' : ''}>‹</button><button type="button" class="nav-flotante-btn" data-flecha="1" aria-label="Paso siguiente" title="Siguiente (flecha derecha)" ${st.nextDis ? 'disabled' : ''}>›</button></div>`;
+}
+function syncNavFlotanteViewport() {
+  document.getElementById('catch-nav-flotante-dock')?.remove();
+  const html = htmlNavFlotante();
+  if (html) document.body.insertAdjacentHTML('beforeend', html);
+}
+function htmlSectionContextTicker(label, text, actionsHtml) {
+  const raw = String(text || '').trim() || '—';
+  const copy = esc(raw);
+  const animate = raw.length > 24;
+  const track = animate
+    ? `<div class="section-context-ticker__track section-context-ticker__track--scroll" aria-live="polite"><div class="section-context-ticker__marquee"><span>${copy}</span><span aria-hidden="true">${copy}</span></div></div>`
+    : `<div class="section-context-ticker__track"><p class="section-context-ticker__static">${copy}</p></div>`;
+  const actions = actionsHtml ? `<div class="section-context-ticker__actions">${actionsHtml}</div>` : '';
+  return `<div class="section-context-ticker"><div class="section-context-ticker__head"><span class="section-context-ticker__label">${esc(label)}</span>${actions}</div>${track}</div>`;
+}
+function textoNotasModerador(p, g) {
+  if (g) return `${g.nota} Términos que conviene aclarar: ${g.glos.join(', ')}.`;
+  if (p.tipo === 'hoja') return 'Al mostrar la hoja, el cliente ve los gráficos en miniatura y se abre la ventana «¿Quedó claro?» (si aún no respondió). Los votos de claridad se conservan para el cierre de la sesión.';
+  if (p.tipo === 'cierre') return `${PRESENTATION_HANDOFF_NARRATIVE} Use la pestaña «Preguntas» para la conversación con la sala y los PDF debajo si corresponde.`;
+  return 'Presente la agenda y explique que las preguntas son anónimas y se responden al final.';
+}
 function htmlCabezaCliente(v, pos, opts = {}) {
   const live = !!(v && v.live);
-  const paso = Number.isFinite(pos)
-    ? `<span class="paso">Paso ${pos + 1} de ${PASOS.length}</span><button class="btn flecha" data-flecha="-1" aria-label="Paso anterior" title="Anterior (flecha izquierda)" ${live ? 'disabled' : ''}>‹</button><button class="btn flecha" data-flecha="1" aria-label="Paso siguiente" title="Siguiente (flecha derecha)" ${live ? 'disabled' : ''}>›</button>`
-    : '';
   const seguimiento = !live
-    ? `<button type="button" class="btn prim" data-vivo>Volver al moderador</button>`
+    ? `<button type="button" class="pill-vivo" data-vivo title="Volver a seguir al moderador"><span class="punto" style="background:var(--cyan)"></span>Explorando</button>`
     : opts.esperando
       ? `<span class="pill-vivo"><span class="punto vivo"></span>Siguiendo en vivo</span>`
       : `<button class="pill-vivo" data-explorar title="Explorar por mi cuenta"><span class="punto vivo"></span>Siguiendo en vivo</button>`;
@@ -3150,7 +3237,7 @@ function htmlCabezaCliente(v, pos, opts = {}) {
         <span class="edicion-monitor">Edición ${esc(DATOS.edicion)}${CLIENTE ? ` · Su empresa ${CLIENTE}` : ''}</span>
       </div>
     </div>
-    <div class="cabeza-acciones">${paso}
+    <div class="cabeza-acciones">
       <button class="btn texto" data-abrir="faqs">Preguntas frecuentes</button>
       <button class="btn texto" data-abrir="presentador">Preguntar al presentador</button>
       ${seguimiento}
@@ -3169,6 +3256,8 @@ function renderCliente(raiz, opciones = {}) {
   if (peek) cuerpo = `<div class="hoja-detalle-nav"><button type="button" class="btn prim" data-volver-hoja>← Volver a hoja completa</button></div>${cuerpo}`;
   if (opciones.preview) { raiz.innerHTML = cuerpo; pintarGraficos(raiz, true); return; }
   const maxSec = maxSeccionAutorizada();
+  const contextLabel = p.tipo === 'cierre' ? PRESENTATION_HANDOFF_SUBLABEL : 'Contexto de la sección';
+  const contextTicker = htmlSectionContextTicker(contextLabel, textoNarracion(p), '');
   raiz.innerHTML = `<div class="cliente"><button type="button" class="nav-velo" data-cerrar-menu hidden aria-hidden="true" aria-label="Cerrar menú de secciones"></button>
     <nav class="rail" id="nav-secciones" aria-label="Secciones" aria-hidden="true"><div class="rail-cabeza-movil"><span>Secciones</span><button type="button" class="btn texto" data-cerrar-menu>Cerrar</button></div>
     <div class="marca">Catch<small>CONSULTING</small></div>
@@ -3177,10 +3266,8 @@ function renderCliente(raiz, opciones = {}) {
     ${htmlAvatarRail()}<div class="pie">HR Toolkit · Monitor de Mercado Laboral</div></nav>
     <section class="escena">${htmlCabezaCliente(v, pos)}
       <div class="cuerpo" id="cl-cuerpo">
-        <div class="livebar">${v.live ? '<b>Sigues al presentador</b> · sincronizado con la sesión en vivo' : mensajeLivebarExploracion('cliente')}</div>
+        ${contextTicker}
         <div class="central">${cuerpo}</div>
-        <div class="narracion-bar"><div><small>${p.tipo === 'cierre' ? esc(PRESENTATION_HANDOFF_SUBLABEL) : 'Contexto de la sección'}</small><p>${esc(textoNarracion(p))}</p></div>
-          <div class="ctrl"><button class="redondo" data-flecha="-1" aria-label="Paso anterior">←</button>${v.live ? '<span class="estado">Esperando al presentador</span>' : '<button type="button" class="estado" data-flecha="1">Siguiente en la sección</button>'}</div></div>
         ${htmlBloquePreguntaIA()}
       </div></section></div>`;
   insertAvatarFlotanteVisitante(raiz);
@@ -3364,7 +3451,7 @@ function seleccionTextoInvalidaParaIA(range) {
     ? range.commonAncestorContainer
     : range.commonAncestorContainer.parentElement;
   if (!el) return true;
-  if (el.closest('.pregunta-ia, .popover-seleccion-ia, .velo, .notas, .mod-col, .acciones, input, textarea, select, button, .rail, .cabeza, .narracion-bar, .livebar')) {
+  if (el.closest('.pregunta-ia, .popover-seleccion-ia, .velo, .notas, .mod-col, .acciones, input, textarea, select, button, .rail, .cabeza, .narracion-bar, .livebar, .section-context-ticker')) {
     return true;
   }
   return !nodoEnZonaSeleccion(el);
@@ -3688,10 +3775,11 @@ function renderMovil(raiz, real) {
   if (p.tipo === 'inicio') cont = `<p class="lede">Bienvenido. Desde aquí sigue la presentación, hace preguntas anónimas y consulta al asistente.</p>`;
   else if (p.tipo === 'cierre') cont = `${htmlPresentationHandoffBanner()}${listaRespuestas()}${htmlCierreDescargasCliente()}`;
   else cont = (peek ? `<div class="hoja-detalle-nav"><button type="button" class="btn prim" data-volver-hoja>← Volver a hoja completa</button></div>` : '') + contenidoPaso(pMostrar, 'mv', !explorando && !peek, explorando, !!peek);
+  const movilCtxLabel = p.tipo === 'cierre' ? PRESENTATION_HANDOFF_SUBLABEL : 'Contexto de la sección';
+  const movilTicker = htmlSectionContextTicker(movilCtxLabel, textoNarracion(p), '');
   raiz.innerHTML = `<div class="${real ? '' : 'movil-marco'}"><div class="movil ${real ? 'real' : ''}"><header><div class="linea"><span>Catch · Monitor ${esc(DATOS.edicion)}</span><span>${v.live ? '● En vivo' : 'Explorando'}</span></div>
     <h2>${esc(p.s !== undefined ? SECCIONES[p.s].nombre : p.tipo === 'cierre' ? 'Cierre' : 'Inicio')}</h2><p>${esc(tituloPaso(p))}</p></header>
-    <div class="contenido"><label class="interruptor"><input type="checkbox" data-seguir ${v.live ? 'checked' : ''}> Seguir al moderador</label>
-    ${v.live ? '' : `<div class="fila" style="justify-content:space-between;margin:0 0 10px;flex-wrap:wrap;gap:8px"><button type="button" class="btn prim" data-vivo>Volver al moderador</button><button type="button" class="btn" data-mv="-1">Anterior</button><button type="button" class="btn" data-mv="1">Siguiente</button></div>`}${cont}</div>
+    <div class="contenido">${movilTicker}<label class="interruptor"><input type="checkbox" data-seguir ${v.live ? 'checked' : ''}> Seguir al moderador</label>${cont}</div>
     <div class="acciones"><button data-abrir="presentador">Preguntar al presentador</button><button data-abrir="ia">Preguntar al avatar</button><button data-abrir="faqs">Preguntas frecuentes</button></div></div></div>`;
   insertAvatarFlotanteVisitante(raiz);
   pintarGraficos(raiz, true); contarCifras(raiz);
@@ -3889,18 +3977,15 @@ function renderModeradorActivo(raiz) {
     ${presentadorEnRevisionPrevia() ? `<div class="banner-iniciar-reunion"><p><strong>Informe listo.</strong> Use el guion a la izquierda para previsualizar. Los participantes siguen en espera.</p>
       <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center"><button type="button" class="btn" data-descargar-guion-pdf>Descargar guion en PDF</button>
       <button type="button" class="btn prim" data-iniciar-reunion>Iniciar reunión</button></div></div>` : ''}
+    ${htmlSectionContextTicker('Notas para el moderador', textoNotasModerador(p, g))}
     <div class="${clasePantallaClientePreview()}">${htmlBarraLoQueVeCliente()}<div class="dentro" id="mod-preview"></div></div>
-    <div class="controles"><button class="btn" data-mod="-1">Anterior</button>${p.tipo === 'cierre'
-      ? `<button type="button" class="btn prim" data-reiniciar-reunion>Reiniciar reunión desde el inicio</button><span class="siguiente">${esc(PRESENTATION_HANDOFF_SUBLABEL)} · sin más secciones</span>`
-      : `<button class="btn prim" data-mod="1" ${S.narracionEsperaAutorizacion ? 'disabled' : ''}>Siguiente</button>
-      ${p.tipo === 'hoja' && S.narracionEsperaAutorizacion ? `<button type="button" class="btn prim" data-continuar-seccion>Continuar sección</button>` : ''}
-      ${p.s !== undefined ? `<button class="btn suave" data-saltar="${PASOS.findIndex(q => q.tipo === 'hoja' && q.s === p.s)}">Mostrar hoja completa</button>` : ''}
-      <span class="siguiente">${sig ? 'Sigue: ' + esc(tituloPaso(sig)) : 'Fin de la sesión'}</span>`}</div>
+    ${p.tipo === 'cierre'
+      ? `<div class="controles"><button type="button" class="btn prim" data-reiniciar-reunion>Reiniciar reunión desde el inicio</button><span class="siguiente">${esc(PRESENTATION_HANDOFF_SUBLABEL)} · sin más secciones</span></div>`
+      : p.tipo === 'hoja' && S.narracionEsperaAutorizacion
+        ? `<div class="controles"><button type="button" class="btn prim" data-continuar-seccion>Continuar sección</button><span class="siguiente">${sig ? 'Sigue: ' + esc(tituloPaso(sig)) : ''}</span></div>`
+        : `<div class="controles"><span class="siguiente">${sig ? 'Sigue: ' + esc(tituloPaso(sig)) : 'Fin de la sesión'}</span></div>`}
     ${htmlEstadoNarracionPaso()}
     ${htmlDiagNarracionPrueba()}
-    <div class="notas"><h4>Notas para el moderador</h4>${g ? `<p style="margin:0 0 6px">${esc(g.nota)}</p><p class="sub" style="margin:0">Términos que conviene aclarar: ${g.glos.map(esc).join(', ')}.</p>`
-      : p.tipo === 'hoja' ? '<p style="margin:0">Al mostrar la hoja, el cliente ve los gráficos en miniatura y se abre la ventana «¿Quedó claro?» (si aún no respondió). Los votos de claridad se conservan para el cierre de la sesión.</p>'
-      : p.tipo === 'cierre' ? `<p style="margin:0">${esc(PRESENTATION_HANDOFF_NARRATIVE)} Use la pestaña «Preguntas» para la conversación con la sala y los PDF debajo si corresponde.</p>` : '<p style="margin:0">Presente la agenda y explique que las preguntas son anónimas y se responden al final.</p>'}</div>
     ${p.tipo === 'cierre' ? `<div class="cierre-pdf-moderador">${htmlCierreDescargasModerador()}</div>` : ''}
     ${visitanteVeReunion() ? htmlBloquePreguntaIA() : ''}
    </section>
@@ -3957,7 +4042,7 @@ function cargarRosterVisitantes() {
   if (!cfg?.meetingId || !cfg.presenterToken) return;
   const now = Date.now();
   if (S.visitorRosterLoading) return;
-  if (S.visitorRosterAt && now - S.visitorRosterAt < 7000) return;
+  if (S.visitorRosterAt && now - S.visitorRosterAt < 4500) return;
   S.visitorRosterLoading = true;
   fetch('/api/meeting/' + encodeURIComponent(cfg.meetingId) + '/analytics/participants', {
     headers: { 'x-presenter-token': cfg.presenterToken },
@@ -3987,7 +4072,8 @@ function htmlTarjetaParticipanteMonitor(v, historial) {
     : (v.presence_label || (on ? 'Conectado' : 'Desconectado'));
   const statusCls = !historial && on ? ' visitor-roster__status--on' : '';
   if (!historial) {
-    return `<li class="visitor-roster__card"><p class="visitor-roster__name">${esc(v.display_name)}</p><p class="visitor-roster__status${statusCls}">${esc(label)}</p></li>`;
+    const meta = `${v.questions_asked || 0} preguntas · ${v.clicks || 0} clics`;
+    return `<li class="visitor-roster__card"><p class="visitor-roster__name">${esc(v.display_name)}</p><p class="visitor-roster__status${statusCls}">${esc(label)}</p><p class="visitor-roster__meta sub">${meta}</p></li>`;
   }
   const dur = v.left_at
     ? `<p class="visitor-roster__duration">Permanencia: ${esc(v.duration_label)}</p>`
@@ -4010,7 +4096,7 @@ function panelParticipantes() {
   const titulo = historial ? 'Historial de participación' : 'Participantes';
   const lead = historial
     ? '<p class="sub" style="margin:0 0 12px">Resumen al cierre de la reunión (datos en Supabase). Los clics son los persistidos en el servidor; no se reconstruyen toques locales anteriores.</p>'
-    : '<p class="sub" style="margin:0 0 12px">Estado de conexión en vivo. El historial consolidado aparece al finalizar.</p>';
+    : '<p class="sub" style="margin:0 0 12px">Estado de conexión, preguntas y clics por persona (Supabase). Historial detallado al finalizar.</p>';
   return `<section class="visitor-roster" aria-label="${esc(titulo)}"><h4 class="visitor-roster__heading">${esc(titulo)}</h4>${lead}<ul class="visitor-roster__list">${items.map(v => htmlTarjetaParticipanteMonitor(v, historial)).join('')}</ul></section>`;
 }
 function panelIntereses() {
@@ -4109,6 +4195,20 @@ function modal(html, alCerrar) {
 }
 let claridadAbierta = null;
 let claridadCola = null;
+/** Tras «Tengo una duda» en claridad: registrar voto solo cuando envíe pregunta escrita u oral. */
+let claridadDudaPendiente = null;
+function registrarClaridadVoto(rol, s, voto) {
+  marcarClaridadRespondida(rol, s);
+  const sectionKey = SECCIONES[s].id;
+  const api = window.__CATCH_MONITOR_API__;
+  if (api?.postClarityVote) void api.postClarityVote(sectionKey, voto);
+  enviar('claridad', {s, voto});
+}
+function consumirClaridadDudaPendiente() {
+  const p = claridadDudaPendiente;
+  claridadDudaPendiente = null;
+  return p;
+}
 function claridadStorageKey() {
   const mid = window.__CATCH_MONITOR_SYNC__?.meetingId;
   return mid ? `catch:monitor:${mid}:claridadResp` : null;
@@ -4172,19 +4272,20 @@ function abrirClaridad(rol, s) {
   claridadAbierta = rol + s;
   const {capa, cerrar} = modal(`<h3>¿Quedó claro ${esc(SECCIONES[s].nombre)}?</h3><p>Está viendo la hoja completa de esta sección. Su respuesta es anónima. En cualquier opción puede recorrer la sección por su cuenta; el presentador ve un tipo de señal distinto según su elección.</p>
     <div class="opciones"><button type="button" data-voto="claro">Sí, todo quedó claro<small>Registra comprensión y abre exploración desde esta hoja</small></button>
-    <button type="button" data-voto="duda">Tengo una duda<small>Solicita turno oral; después puede explorar mientras espera</small></button>
+    <button type="button" data-voto="duda">Tengo una duda<small>Elija escribir la pregunta o solicitar turno oral</small></button>
     <button type="button" data-voto="explorar">Quiero explorar<small>Prefiere revisar la sección a su ritmo (sin marcar «quedó claro»)</small></button></div>`, () => { claridadAbierta = null; });
   capa.querySelectorAll('[data-voto]').forEach(b => b.addEventListener('click', () => {
     const voto = b.dataset.voto;
-    marcarClaridadRespondida(rol, s);
-    const sectionKey = SECCIONES[s].id;
-    const api = window.__CATCH_MONITOR_API__;
-    if (api?.postClarityVote) void api.postClarityVote(sectionKey, voto);
-    enviar('claridad', {s, voto});
     cerrar();
+    claridadAbierta = null;
     if (voto === 'duda') {
-      void solicitarTurnoOralDirecto({ sectionIndex: s, source: 'clarity_modal', rol });
-    } else if (voto === 'claro' || voto === 'explorar') {
+      claridadDudaPendiente = { rol, s };
+      abrirMenuPresentador();
+      programarRender();
+      return;
+    }
+    registrarClaridadVoto(rol, s, voto);
+    if (voto === 'claro' || voto === 'explorar') {
       entrarExploracionTrasClaridad(rol, s, voto);
     }
     programarRender();
@@ -4203,18 +4304,28 @@ function abrirMenuPresentador() {
         <span><strong>Solicitar turno oral</strong><small>No activa el micrófono ni graba audio. Solo pide turno para hablar en la reunión externa.</small></span>
       </button>
     </div>
-    <div class="fila"><button class="btn" data-cerrar>Cerrar</button></div>`);
+    <div class="fila"><button class="btn" data-cerrar>Cerrar</button></div>`, () => { claridadDudaPendiente = null; });
 }
 function abrirPregunta() {
-  const ctx = seccionColaContexto();
+  const pend = claridadDudaPendiente;
+  const ctx = pend
+    ? { sectionKey: SECCIONES[pend.s].id, sectionLabel: SECCIONES[pend.s].nombre, seccion: pend.s }
+    : seccionColaContexto();
   const {capa} = modal(`<h3>Escribir pregunta</h3><p>Se guarda un identificador de sesión (no su nombre). El moderador la ve en la cola unificada.</p>
     <textarea id="txtPregunta" placeholder="Escriba su pregunta"></textarea><div class="fila"><button class="btn" data-cerrar>Cancelar</button><button class="btn prim" id="btnEnviarPregunta">Enviar pregunta</button></div>`);
   $('#btnEnviarPregunta', capa).addEventListener('click', async () => {
     const t = $('#txtPregunta', capa).value.trim(); if (!t) return;
+    const source = pend ? 'clarity_modal' : 'participant_modal';
     await publicarCola({
-      texto: t.slice(0, 600), kind: 'written_question', source: 'participant_modal',
+      texto: t.slice(0, 600), kind: 'written_question', source,
       sectionKey: ctx.sectionKey, sectionLabel: ctx.sectionLabel,
     });
+    const claridad = consumirClaridadDudaPendiente();
+    if (claridad) {
+      registrarClaridadVoto(claridad.rol, claridad.s, 'duda');
+      entrarExploracionTrasClaridad(claridad.rol, claridad.s, 'duda');
+      programarRender();
+    }
     capa.querySelector('.modal').innerHTML = '<h3>Pregunta enviada</h3><p>Entró en la cola del moderador. Puede seguir la presentación.</p><div class="fila"><button class="btn prim" data-cerrar>Listo</button></div>';
   });
 }
@@ -4243,6 +4354,10 @@ async function solicitarTurnoOralDirecto(opts = {}) {
     sectionKey: ctx.sectionKey, sectionLabel: ctx.sectionLabel,
     idempotencyKey: pid ? `oral:${ctx.sectionKey}:${pid}` : `oral:${uid()}`,
   });
+  const claridad = claridadDudaPendiente && (opts.sectionIndex === claridadDudaPendiente.s || claridadDudaPendiente.s === ctx.seccion)
+    ? consumirClaridadDudaPendiente()
+    : null;
+  if (claridad) registrarClaridadVoto(claridad.rol, claridad.s, 'duda');
   $('#capaModal').innerHTML = '';
   const rol = opts.rol || (S.rol === 'movil' ? 'movil' : S.rol === 'cliente' ? 'cliente' : null);
   const sectionIndex = opts.sectionIndex ?? ctx.seccion;
@@ -5288,6 +5403,7 @@ function render(opts) {
   sincronizarEsperaNarracion();
   const app = $('#app');
   if (visitanteRequiereIngreso()) {
+    document.getElementById('catch-nav-flotante-dock')?.remove();
     app.innerHTML = htmlPantallaIngresoVisitante();
     enlazarIngresoVisitante(app);
     return;
@@ -5309,6 +5425,7 @@ function render(opts) {
     tavus?.refreshUi?.();
     tavus?.syncRemoteMedia?.();
   } catch { /* ignore */ }
+  syncNavFlotanteViewport();
   programarOrquestacionPasoActivo();
 }
 document.addEventListener('input', e => {
@@ -5455,7 +5572,13 @@ document.addEventListener('click', e => {
   }
   if (d.abrir === 'presentador') return abrirMenuPresentador();
   if (d.abrir === 'pregunta') return abrirPregunta();
-  if (d.solicitarTurnoOral !== undefined) return void solicitarTurnoOralDirecto();
+  if (d.solicitarTurnoOral !== undefined) {
+    const pend = claridadDudaPendiente;
+    if (pend) {
+      return void solicitarTurnoOralDirecto({ sectionIndex: pend.s, source: 'clarity_modal', rol: pend.rol });
+    }
+    return void solicitarTurnoOralDirecto();
+  }
   if (d.enfocarIa !== undefined) return enfocarEntradaGemini();
   if (d.abrir === 'ia') return abrirIA();
   if (d.iaEscalarAceptar) return void aceptarEscalamientoIA(decodeURIComponent(d.iaEscalarAceptar));

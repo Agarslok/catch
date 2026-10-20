@@ -32,6 +32,11 @@ import { EChartPanel } from "./EChartPanel";
 
 type ChartEvents = {
   onSelect?: (payload: Record<string, unknown>) => void;
+  onAskAboutCategory?: (payload: {
+    category: string;
+    value?: number;
+    chartTitle?: string;
+  }) => void;
 };
 
 type AnalyticsTrack = (
@@ -413,11 +418,25 @@ export function ChapterCharts({
     </div>
   );
 
+  const activePoint = detailPointId
+    ? seriesContext.points.find((p) => p.id === detailPointId)
+    : null;
+
   const detail = (
     <ChartDetailPanel
       narrative={detailNarrative}
       contentKey={detailPointId}
       onClose={closeDetail}
+      onAskIa={
+        events?.onAskAboutCategory && activePoint
+          ? () =>
+              events.onAskAboutCategory?.({
+                category: activePoint.label,
+                value: activePoint.value,
+                chartTitle: seriesContext.chartId,
+              })
+          : undefined
+      }
     />
   );
 

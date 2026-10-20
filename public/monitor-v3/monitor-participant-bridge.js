@@ -262,6 +262,7 @@
       timestamp: new Date().toISOString(),
     });
     const urgent = eventType === "session.join" || eventType === "session.leave"
+      || eventType === "session.heartbeat"
       || eventType === "question.asked" || eventType === "question.answered"
       || eventType === "element.clicked" || String(eventType).indexOf("presentation.") === 0;
     if (urgent || queue.length >= 8) void flushQueue();
@@ -322,12 +323,21 @@
     if (!actor?.id || sessionTrackingStarted) return;
     sessionTrackingStarted = true;
     track("session.join", { metadata: { role: "visitor", display_name: actor.name } });
+    track("session.heartbeat", { metadata: { display_name: actor.name } });
     window.setInterval(() => {
       track("session.heartbeat", { metadata: { display_name: actor.name } });
     }, 20000);
     window.addEventListener("pagehide", () => {
       track("session.leave", { metadata: { display_name: actor.name } });
       void flushQueue();
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        track("session.heartbeat", { metadata: { display_name: actor.name } });
+        void flushQueue();
+      } else if (document.visibilityState === "hidden") {
+        void flushQueue();
+      }
     });
   }
 

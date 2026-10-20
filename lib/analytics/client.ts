@@ -111,6 +111,7 @@ export function enqueueInteractionEvent(
   const urgent =
     row.event_type === "session.join" ||
     row.event_type === "session.leave" ||
+    row.event_type === "session.heartbeat" ||
     row.event_type === "question.asked" ||
     row.event_type === "question.answered" ||
     row.event_type === "element.clicked" ||

@@ -2,7 +2,11 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   buildVisitorSessionSummaries,
+  countModeratorQuestionsByParticipant,
+  effectiveVisitorLeftAt,
+  enrichVisitorsWithModeratorQuestions,
   formatDurationSeconds,
+  latestVisitorPresenceAt,
   resolveVisitorPresence,
   VISITOR_PRESENCE_STALE_MS,
 } from "./participant-summaries";
@@ -132,6 +136,49 @@ describe("participant-summaries", () => {
     assert.equal(rows[0].still_active, true);
   });
 
+  it("usa el heartbeat más reciente para presencia aunque last_seen_at falte", () => {
+    const events: InteractionEventRow[] = [
+      {
+        id: "1",
+        client_event_id: "a",
+        meeting_id: "m",
+        session_id: "s1",
+        participant_id: "p1",
+        participant_role: "visitor",
+        event_type: "session.join",
+        metadata: {},
+        schema_version: "1.0",
+        created_at: "2026-10-18T15:00:00.000Z",
+      },
+      {
+        id: "2",
+        client_event_id: "b",
+        meeting_id: "m",
+        session_id: "s1",
+        participant_id: "p1",
+        participant_role: "visitor",
+        event_type: "session.heartbeat",
+        metadata: {},
+        schema_version: "1.0",
+        created_at: "2026-10-18T15:00:50.000Z",
+      },
+    ];
+    const sessions: SessionRegistryRow[] = [
+      {
+        session_id: "s1",
+        meeting_id: "m",
+        participant_id: "p1",
+        participant_role: "visitor",
+        joined_at: "2026-10-18T15:00:00.000Z",
+        left_at: null,
+        schema_version: "1.0",
+      },
+    ];
+    assert.equal(latestVisitorPresenceAt(events, sessions), "2026-10-18T15:00:50.000Z");
+    const rows = buildVisitorSessionSummaries(events, sessions, {}, Date.parse("2026-10-18T15:01:00.000Z"));
+    assert.equal(rows[0].presence, "connected");
+  });
+
   it("marca ausencia de heartbeat como desconexión temporal, no como salida", () => {
     assert.equal(
       resolveVisitorPresence({
@@ -160,6 +207,72 @@ describe("participant-summaries", () => {
       }),
       "left",
     );
+  });
+
+  it("ignora leave espurio si hubo heartbeat después", () => {
+    const events: InteractionEventRow[] = [
+      {
+        id: "1",
+        client_event_id: "l",
+        meeting_id: "m",
+        session_id: "s1",
+        participant_id: "p1",
+        participant_role: "visitor",
+        event_type: "session.leave",
+        metadata: {},
+        schema_version: "1.0",
+        created_at: "2026-10-18T15:00:10.000Z",
+      },
+      {
+        id: "2",
+        client_event_id: "h",
+        meeting_id: "m",
+        session_id: "s1",
+        participant_id: "p1",
+        participant_role: "visitor",
+        event_type: "session.heartbeat",
+        metadata: {},
+        schema_version: "1.0",
+        created_at: "2026-10-18T15:00:20.000Z",
+      },
+    ];
+    assert.equal(effectiveVisitorLeftAt("2026-10-18T15:00:10.000Z", events), null);
+    const [row] = buildVisitorSessionSummaries(
+      events,
+      [
+        {
+          session_id: "s1",
+          meeting_id: "m",
+          participant_id: "p1",
+          participant_role: "visitor",
+          joined_at: "2026-10-18T15:00:00.000Z",
+          left_at: "2026-10-18T15:00:10.000Z",
+          schema_version: "1.0",
+        },
+      ],
+      {},
+      Date.parse("2026-10-18T15:00:25.000Z"),
+    );
+    assert.equal(row.presence, "connected");
+  });
+
+  it("suma preguntas privadas de meeting_questions al roster", () => {
+    const counts = countModeratorQuestionsByParticipant([
+      { participant_id: "p1" },
+      { participant_id: "p1" },
+      { participant_id: "p2" },
+    ]);
+    assert.equal(counts.p1, 2);
+    assert.equal(counts.p2, 1);
+    const rows = enrichVisitorsWithModeratorQuestions(
+      buildVisitorSessionSummaries([], [], { p1: "Ana" }),
+      counts,
+      { p1: "Ana", p2: "Luis" },
+    );
+    const ana = rows.find((r) => r.participant_id === "p1");
+    const luis = rows.find((r) => r.participant_id === "p2");
+    assert.equal(ana?.questions_asked, 2);
+    assert.equal(luis?.questions_asked, 1);
   });
 
   it("counts element.clicked separately from questions and detail.opened", () => {

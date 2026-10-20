@@ -6,6 +6,7 @@ import {
   sendBeaconLeave,
   trackInteraction,
 } from "@/lib/analytics/client";
+import { VISITOR_HEARTBEAT_MS } from "@/lib/analytics/participant-summaries";
 import { setVisitorAnalyticsAuth } from "@/lib/analytics/participant-auth";
 import type { ParticipantRole } from "@/lib/analytics/types";
 import { participantRoleFromAppRole } from "@/lib/analytics/session";
@@ -32,7 +33,7 @@ export function useInteractionAnalytics({
     () => ({ meetingId, participantId, participantRole }),
     [meetingId, participantId, participantRole],
   );
-  const joined = useRef(false);
+  const presenceSessionKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (role === "visitor" && participantToken) {
@@ -48,32 +49,52 @@ export function useInteractionAnalytics({
 
   useEffect(() => {
     if (!enabled) return;
-    if (joined.current) return;
-    joined.current = true;
-    trackInteraction(ctx, "session.join", {
-      metadata: { role, display_name: displayName ?? null },
-    });
-    void flushInteractionQueue(meetingId);
+
+    const presenceKey = `${meetingId}:${participantId}`;
+    if (presenceSessionKeyRef.current !== presenceKey) {
+      presenceSessionKeyRef.current = presenceKey;
+      trackInteraction(ctx, "session.join", {
+        metadata: { role, display_name: displayName ?? null },
+      });
+      void flushInteractionQueue(meetingId);
+      if (role === "visitor") {
+        trackInteraction(ctx, "session.heartbeat", {
+          metadata: { display_name: displayName ?? null },
+        });
+        void flushInteractionQueue(meetingId);
+      }
+    }
 
     const onLeave = () => sendBeaconLeave(ctx);
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") {
+        if (role === "visitor") {
+          trackInteraction(ctx, "session.heartbeat", {
+            metadata: { display_name: displayName ?? null },
+          });
+        }
+        void flushInteractionQueue(meetingId);
+      } else if (document.visibilityState === "hidden") {
+        void flushInteractionQueue(meetingId);
+      }
+    };
     window.addEventListener("pagehide", onLeave);
+    document.addEventListener("visibilitychange", onVisibility);
     const beat =
       role === "visitor"
         ? window.setInterval(() => {
             trackInteraction(ctx, "session.heartbeat", {
               metadata: { display_name: displayName ?? null },
             });
-          }, 20_000)
+            void flushInteractionQueue(meetingId);
+          }, VISITOR_HEARTBEAT_MS)
         : 0;
     return () => {
       if (beat) window.clearInterval(beat);
       window.removeEventListener("pagehide", onLeave);
-      if (role === "visitor") {
-        trackInteraction(ctx, "session.leave", {});
-        void flushInteractionQueue(meetingId);
-      }
+      document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [ctx, enabled, meetingId, role, displayName]);
+  }, [ctx, enabled, meetingId, role, displayName, participantId]);
 
   const track = useCallback(
     (

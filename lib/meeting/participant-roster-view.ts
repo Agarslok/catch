@@ -31,6 +31,12 @@ export function rosterDurationDisplay(
   return { kind: "unconfirmed", message: "Sin registro de permanencia" };
 }
 
+export function rosterEngagementLabel(visitor: VisitorSessionSummary): string {
+  const q = visitor.questions_asked;
+  const c = visitor.clicks;
+  return `${q} pregunta${q === 1 ? "" : "s"} · ${c} clic${c === 1 ? "" : "s"}`;
+}
+
 export function rosterPresenceLabel(
   visitor: VisitorSessionSummary,
   showHistory: boolean,

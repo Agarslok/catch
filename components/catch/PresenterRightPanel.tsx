@@ -113,7 +113,7 @@ export function PresenterRightPanel({
         </div>
       )}
 
-      <div className="presenter-side-body">
+      <div className="presenter-side-body catch-rail-scroll catch-rail-scroll--light">
         {mode === "templates" && (
           <div className="visual-template-panel" role="tabpanel">
             <p className="visual-template-panel__lead">

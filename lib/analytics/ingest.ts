@@ -2,6 +2,7 @@ import type { InteractionEventInput } from "./types";
 import { INTERACTION_EVENT_TYPES } from "./types";
 import { resolveParticipantFromToken } from "@/lib/meeting/participant-identity";
 import { verifyParticipantToken } from "@/lib/meeting/presenter-auth";
+import { isMissingSchemaColumnError } from "@/lib/meeting/visitor-register";
 import { getSupabaseServiceClient, getSupabaseServerClient } from "@/lib/supabase/server";
 
 export function isValidInteractionEvent(e: InteractionEventInput): boolean {
@@ -138,10 +139,13 @@ export async function persistInteractionEvents(
           .eq("session_id", e.session_id);
       }
     } else {
-      await supabase
+      const touch = await supabase
         .from("meeting_session_registry")
         .update({ last_seen_at: stamp })
         .eq("session_id", e.session_id);
+      if (touch.error && isMissingSchemaColumnError(touch.error)) {
+        /* Heartbeats siguen en meeting_interaction_events; presencia usa esos timestamps. */
+      }
     }
   }
 

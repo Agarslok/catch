@@ -16,6 +16,8 @@ type ProviderProps = {
   meetingId?: string;
   presenterToken?: string;
   canStartTavus: boolean;
+  /** No asocia el avatar a una reunión ni publica su sesión en Supabase. */
+  detached?: boolean;
 };
 
 export function TavusCviProvider({
@@ -23,13 +25,28 @@ export function TavusCviProvider({
   meetingId,
   presenterToken,
   canStartTavus,
+  detached = false,
 }: ProviderProps) {
   const session = useTavusCviSession(canStartTavus);
   const value: TavusContextValue = {
     ...session,
-    meetingId,
-    presenterToken,
+    meetingId: detached ? undefined : meetingId,
+    presenterToken: detached ? undefined : presenterToken,
     canStartTavus,
+    startSession: (opts) =>
+      session.startSession({
+        ...opts,
+        detached,
+        meetingId: detached ? undefined : (opts?.meetingId ?? meetingId),
+        presenterToken: detached ? undefined : (opts?.presenterToken ?? presenterToken),
+      }),
+    endSession: (opts) =>
+      session.endSession({
+        ...opts,
+        detached,
+        meetingId: detached ? undefined : (opts?.meetingId ?? meetingId),
+        presenterToken: detached ? undefined : (opts?.presenterToken ?? presenterToken),
+      }),
   };
   return <TavusCviContext.Provider value={value}>{children}</TavusCviContext.Provider>;
 }

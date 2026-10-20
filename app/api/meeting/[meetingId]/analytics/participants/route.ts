@@ -1,10 +1,18 @@
 import { NextResponse } from "next/server";
-import { buildVisitorSessionSummaries } from "@/lib/analytics/participant-summaries";
+import {
+  buildVisitorSessionSummaries,
+  countModeratorQuestionsByParticipant,
+  enrichVisitorsWithModeratorQuestions,
+} from "@/lib/analytics/participant-summaries";
 import { groupClarityVotesByParticipant } from "@/lib/meeting/participant-clarity";
 import { dedupeVisitorsByParticipantId } from "@/lib/meeting/participant-roster-view";
 import type { InteractionEventRow, SessionRegistryRow } from "@/lib/analytics/types";
 import { verifyPresenterToken } from "@/lib/meeting/presenter-auth";
-import { getSupabaseServiceClient } from "@/lib/supabase/server";
+import {
+  getSupabaseServiceClient,
+  supabaseServiceConfigErrorCode,
+  supabaseServiceEnvStatus,
+} from "@/lib/supabase/server";
 
 export async function GET(
   request: Request,
@@ -18,7 +26,12 @@ export async function GET(
 
   const supabase = getSupabaseServiceClient("analytics-participants");
   if (!supabase) {
-    return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });
+    const checks = supabaseServiceEnvStatus();
+    const code = supabaseServiceConfigErrorCode(checks);
+    return NextResponse.json(
+      { error: "Supabase service client unavailable", code, checks },
+      { status: 503 },
+    );
   }
 
   const [
@@ -26,6 +39,7 @@ export async function GET(
     { data: sessions, error: sessErr },
     { data: people, error: pplErr },
     { data: clarityRows, error: clarityErr },
+    { data: questionRows, error: qErr },
   ] = await Promise.all([
     supabase
       .from("meeting_interaction_events")
@@ -43,6 +57,10 @@ export async function GET(
       .from("meeting_clarity_votes")
       .select("participant_id, section_key, vote")
       .eq("meeting_id", meetingId),
+    supabase
+      .from("meeting_questions")
+      .select("participant_id")
+      .eq("meeting_id", meetingId),
   ]);
 
   if (evErr) return NextResponse.json({ error: evErr.message }, { status: 500 });
@@ -52,6 +70,9 @@ export async function GET(
   }
   if (clarityErr) {
     /* claridad opcional si la tabla no está disponible */
+  }
+  if (qErr) {
+    /* cola de preguntas opcional si la tabla no está disponible */
   }
 
   const names: Record<string, string> = {};
@@ -70,15 +91,21 @@ export async function GET(
     (clarityRows ?? []) as { participant_id: string; section_key: string; vote: string }[],
   );
 
+  const questionCounts = countModeratorQuestionsByParticipant(questionRows ?? []);
+
   const visitors = dedupeVisitorsByParticipantId(
-    buildVisitorSessionSummaries(
-      (events ?? []) as InteractionEventRow[],
-      (sessions ?? []) as SessionRegistryRow[],
+    enrichVisitorsWithModeratorQuestions(
+      buildVisitorSessionSummaries(
+        (events ?? []) as InteractionEventRow[],
+        (sessions ?? []) as SessionRegistryRow[],
+        names,
+      ).map((v) => ({
+        ...v,
+        clarity_votes: clarityByParticipant[v.participant_id] ?? [],
+      })),
+      questionCounts,
       names,
-    ).map((v) => ({
-      ...v,
-      clarity_votes: clarityByParticipant[v.participant_id] ?? [],
-    })),
+    ),
   );
 
   return NextResponse.json({ meetingId, visitors });

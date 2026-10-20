@@ -1,12 +1,19 @@
 "use client";
 
 import { AvatarVisual } from "@/components/catch/AvatarVisual";
-
+import type { TavusRaiseHandResult } from "@/lib/tavus/raise-hand";
 type Props = {
   active?: boolean;
   syncPaused?: boolean;
   canControlPause?: boolean;
   onTogglePause?: () => void;
+  tavusUi?: "bar" | "dock";
+  onMicToggle?: () => void;
+  micListening?: boolean;
+  micSupported?: boolean;
+  showRaiseHand?: boolean;
+  raiseHandActive?: boolean;
+  onRaiseHand?: (result: TavusRaiseHandResult) => void;
 };
 
 export function AvatarDockVideo({
@@ -14,6 +21,13 @@ export function AvatarDockVideo({
   syncPaused = false,
   canControlPause = false,
   onTogglePause,
+  tavusUi = "bar",
+  onMicToggle,
+  micListening,
+  micSupported,
+  showRaiseHand,
+  raiseHandActive,
+  onRaiseHand,
 }: Props) {
   return (
     <section
@@ -30,6 +44,13 @@ export function AvatarDockVideo({
         syncPaused={syncPaused}
         canControlPause={canControlPause}
         onTogglePause={onTogglePause}
+        tavusUi={tavusUi}
+        onMicToggle={onMicToggle}
+        micListening={micListening}
+        micSupported={micSupported}
+        showRaiseHand={showRaiseHand}
+        raiseHandActive={raiseHandActive}
+        onRaiseHand={onRaiseHand}
       />
     </section>
   );

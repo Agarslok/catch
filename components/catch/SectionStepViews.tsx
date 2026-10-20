@@ -28,15 +28,24 @@ export function PresentationHandoffBanner() {
   );
 }
 
-export function IntroductionView({ script }: { script: SessionScript }) {
+export function IntroductionView({
+  script,
+  asyncExplore = false,
+}: {
+  script: SessionScript;
+  asyncExplore?: boolean;
+}) {
   return (
-    <section className="stage stage--copy">
+    <section
+      className={`stage stage--copy stage--intro-cover${asyncExplore ? " async-selectable-copy" : ""}`}
+    >
       <div className="text">
         <p className="chapter">Monitor de Mercado Laboral</p>
         <h1 className="headline">Cómo está el mercado en esta edición</h1>
         <p className="sub">
-          En cada capítulo se explican las gráficas una a una, luego se abre la hoja completa y,
-          antes de seguir, se confirma si quedó claro.
+          {asyncExplore
+            ? "Recorra el informe a su ritmo, capítulo por capítulo. Puede seleccionar texto o datos en las gráficas para preguntar a la IA, o escribir al equipo Catch."
+            : "En cada capítulo se explican las gráficas una a una, luego se abre la hoja completa y, antes de seguir, se confirma si quedó claro."}
         </p>
       </div>
       <div className="agenda-grid">
@@ -155,7 +164,9 @@ export function ClarityStepView({
           </button>
           <button type="button" className="clarity-btn clarity-btn--ask" onClick={onDoubts}>
             Tengo dudas
-            <small>Escriba una pregunta privada. Solo usted y el moderador la ven.</small>
+            <small>
+              Elija escribir o turno oral en la ventana siguiente; la solicitud se envía solo al confirmar.
+            </small>
           </button>
           <button type="button" className="clarity-btn clarity-btn--review" onClick={onReview}>
             Quiero repasar conceptos
@@ -180,6 +191,55 @@ export function ClarityStepView({
                   : ": repasará conceptos."}
           </p>
         )}
+      </div>
+    </section>
+  );
+}
+
+/** Claridad en exploración asincrónica: sin preguntas al moderador ni flujo en vivo. */
+export function AsyncClarityStepView({
+  sectionLabel,
+  chapterIndex,
+  onClear,
+  onReview,
+}: {
+  sectionLabel: string;
+  chapterIndex: number;
+  onClear: () => void;
+  onReview: () => void;
+}) {
+  const ch = CHAPTERS[chapterIndex] ?? CHAPTERS[0];
+  return (
+    <section className="stage stage--copy">
+      <div className="clarity-block">
+        <p className="chapter">Antes de continuar · {sectionLabel}</p>
+        <h1 className="headline headline--sheet">¿Quedó claro lo que viste?</h1>
+        <ul className="clarity-findings">
+          <li>
+            <b>Hallazgo</b>
+            <span>{ch.headline}</span>
+          </li>
+          <li>
+            <b>Indicador</b>
+            <span>
+              {ch.big} · {ch.s1v} {ch.s1l} · {ch.s2v} {ch.s2l}
+            </span>
+          </li>
+          <li>
+            <b>Periodo e interpretación</b>
+            <span>{ch.sub}</span>
+          </li>
+        </ul>
+        <div className="clarity-actions clarity-actions--async">
+          <button type="button" className="clarity-btn clarity-btn--ok" onClick={onClear}>
+            Sí, quedó claro
+            <small>Sigue al siguiente paso del recorrido.</small>
+          </button>
+          <button type="button" className="clarity-btn clarity-btn--review" onClick={onReview}>
+            Repasar conceptos
+            <small>Glosario y definiciones de esta sección, sin salir del modo asincrónico.</small>
+          </button>
+        </div>
       </div>
     </section>
   );

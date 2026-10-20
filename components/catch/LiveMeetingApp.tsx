@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AvatarDockVideo } from "@/components/catch/AvatarDockVideo";
+import { PresentationFloatingNav } from "@/components/catch/PresentationFloatingNav";
+import { SectionContextTicker } from "@/components/catch/SectionContextTicker";
 import { PresenterAvatarWidget } from "@/components/catch/PresenterAvatarWidget";
 import { TavusAiEcho } from "@/components/catch/TavusAiEcho";
 import { TavusCviProvider } from "@/components/catch/TavusCviProvider";
@@ -19,6 +21,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/client";
 import { useActivityFeed } from "@/hooks/useActivityFeed";
 import { useMeetingSync } from "@/hooks/useMeetingSync";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { usePresentationArrowKeys } from "@/hooks/usePresentationArrowKeys";
 import {
   ClarityStepView,
   ClosingView,
@@ -39,6 +42,7 @@ import {
 import { useSupabaseHealth } from "@/hooks/useSupabaseHealth";
 import { useInteractionAnalytics } from "@/hooks/useInteractionAnalytics";
 import { excerptText, presentationNavMetadata } from "@/lib/analytics/track-presentation";
+import { glossaryTermsForChapter } from "@/lib/data/glossary";
 import { MeetingVisitorTools } from "@/components/catch/MeetingVisitorTools";
 import { PresenterVisitorRoster } from "@/components/catch/PresenterVisitorRoster";
 import type { PresenterPrepFaqItem } from "@/components/catch/PresenterFaqPrepSection";
@@ -52,7 +56,7 @@ import {
   PresenterRightPanel,
   type PresenterLiveRailTab,
 } from "@/components/catch/PresenterRightPanel";
-import { PrivateQuestionPanel } from "@/components/catch/PrivateQuestionPanel";
+import { ParticipantModeratorAskModal } from "@/components/catch/ParticipantModeratorAskModal";
 import { applyChartActionToGlobalView } from "@/lib/meeting/global-view";
 import {
   adjacentNavigableIndex,
@@ -143,6 +147,8 @@ export function LiveMeetingApp({
   const [chartHighlight, setChartHighlight] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [privateAskOpen, setPrivateAskOpen] = useState(false);
+  const [moderatorAskFromClarity, setModeratorAskFromClarity] = useState(false);
+  const pendingClaritySectionIdRef = useRef<string | null>(null);
   const [participantToken, setParticipantToken] = useState(initialParticipantToken ?? "");
   const [munFilter, setMunFilter] = useState<MunFilter>("total");
   const [chartKind, setChartKind] = useState<ChartKind>("bar");
@@ -752,6 +758,24 @@ export function LiveMeetingApp({
     );
   };
 
+  const presentationKeyboardNavActive =
+    (isPresenter &&
+      (presenterPreMeetingReview || presenterDashboardReady(sessionPhase))) ||
+    (!isPresenter && visitorSeesMeeting(sessionPhase));
+
+  const dismissPresentationOverlays = useCallback(() => {
+    setPrivateAskOpen(false);
+    setReviewOpen(false);
+    setSectionNavOpen(false);
+  }, []);
+
+  usePresentationArrowKeys({
+    enabled: presentationKeyboardNavActive,
+    nav: { next, prev },
+    blocked: privateAskOpen || reviewOpen || sectionNavOpen,
+    onEscape: dismissPresentationOverlays,
+  });
+
   const logView = useCallback(() => {
     if (isPresenter) return;
     void logMeetingActivity({
@@ -999,17 +1023,6 @@ export function LiveMeetingApp({
   const waitingOnPresenter = !isPresenter && follow;
   const localCanMove = !isPresenter && !follow && currentIndex < unlockedStep;
 
-  const jumpKind = (kind: "full_sheet" | "clarity_check") => {
-    if (!section) return;
-    const id = specialPointId(script, section.id, kind);
-    if (!id) return;
-    if (presenterPreMeetingReview) {
-      setPresenterPreviewPointId(id);
-      return;
-    }
-    void publishPoint(id);
-  };
-
   const rail = (
     <StoryRail
       script={script}
@@ -1111,10 +1124,9 @@ export function LiveMeetingApp({
             void voteClarity("claro", secId).then(() => exploreAfterClarityVote());
           }}
           onDoubts={() => {
-            void voteClarity("duda", secId).then(() => {
-              setPrivateAskOpen(true);
-              exploreAfterClarityVote();
-            });
+            pendingClaritySectionIdRef.current = secId ?? null;
+            setModeratorAskFromClarity(true);
+            setPrivateAskOpen(true);
           }}
           onReview={() => {
             void voteClarity("glosario", secId).then(() => setReviewOpen(true));
@@ -1186,19 +1198,70 @@ export function LiveMeetingApp({
     );
   };
 
-  const atLastNavigable =
-    adjacentNavigableIndex(script, isPresenter ? liveStep : currentIndex, 1) ===
-    (isPresenter ? liveStep : currentIndex);
+  const slideNavIndex = isPresenter
+    ? presenterPreMeetingReview
+      ? getPointIndex(script, currentPoint.id)
+      : liveStep
+    : currentIndex;
+  const slideNavPrevDisabled =
+    adjacentNavigableIndex(script, slideNavIndex, -1) === slideNavIndex ||
+    (!isPresenter && waitingOnPresenter);
+  const slideNavNextDisabled =
+    (isPresenter && groupAwaitingModerator) ||
+    (!isPresenter && (waitingOnPresenter || !localCanMove));
+  const avatarSlideNav =
+    presentationKeyboardNavActive && !reviewOpen ? (
+      <PresentationFloatingNav
+        onPrev={prev}
+        onNext={next}
+        prevDisabled={slideNavPrevDisabled}
+        nextDisabled={slideNavNextDisabled}
+      />
+    ) : null;
   const avatarCaptionText =
     liveAtHandoff && (follow || isPresenter)
       ? PRESENTATION_HANDOFF_NARRATIVE
       : currentPoint.narrative || (beat === 0 ? c.capA : c.capB);
+
+  const visitorContextLabel =
+    liveAtHandoff && currentPoint.kind !== "closing"
+      ? "Espacio de preguntas"
+      : "Contexto de la sección";
+
+  const presenterModeratorNotesText = (() => {
+    if (currentPoint.kind === "closing") {
+      return `${PRESENTATION_HANDOFF_NARRATIVE} Use la pestaña «Preguntas» para la conversación con la sala.`;
+    }
+    if (currentPoint.kind === "full_sheet" || currentPoint.kind === "clarity_check") {
+      return "Al mostrar la hoja, el cliente ve los gráficos en miniatura y se abre la ventana «¿Quedó claro?» (si aún no respondió).";
+    }
+    if (currentPoint.kind === "introduction") {
+      return "Presente la agenda y explique que las preguntas son anónimas y se responden al final.";
+    }
+    const base = currentPoint.narrative || (beat === 0 ? c.capA : c.capB);
+    const terms = glossaryTermsForChapter(c.chartFocus);
+    const gloss = terms.length
+      ? ` Términos que conviene aclarar: ${terms.join(", ")}.`
+      : "";
+    return `${base}${gloss}`;
+  })();
 
   const shellClass = `app-shell ${isPresenter ? "presentador" : "cliente"}`;
   const presenterLiveDashboard = isPresenter && presenterDashboardReady(sessionPhase);
   const showRailContent = isPresenter
     ? presenterSeesDashboard(sessionPhase) && !inPresenterLoadView
     : visitorSeesMeeting(sessionPhase);
+  const showIaChat =
+    (!isPresenter && visitorSeesMeeting(sessionPhase)) ||
+    (isPresenter &&
+      presenterLiveDashboard &&
+      !presenterPreMeetingReview &&
+      !inPresenterLoadView);
+  const hideNarrationRecoveryBanner =
+    recovery &&
+    (recovery.kind === "avatar_inactive" ||
+      recovery.kind === "narration_unconfirmed" ||
+      recovery.kind === "stale_narration_end");
 
   return (
     <TavusCviProvider
@@ -1234,11 +1297,6 @@ export function LiveMeetingApp({
         </div>
         {!isPresenter ? (
           <div className="cabeza-acciones">
-            {!isMobile ? (
-              <span className="step-label">
-                Paso {currentIndex + 1} de {totalPoints}
-              </span>
-            ) : null}
             {!supabaseLoading && supabaseHealth && !supabaseHealth.ok && (
               <span className="pill pill--warn" title={syncBadge}>Sin sync</span>
             )}
@@ -1252,6 +1310,7 @@ export function LiveMeetingApp({
               prepFaqs={prepFaqs}
               showClarityButton={false}
               onAskPrivate={() => {
+                setModeratorAskFromClarity(false);
                 setPrivateAskOpen(true);
                 trackAnalytics("question.private_opened", {
                   chart_id: c.chartFocus,
@@ -1319,8 +1378,8 @@ export function LiveMeetingApp({
           </aside>
         )}
 
-        <main className="main">
-          {isPresenter && recovery && (
+        <main className="main catch-rail-scroll catch-rail-scroll--light">
+          {isPresenter && recovery && !hideNarrationRecoveryBanner && (
             <div className="banner" style={{ marginBottom: "12px" }}>
               <span>
                 <strong>{recovery.title}</strong>
@@ -1424,50 +1483,43 @@ export function LiveMeetingApp({
             </>
           ) : null}
 
-          {!isPresenter && (
-            <div className="banner">
-              <span>
-                <strong>
-                  {reviewOpen
-                    ? "Repaso conceptual local"
-                    : follow && !peekPointId
-                      ? "Sigues al presentador"
-                      : exploreMode === "summary_origin" || peekPointId
-                        ? "Consulta local desde la hoja completa"
-                        : "Exploras por tu cuenta"}
-                </strong>
-                <span className="muted">
-                  {reviewOpen && livePointId !== currentPoint.id
-                    ? " · el presentador puede estar en otro punto"
-                    : " · el contenido habilitado se actualiza en vivo"}
-                </span>
-              </span>
-              <span className="banner-actions">
-                {reviewOpen && (
-                  <button type="button" className="btn-small" onClick={() => setReviewOpen(false)}>
-                    Cerrar repaso
-                  </button>
-                )}
-                {(exploreMode === "summary_origin" || peekPointId) && sheetReturnId && (
-                  <button
-                    type="button"
-                    className="btn-small"
-                    onClick={() => {
-                      setPeekPointId(null);
-                      goLocal(sheetReturnId, "explore");
-                    }}
-                  >
-                    Volver a la hoja completa
-                  </button>
-                )}
-                {!follow && (
-                  <button type="button" className="btn-small" onClick={() => returnToPresentation()}>
-                    Volver a la presentación
-                  </button>
-                )}
-              </span>
-            </div>
+          {!isPresenter && visitorSeesMeeting(sessionPhase) && (
+            <SectionContextTicker
+              label={visitorContextLabel}
+              text={avatarCaptionText}
+              actions={
+                <>
+                  {reviewOpen && (
+                    <button type="button" className="btn-small" onClick={() => setReviewOpen(false)}>
+                      Cerrar repaso
+                    </button>
+                  )}
+                  {(exploreMode === "summary_origin" || peekPointId) && sheetReturnId && (
+                    <button
+                      type="button"
+                      className="btn-small"
+                      onClick={() => {
+                        setPeekPointId(null);
+                        goLocal(sheetReturnId, "explore");
+                      }}
+                    >
+                      Volver a la hoja completa
+                    </button>
+                  )}
+                </>
+              }
+            />
           )}
+
+          {isPresenter &&
+            presenterLiveDashboard &&
+            !presenterPreMeetingReview &&
+            !inPresenterLoadView && (
+              <SectionContextTicker
+                label="Notas para el moderador"
+                text={presenterModeratorNotesText}
+              />
+            )}
 
           {liveAtHandoff && currentPoint.kind !== "closing" ? (
             <PresentationHandoffBanner />
@@ -1475,14 +1527,18 @@ export function LiveMeetingApp({
 
           {renderStage()}
 
+          {(isPresenter || aiReply) && (
           <div className="caption">
+            {isPresenter ? (
             <div className="cap-text">
               <small>
                 {liveAtHandoff ? "Espacio de preguntas" : "Avatar Catch narrando"}
               </small>
               <p>{avatarCaptionText}</p>
-              {!isPresenter && aiReply && <p className="ai-inline">{aiReply}</p>}
             </div>
+            ) : (
+              aiReply ? <p className="ai-inline">{aiReply}</p> : null
+            )}
             <div className="controls">
               {isPresenter && (
                 <>
@@ -1514,101 +1570,86 @@ export function LiveMeetingApp({
                       </button>
                     </>
                   )}
-                  {section && (
-                    <>
-                      {peekPointId && (
-                        <button type="button" className="ghost" onClick={() => setPeekPointId(null)}>
-                          Volver al índice
-                        </button>
-                      )}
-                      <button type="button" className="ghost" onClick={() => jumpKind("full_sheet")}>
-                        Hoja completa
-                      </button>
-                      <button
-                        type="button"
-                        className="ghost"
-                        onClick={() => jumpKind("clarity_check")}
-                      >
-                        ¿Quedó claro?
-                      </button>
-                    </>
+                  {section && peekPointId && (
+                    <button type="button" className="ghost" onClick={() => setPeekPointId(null)}>
+                      Volver al índice
+                    </button>
                   )}
                 </>
               )}
-              {((!isPresenter && !follow) || isPresenter) && !(isMobile && !isPresenter) ? (
-                <button type="button" className="ghost round" onClick={prev} aria-label="Anterior">
-                  ←
-                </button>
-              ) : null}
-              <button
-                type="button"
-                className="solid"
-                onClick={next}
-                disabled={
-                  (isPresenter && groupAwaitingModerator) ||
-                  (!isPresenter && (waitingOnPresenter || !localCanMove))
-                }
-              >
-                {presenterPreMeetingReview
-                  ? "Siguiente en vista previa"
-                  : isPresenter
-                  ? groupAwaitingModerator
-                    ? "Esperando autorización"
-                    : atLastNavigable
-                      ? liveAtHandoff
-                        ? "Reiniciar presentación"
-                        : "Reiniciar para todos"
-                      : "Siguiente para todos"
-                  : waitingOnPresenter
-                    ? presentationStatus === "paused"
-                      ? "Presentación en pausa"
-                      : "Esperando al presentador"
-                    : localCanMove
-                      ? "Siguiente paso"
-                      : "Límite de lo habilitado"}
-              </button>
             </div>
           </div>
+          )}
 
           {!isPresenter && (
-            <>
-              <PrivateQuestionPanel
-                meetingId={meetingId}
-                participantId={actorRef.current.id}
-                participantToken={participantToken}
-                sectionKey={section?.id ?? c.chartFocus}
-                sectionLabel={section?.name ?? c.t}
-                presentationPointId={currentPoint.id}
-                open={privateAskOpen}
-                onClose={() => setPrivateAskOpen(false)}
-              />
-              <form className="ask" onSubmit={submitQuestion} id="session-chat">
-                <label htmlFor="q">Pregúntale al asistente sobre lo que estás viendo.</label>
-                {chatThread.length > 0 ? (
-                  <div className="ask-thread" aria-live="polite">
-                    {chatThread.map((m, i) => (
-                      <div
-                        key={`${m.role}-${i}`}
-                        className={m.role === "user" ? "ask-thread__user" : "ask-thread__ai"}
-                      >
-                        {m.text}
-                      </div>
-                    ))}
-                  </div>
+            <ParticipantModeratorAskModal
+              meetingId={meetingId}
+              participantId={actorRef.current.id}
+              participantToken={participantToken}
+              sectionKey={section?.id ?? c.chartFocus}
+              sectionLabel={section?.name ?? c.t}
+              presentationPointId={currentPoint.id}
+              open={privateAskOpen}
+              fromClarity={moderatorAskFromClarity}
+              onQueueSubmitted={
+                moderatorAskFromClarity
+                  ? () => {
+                      void voteClarity("duda", pendingClaritySectionIdRef.current).then(() =>
+                        exploreAfterClarityVote(),
+                      );
+                    }
+                  : undefined
+              }
+              onExploreAfterOral={() => exploreAfterClarityVote()}
+              onClose={() => {
+                setPrivateAskOpen(false);
+                setModeratorAskFromClarity(false);
+                pendingClaritySectionIdRef.current = null;
+              }}
+            />
+          )}
+
+          {showIaChat && (
+            <form className="ask" onSubmit={submitQuestion} id="session-chat">
+              <div className="ask-head">
+                <h2 className="headline ask-chat-title">Chatear con la IA</h2>
+                {!isPresenter ? (
+                  <p className="ask-chart-hint">
+                    Toque cualquier barra para ver de dónde sale el dato.
+                  </p>
                 ) : null}
-                <div className="ask-row">
-                  <input
-                    id="q"
-                    ref={chatRef}
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                    placeholder="¿Qué municipio tiene mayor rotación?"
-                  />
-                  <button type="submit" className="send">Enviar</button>
+              </div>
+              {chatThread.length > 0 ? (
+                <div className="ask-thread" aria-live="polite">
+                  {chatThread.map((m, i) => (
+                    <div
+                      key={`${m.role}-${i}`}
+                      className={m.role === "user" ? "ask-thread__user" : "ask-thread__ai"}
+                    >
+                      {m.text}
+                    </div>
+                  ))}
                 </div>
-                <span className="ask-ok">{askOk}</span>
-              </form>
-            </>
+              ) : null}
+              <div className="ask-row">
+                <input
+                  id="q"
+                  className="ask-input--dark"
+                  ref={chatRef}
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  placeholder={
+                    isPresenter
+                      ? "Ej.: Avanza al siguiente punto · Repite la explicación · Ve a salarios"
+                      : "¿Qué significa rotación no controlada?"
+                  }
+                  aria-label="Chatear con la IA"
+                  autoComplete="off"
+                />
+                <button type="submit" className="send">Enviar</button>
+              </div>
+              <span className="ask-ok">{askOk}</span>
+            </form>
           )}
         </main>
 
@@ -1632,6 +1673,7 @@ export function LiveMeetingApp({
       {showFloatingAvatar && (
         <PresenterAvatarWidget mobileMode={isMobile} {...avatarVideoProps} />
       )}
+      {avatarSlideNav}
       </div>
     </TavusCviProvider>
   );

@@ -1,7 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 import { AvatarVideoControls } from "@/components/catch/AvatarVideoControls";
+import { IaHandButton } from "@/components/catch/IaHandButton";
+import { IaMicButton } from "@/components/catch/IaMicButton";
+import { performTavusRaiseHand, type TavusRaiseHandResult } from "@/lib/tavus/raise-hand";
 import { AVATAR_MP4_ENABLED, AVATAR_VIDEO } from "@/lib/avatar/config";
 import { useAvatarVideoPlayback } from "@/hooks/useAvatarVideoPlayback";
 import { useTavusCvi } from "@/components/catch/TavusCviProvider";
@@ -13,6 +16,15 @@ type Props = {
   canControlPause?: boolean;
   onTogglePause?: () => void;
   onTavusSessionChange?: (active: boolean) => void;
+  slideNav?: ReactNode;
+  /** bar: controles Tavus arriba del video; dock: botones sobre el video (modo asincrónico). */
+  tavusUi?: "bar" | "dock";
+  onMicToggle?: () => void;
+  micListening?: boolean;
+  micSupported?: boolean;
+  showRaiseHand?: boolean;
+  raiseHandActive?: boolean;
+  onRaiseHand?: (result: TavusRaiseHandResult) => void;
 };
 
 function statusLabel(status: TavusCviStatus, error: string | null): string {
@@ -36,6 +48,14 @@ export function AvatarVisual({
   canControlPause = false,
   onTogglePause,
   onTavusSessionChange,
+  slideNav,
+  tavusUi = "bar",
+  onMicToggle,
+  micListening = false,
+  micSupported = false,
+  showRaiseHand = false,
+  raiseHandActive = false,
+  onRaiseHand,
 }: Props) {
   const tavus = useTavusCvi();
   const tavusSessionOpen =
@@ -57,9 +77,52 @@ export function AvatarVisual({
     onTavusSessionChange?.(tavus.tavusActive);
   }, [onTavusSessionChange, tavus.tavusActive]);
 
+  const tavusDock = tavusUi === "dock";
+
+  const dockControls =
+    tavus.canStartTavus && tavusDock ? (
+      <div className="ai-dock-controls" role="group" aria-label="Controles del avatar">
+        {tavus.mode === "local" && tavus.status !== "starting" && (
+          <button
+            type="button"
+            className="ai-dock-controls__btn ai-dock-controls__btn--primary"
+            disabled={!tavus.configured}
+            onClick={() => void tavus.startSession(tavusOpts)}
+          >
+            {tavus.configured ? "Iniciar Frida" : "Tavus no configurado"}
+          </button>
+        )}
+        {(tavus.status === "connected" || tavus.status === "starting") && (
+          <button
+            type="button"
+            className="ai-dock-controls__btn"
+            onClick={() => void tavus.endSession(tavusOpts)}
+          >
+            Finalizar
+          </button>
+        )}
+        {showRaiseHand ? (
+          <IaHandButton
+            active={raiseHandActive}
+            onClick={() => {
+              const result = performTavusRaiseHand({
+                tavusActive: tavus.tavusActive,
+                interruptSpeech: tavus.interruptSpeech,
+                speakEcho: tavus.speakEcho,
+              });
+              onRaiseHand?.(result);
+            }}
+          />
+        ) : null}
+        {micSupported && onMicToggle ? (
+          <IaMicButton variant="dock" listening={micListening} onClick={onMicToggle} />
+        ) : null}
+      </div>
+    ) : null;
+
   return (
     <>
-      {tavus.canStartTavus && (
+      {tavus.canStartTavus && !tavusDock && (
         <div className="ai-tavus-bar" role="status" aria-live="polite">
           <span className={`ai-tavus-pill ai-tavus-pill--${tavus.status}`}>
             {statusLabel(tavus.status, tavus.error)}
@@ -96,6 +159,8 @@ export function AvatarVisual({
         </div>
       )}
       <div className="ai-media">
+        {dockControls}
+        {slideNav}
         {showLocalVideo ? (
           <video
             ref={localVideoRef}

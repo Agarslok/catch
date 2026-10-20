@@ -20,7 +20,14 @@ export default function HomePage() {
         <Link className="link-btn link-btn--hero outline" href={`/monitor/${DEFAULT_MEETING}/visitor`}>
           Cliente · Monitor
         </Link>
+        <Link className="link-btn link-btn--hero link-btn--async" href="/async">
+          Modo asincrónico
+        </Link>
       </div>
+      <p className="landing-async-note">
+        Explora los informes a tu propio ritmo e interactúa directamente con el avatar de IA, sin
+        depender de una presentación en vivo.
+      </p>
       <p className="landing-meta">
         Reunión demo: <code>{DEFAULT_MEETING}</code>
       </p>
