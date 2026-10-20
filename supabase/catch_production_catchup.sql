@@ -288,3 +288,6 @@ drop policy if exists "meeting_prep_faqs_write_denied_client" on public.meeting_
 create policy "meeting_prep_faqs_write_denied_client"
   on public.meeting_prep_faqs for all to anon, authenticated
   using (false) with check (false);
+
+-- ========== 20260324120000_reset_meeting_session.sql ==========
+-- Misma función que la migración. Ejecutar en SQL Editor si el botón de reinicio responde 503.

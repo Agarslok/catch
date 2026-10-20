@@ -1847,8 +1847,64 @@ function aplicar(tipo, d) {
   }
   programarRender();
 }
+let ultimoResetNonce = 0;
+function claveResetNonce() {
+  const mid = window.__CATCH_MONITOR_SYNC__?.meetingId;
+  return mid ? `catch:${mid}:resetNonce` : null;
+}
+function leerResetNonceLocal() {
+  const key = claveResetNonce();
+  if (!key) return 0;
+  const n = Number(localStorage.getItem(key) || 0);
+  return Number.isFinite(n) ? n : 0;
+}
+ultimoResetNonce = leerResetNonceLocal();
+function limpiarHistorialLocalReunion() {
+  S.cola = [];
+  S.toques = {};
+  S.claridad = {};
+  S.visitorRoster = [];
+  S.monitorHighlight = null;
+  S.narracionEsperaAutorizacion = false;
+  S.sectionClaridadLista = false;
+  S.sectionCloseDedup = null;
+  S.pos = 0;
+  S.unlockedStep = 0;
+  ['cliente', 'movil'].forEach(rol => {
+    const v = S.vistas?.[rol];
+    if (!v) return;
+    v.pos = 0;
+    v.live = true;
+    v.peekExplica = null;
+  });
+  persistir();
+  const mid = window.__CATCH_MONITOR_SYNC__?.meetingId;
+  if (mid) {
+    try {
+      localStorage.removeItem(`catch:monitor:${mid}:claridadResp`);
+      localStorage.removeItem(`catch:${mid}:actor`);
+      localStorage.removeItem(`catch:${mid}:pt`);
+      localStorage.removeItem(`catch:${mid}:registerAttempt`);
+    } catch { /* ignore */ }
+  }
+  try { window.__CATCH_TAVUS_CVI__?.interrupt?.(); } catch { /* ignore */ }
+}
+function aplicarReinicioReunion(nonce) {
+  const n = Number(nonce);
+  if (!Number.isFinite(n) || n <= ultimoResetNonce) return false;
+  ultimoResetNonce = n;
+  const key = claveResetNonce();
+  if (key) {
+    try { localStorage.setItem(key, String(n)); } catch { /* ignore */ }
+  }
+  limpiarHistorialLocalReunion();
+  aplicarFaseSesion('preparacion');
+  programarRender();
+  return true;
+}
 canal && (canal.onmessage = ev => {
   const { tipo, data } = ev.data || {};
+  if (tipo === 'reinicioReunion') return aplicarReinicioReunion(data?.nonce);
   if (tipo === 'sesion') return aplicarSesion(data || {});
   if (tipo) aplicar(tipo, data);
 });
@@ -3835,7 +3891,7 @@ function renderModeradorActivo(raiz) {
       <button type="button" class="btn prim" data-iniciar-reunion>Iniciar reunión</button></div></div>` : ''}
     <div class="${clasePantallaClientePreview()}">${htmlBarraLoQueVeCliente()}<div class="dentro" id="mod-preview"></div></div>
     <div class="controles"><button class="btn" data-mod="-1">Anterior</button>${p.tipo === 'cierre'
-      ? `<button type="button" class="btn prim" data-saltar="0">Reiniciar presentación</button><span class="siguiente">${esc(PRESENTATION_HANDOFF_SUBLABEL)} · sin más secciones</span>`
+      ? `<button type="button" class="btn prim" data-reiniciar-reunion>Reiniciar reunión desde el inicio</button><span class="siguiente">${esc(PRESENTATION_HANDOFF_SUBLABEL)} · sin más secciones</span>`
       : `<button class="btn prim" data-mod="1" ${S.narracionEsperaAutorizacion ? 'disabled' : ''}>Siguiente</button>
       ${p.tipo === 'hoja' && S.narracionEsperaAutorizacion ? `<button type="button" class="btn prim" data-continuar-seccion>Continuar sección</button>` : ''}
       ${p.s !== undefined ? `<button class="btn suave" data-saltar="${PASOS.findIndex(q => q.tipo === 'hoja' && q.s === p.s)}">Mostrar hoja completa</button>` : ''}
@@ -3998,6 +4054,52 @@ function htmlCierre() {
 }
 
 // ======================= ventanas =======================
+let reinicioReunionEnCurso = false;
+function abrirConfirmacionReinicioReunion() {
+  if (S.rol !== 'moderador' || reinicioReunionEnCurso) return;
+  const ui = modal(`<h3 style="margin-top:0">Reiniciar reunión desde el inicio</h3>
+    <p>La presentación volverá a la primera diapositiva. Se eliminará el historial de <b>esta</b> reunión: preguntas y respuestas, eventos, actividad, votos de claridad y registros de participantes. Las preguntas frecuentes preparadas y el informe compartido no se borran. Las demás reuniones no cambian.</p>
+    <p class="sub" data-reinicio-estado style="min-height:1.2em"></p>
+    <div class="fila" style="justify-content:flex-end;gap:8px">
+      <button type="button" class="btn" data-cerrar>Cancelar</button>
+      <button type="button" class="btn prim" data-confirmar-reinicio>Confirmar reinicio</button>
+    </div>`);
+  const btn = ui.capa.querySelector('[data-confirmar-reinicio]');
+  const estado = ui.capa.querySelector('[data-reinicio-estado]');
+  btn?.addEventListener('click', async (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    if (reinicioReunionEnCurso) return;
+    const cfg = window.__CATCH_MONITOR_SYNC__;
+    if (!cfg?.meetingId || !cfg.presenterToken) {
+      if (estado) estado.textContent = 'Solo el presentador de esta reunión puede reiniciarla.';
+      return;
+    }
+    reinicioReunionEnCurso = true;
+    if (btn) btn.disabled = true;
+    if (estado) estado.textContent = 'Reiniciando…';
+    try {
+      const res = await fetch(`/api/meeting/${encodeURIComponent(cfg.meetingId)}/reset-session`, {
+        method: 'POST',
+        headers: { 'x-presenter-token': cfg.presenterToken },
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        reinicioReunionEnCurso = false;
+        if (btn) btn.disabled = false;
+        if (estado) estado.textContent = body.error || 'No se pudo reiniciar la reunión.';
+        return;
+      }
+      aplicarReinicioReunion(body.sessionResetNonce);
+      reinicioReunionEnCurso = false;
+      ui.cerrar();
+    } catch {
+      reinicioReunionEnCurso = false;
+      if (btn) btn.disabled = false;
+      if (estado) estado.textContent = 'Error de conexión. No se confirmó el reinicio.';
+    }
+  });
+}
 function modal(html, alCerrar) {
   const capa = $('#capaModal'); capa.innerHTML = `<div class="velo" data-velo><div class="modal" role="dialog" aria-modal="true">${html}</div></div>`;
   const cerrar = () => { capa.innerHTML = ''; alCerrar && alCerrar(); };
@@ -5275,6 +5377,7 @@ document.addEventListener('click', e => {
     else { v.pos = acotarPosExploracion(rol, target); return render(); }
     return;
   }
+  if (d.reiniciarReunion !== undefined) return abrirConfirmacionReinicioReunion();
   if (d.saltar !== undefined) return moverModerador(+d.saltar);
   if (d.tab) { S.tabMod = d.tab; return render(); }
   if (d.addPrepFaq !== undefined) {

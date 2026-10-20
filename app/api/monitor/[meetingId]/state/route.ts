@@ -41,6 +41,7 @@ export async function GET(
       monitorHighlight: globalView.monitorHighlight ?? null,
       monitorTavusSession: readMonitorTavusSessionFromGlobalView(globalView),
       awaitingModerator: globalView.awaitingModerator === true,
+      sessionResetNonce: globalView.sessionResetNonce ?? null,
       sectionAwaitSectionId: globalView.sectionAwaitSectionId ?? null,
       sectionAwaitSectionLabel: globalView.sectionAwaitSectionLabel ?? null,
     });

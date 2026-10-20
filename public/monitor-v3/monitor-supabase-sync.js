@@ -223,6 +223,13 @@
           if (gv.monitorSessionPhase !== undefined) {
             applyMonitorSessionPhase(gv.monitorSessionPhase, true);
           }
+          if (gv.sessionResetNonce != null) {
+            bc?.postMessage({
+              tipo: "reinicioReunion",
+              data: { nonce: gv.sessionResetNonce },
+              _remote: true,
+            });
+          }
           applySectionAwaitFromGlobalView(gv);
         },
       )
@@ -315,6 +322,13 @@
       }
       if (data && typeof data.awaitingModerator === "boolean") {
         applySectionAwaitFromGlobalView({ awaitingModerator: data.awaitingModerator });
+      }
+      if (data && data.sessionResetNonce != null) {
+        bc?.postMessage({
+          tipo: "reinicioReunion",
+          data: { nonce: data.sessionResetNonce },
+          _remote: true,
+        });
       }
       if (!hasSb) {
         setSyncLabel(
