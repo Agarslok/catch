@@ -1,7 +1,6 @@
-import { beneficiosMercado, perfilRadar } from "@/lib/monitor-data/domain";
+import { perfilRadar } from "@/lib/monitor-data/domain";
 import {
   getDemoClient,
-  getDemoClientId,
   getMonitorDataset,
   getMonitorEmpresas,
 } from "@/lib/monitor-data/dataset";
@@ -148,7 +147,6 @@ export function enumerateHighlightElements(chartId: MonitorChartId): MonitorChar
   const M = getMonitorEmpresas();
   const datos = getMonitorDataset();
   const ULT = datos.bimestres.length - 1;
-  const CLIENTE = getDemoClientId();
   const out: MonitorChartElementRef[] = [];
 
   switch (chartId) {
@@ -170,11 +168,9 @@ export function enumerateHighlightElements(chartId: MonitorChartId): MonitorChar
       break;
     }
     case "tamano": {
-      const rows: { label: string }[] = TAMANOS.filter((t) => M.some((e) => e.tamano === t)).map(
-        (t) => ({ label: t }),
+      ["1 a 100", "101 a 300", "301 a 500", "501 a 1,000", "Más de 1,000"].forEach((l, i) =>
+        out.push(ref(chartId, l, "", 0, i)),
       );
-      if (M.some((e) => !e.tamano)) rows.push({ label: "Sin dato" });
-      rows.forEach((row, i) => out.push(ref(chartId, row.label, "", 0, i)));
       break;
     }
     case "edad": {
@@ -188,22 +184,18 @@ export function enumerateHighlightElements(chartId: MonitorChartId): MonitorChar
       );
       break;
     }
-    case "salini":
-    case "capacitacion": {
-      const filas = ordenadasVal(
-        M,
-        chartId === "salini" ? (e) => e.sal[0] : (e) => e.cap,
+    case "salini": {
+      ordenadasVal(M, (e) => e.sal[0]).forEach((row, i) =>
+        out.push(ref(chartId, row.id, "", 0, i)),
       );
-      filas.forEach((row, i) => out.push(ref(chartId, row.id, "", 0, i)));
       break;
     }
     case "escalera": {
       const labels = ["Inicial", "Intermedio bajo", "Intermedio alto", "Máximo"];
       const series = [
-        { key: "Percentil 75", datasetIndex: 0 },
-        { key: "Percentil 25", datasetIndex: 1 },
+        { key: "Techo del 50%", datasetIndex: 0 },
+        { key: "Piso del 50%", datasetIndex: 1 },
         { key: "Mediana", datasetIndex: 2 },
-        { key: CLIENT_LABEL, datasetIndex: 3 },
       ];
       series.forEach((s) =>
         labels.forEach((l, i) => out.push(ref(chartId, l, s.key, s.datasetIndex, i))),
@@ -231,9 +223,9 @@ export function enumerateHighlightElements(chartId: MonitorChartId): MonitorChar
       break;
     }
     case "beneficios": {
-      beneficiosMercado(M)
-        .slice(0, 10)
-        .forEach((row, i) => out.push(ref(chartId, row.label, "", 0, i)));
+      ["No movió ningún beneficio", "Subió vales de despensa", "Subió fondo de ahorro"].forEach(
+        (l, i) => out.push(ref(chartId, l, "Mercado", 0, i)),
+      );
       break;
     }
     case "incben": {
@@ -250,8 +242,46 @@ export function enumerateHighlightElements(chartId: MonitorChartId): MonitorChar
       break;
     }
     case "mixcontrata": {
-      ["Reposición de bajas", "Posiciones nuevas"].forEach((l, i) =>
-        out.push(ref(chartId, l, "", 0, i)),
+      const series = [
+        { key: "Reposición de bajas", datasetIndex: 0 },
+        { key: "Posiciones nuevas", datasetIndex: 1 },
+      ];
+      datos.bimestres.forEach((bim, i) => {
+        series.forEach((ser) => out.push(ref(chartId, bim, ser.key, ser.datasetIndex, i)));
+      });
+      break;
+    }
+    case "cuandosevan": {
+      const labels =
+        datos.mercado?.cuandosevan?.labels ?? [
+          "Hasta 1 mes",
+          "1 a 3 meses",
+          "3 a 6 meses",
+          "6 a 12 meses",
+          "Más de 1 año",
+        ];
+      labels.forEach((l, i) => out.push(ref(chartId, l, "Bajas acumuladas", 0, i)));
+      break;
+    }
+    case "prediccion": {
+      const labels = [
+        ...datos.bimestres,
+        "Sep-Oct 2025",
+        "Nov-Dic 2025",
+        "Ene-Feb 2026",
+        "Mar-Abr 2026",
+        "May-Jun 2026",
+        "Jul-Ago 2026",
+        "Sep-Oct 2026",
+        "Nov-Dic 2026",
+      ];
+      const series = [
+        { key: "Historia", datasetIndex: 0 },
+        { key: "Rango del 80%", datasetIndex: 1 },
+        { key: "Pronóstico (mediana)", datasetIndex: 3 },
+      ];
+      series.forEach((s) =>
+        labels.forEach((l, i) => out.push(ref(chartId, l, s.key, s.datasetIndex, i))),
       );
       break;
     }
@@ -260,20 +290,7 @@ export function enumerateHighlightElements(chartId: MonitorChartId): MonitorChar
       break;
     }
     case "rotserie": {
-      const series = [
-        { key: "No controlada", datasetIndex: 0 },
-        { key: "Controlada", datasetIndex: 1 },
-        { key: CLIENT_LABEL, datasetIndex: 2 },
-      ];
-      datos.bimestres.forEach((bim, i) => {
-        series.forEach((ser) => {
-          if (ser.datasetIndex < 2) {
-            out.push(ref(chartId, bim, ser.key, ser.datasetIndex, i));
-          } else {
-            out.push(ref(chartId, bim, ser.key, ser.datasetIndex, i));
-          }
-        });
-      });
+      datos.bimestres.forEach((bim, i) => out.push(ref(chartId, bim, "Mercado", 0, i)));
       break;
     }
     case "causas": {
@@ -293,38 +310,12 @@ export function enumerateHighlightElements(chartId: MonitorChartId): MonitorChar
       break;
     }
     case "salrot": {
-      const ids = M.filter((e) => e.sal[0] != null && e.rot[ULT] != null).map((e) => e.id);
-      const otros = ids.filter((id) => id !== CLIENTE);
-      ids.forEach((id) => {
-        const isClient = id === CLIENTE;
-        out.push(
-          ref(
-            chartId,
-            id,
-            isClient ? CLIENT_LABEL : "Otras empresas",
-            isClient ? 1 : 0,
-            isClient ? 0 : otros.indexOf(id),
-          ),
-        );
-      });
-      break;
-    }
-    case "plantbubble": {
-      const pts = M.filter((e) => e.rot[ULT] != null);
-      const otros = pts.filter((p) => p.id !== CLIENTE);
-      const client = pts.filter((p) => p.id === CLIENTE);
-      otros.forEach((e, i) =>
-        out.push(ref(chartId, e.id, "Otras empresas", 0, i)),
-      );
-      client.forEach((e, i) =>
-        out.push(ref(chartId, e.id, CLIENT_LABEL, 1, i)),
-      );
-      break;
-    }
-    case "rotmapa": {
-      matrizRotTierTam(M, ULT).celdas.forEach((c, i) =>
-        out.push(ref(chartId, `${c.tier} · ${c.tam}`, "Rotación", 0, i)),
-      );
+      [
+        "Bajas antes del primer año",
+        "Salario inicial sobre el mercado",
+        "Ausentismo",
+        "Personal menor de 23 años",
+      ].forEach((l, i) => out.push(ref(chartId, l, l, i, 0)));
       break;
     }
     case "perfilradar": {
@@ -335,6 +326,12 @@ export function enumerateHighlightElements(chartId: MonitorChartId): MonitorChar
       ];
       r.labels.forEach((l, i) => {
         series.forEach((s) => out.push(ref(chartId, l, s.key, s.datasetIndex, i)));
+      });
+      break;
+    }
+    case "paquete": {
+      ["Vales de despensa", "Fondo de ahorro", "Prima vacacional", "Aguinaldo", "Comedor"].forEach((l, i) => {
+        out.push(ref(chartId, l, "Mercado", 0, i));
       });
       break;
     }

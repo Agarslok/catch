@@ -27,8 +27,8 @@ const meetingId = "audit-7-4-meeting";
 const participantId = "visitor-audit-1";
 const pasos = buildMonitorPasos();
 const hoja = pasos.findIndex((p) => p.tipo === "hoja");
-const rotcomp = findPasoIndexForChart("rotcomp");
-const ausentismo = findPasoIndexForChart("ausentismo");
+const rotcomp = findPasoIndexForChart("rotserie");
+const cuando = findPasoIndexForChart("cuandosevan");
 const salarios = findPasoIndexForChart("salini");
 
 function interpretHttp(headers: Record<string, string>, body: Record<string, unknown>) {
@@ -254,14 +254,14 @@ describe("Fase 7.4 contrato e instrucciones", () => {
 
     const chart = await runMonitorAiInterpret({
       meetingId: "demo",
-      instruction: "Ve a la sección de ausentismo",
+      instruction: "Ve a la sección de cuándo se van",
       snapshot: defaultControllerSnapshot({ stepIndex: 0 }),
     });
     assert.equal(chart.ok, true);
     if (chart.ok) {
       const nav = chart.body.effects.find((e) => e.kind === "navigate");
       assert.ok(nav && nav.kind === "navigate");
-      assert.equal(nav.targetStep, ausentismo);
+      assert.equal(nav.targetStep, cuando);
     }
 
     const missing = await runMonitorAiInterpret({

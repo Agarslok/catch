@@ -1,10 +1,10 @@
-import { beneficiosMercado, mixContratacion, perfilRadar } from "./domain";
+import { mixContratacion, perfilRadar } from "./domain";
 import { getDemoClient, getMonitorDataset, getMonitorEmpresas } from "./dataset";
 import { fmt$, fmtN, fmtP } from "./format";
 import { mediana, prom, promSinCeros, rango, serieRotIndices, vals } from "./stats";
-import { TAMANOS } from "./types";
 import type { Empresa } from "./types";
 import type { MonitorChartId } from "@/lib/monitor-ai/types";
+import { withSectionLead } from "@/lib/monitor-content/dael-reference";
 
 const MESES = [
   "Enero",
@@ -81,21 +81,6 @@ function etapaNeg(t: string | null) {
   return "No aplica";
 }
 
-function conteoTamano(M: Empresa[]) {
-  const n = M.length;
-  const c: Record<string, number> = {};
-  M.forEach((e) => {
-    const t = e.tamano || "Sin dato";
-    c[t] = (c[t] || 0) + 1;
-  });
-  const rows: { label: string; v: number }[] = TAMANOS.filter((t) => c[t]).map((t) => ({
-    label: t,
-    v: c[t]! / n,
-  }));
-  if (c["Sin dato"]) rows.push({ label: "Sin dato", v: c["Sin dato"] / n });
-  return rows.sort((a, b) => b.v - a.v);
-}
-
 function causasMercado(M: Empresa[]) {
   const datos = getMonitorDataset();
   const r = M.filter((e) => e.mot.some((v) => v != null));
@@ -108,35 +93,15 @@ function causasMercado(M: Empresa[]) {
     .sort((a, b) => b.v - a.v);
 }
 
-function celdaRotMax(M: Empresa[], ult: number) {
-  const tiers = [...new Set(M.map((e) => e.tier).filter((t): t is string => !!t))].sort();
-  const celdas: { tier: string; tam: string; v: number }[] = [];
-  TAMANOS.forEach((tam) => {
-    tiers.forEach((tier) => {
-      const sub = M.filter(
-        (e) => e.tamano === tam && e.tier === tier && (e.rot[ult] ?? 0) > 0,
-      );
-      if (sub.length >= 2) {
-        celdas.push({ tier, tam, v: prom(sub.map((e) => e.rot[ult])) ?? 0 });
-      }
-    });
-  });
-  if (!celdas.length) return { tier: "—", tam: "—", v: 0 };
-  return celdas.reduce((a, b) => (b.v > a.v ? b : a));
-}
-
 function speakForChart(chartId: MonitorChartId, M: Empresa[], CLI: Empresa): string | null {
   const datos = getMonitorDataset();
   const ULT = datos.bimestres.length - 1;
 
   switch (chartId) {
     case "plantilla": {
-      const op = M.reduce((s, e) => s + (e.op || 0), 0);
-      const ad = M.reduce((s, e) => s + (e.adm || 0), 0);
-      const ot = M.reduce((s, e) => s + (e.otro || 0), 0);
-      const t = op + ad + ot;
-      const cliHead = (CLI.op || 0) + (CLI.adm || 0) + (CLI.otro || 0);
-      return `La muestra reúne ${M.length} empresas con ${fmtN(t)} empleados. El ${fmtP(op / t, 0)} es personal operativo y el ${fmtP(ad / t, 0)} administrativo. Su empresa aporta ${fmtN(cliHead)} empleados, el ${fmtP(cliHead / t, 1)} del total.`;
+      const sx = datos.mercado?.sintesis;
+      const comp = sx?.composicion;
+      return `Son ${sx?.empresas ?? 40} empresas y ${fmtN(sx?.empleados ?? 35128)} empleados. El ${fmtP(comp?.op ?? 0.7, 0)} es personal operativo. El ${fmtP(sx?.mujeres?.pct ?? 0.386, 1)} de la plantilla son mujeres (n = ${sx?.mujeres?.n ?? 37}).`;
     }
     case "procesos": {
       const f = conteoProcesos(M);
@@ -149,26 +114,19 @@ function speakForChart(chartId: MonitorChartId, M: Empresa[], CLI: Empresa): str
       const sind = prom(M.map((e) => e.sindicato));
       return `El ${fmtP(t[0]?.v, 0)} de las compañías es ${t[0]?.label}. Su empresa es ${CLI.tier}. El ${fmtP(sind, 0)} de las compañías tiene sindicato.`;
     }
-    case "tamano": {
-      const t = conteoTamano(M);
-      const seg = CLI.tamano || "sin dato";
-      return `El ${fmtP(t[0]?.v, 0)} de las compañías tiene entre ${t[0]?.label.toLowerCase()} empleados. La suya (${seg}) está en el segmento resaltado en ámbar.`;
-    }
+    case "tamano":
+      return "Hay empresas de todos los tamaños: 5 de 1 a 100, 10 de 101 a 300, 7 de 301 a 500, 8 de 501 a 1,000 y 10 de más de 1,000. El 80% tiene sindicato.";
     case "edad": {
       const d = edadMercado(M);
       return `En el mercado, el ${fmtP(d[0], 0)} del personal tiene menos de 23 años; en su empresa, el ${fmtP(CLI.edad[0], 0)}. Una plantilla más joven suele rotar más: es la asociación más fuerte que encontramos en los datos.`;
     }
     case "salini": {
-      const med = mediana(M.map((e) => e.sal[0]));
-      const pos = rango(M.map((e) => e.sal[0]), CLI.sal[0] ?? 0);
-      return `La mediana del mercado es ${fmt$(med)} diarios. Su empresa paga ${fmt$(CLI.sal[0])}, ${CLI.sal[0]! < (med ?? 0) ? "por debajo" : "por arriba"} de la mediana: el ${fmtP(pos, 0)} de las empresas paga menos que usted.`;
+      const s = datos.mercado?.sintesis?.salario;
+      return `Mediana ${fmt$(s?.mediana ?? 340)} diarios. La mitad de las empresas paga entre ${fmt$(s?.p25 ?? 300)} y ${fmt$(s?.p75 ?? 370)}. 13 de 40 pagan bajo el mínimo 2026 de $315.`;
     }
     case "escalera": {
-      const esc = CLI.sal[3]! / CLI.sal[0]! - 1;
-      const escM = mediana(
-        M.map((e) => (e.sal[3] && e.sal[0] ? e.sal[3] / e.sal[0] - 1 : null)),
-      );
-      return `Del salario inicial al máximo, su escalera crece ${fmtP(esc, 0)}; en la empresa típica del mercado, ${fmtP(escM, 0)}. Una escalera corta deja poco incentivo para quedarse.`;
+      const s = datos.mercado?.sintesis?.salario;
+      return `Escalera mediana de ${fmt$(s?.escalera?.[0] ?? 340)} a ${fmt$(s?.escalera?.[3] ?? 561)}: ${fmtP(s?.crecimientoPct ?? 0.65, 0)} más. El piso del rango central es ${fmt$(s?.p25 ?? 300)}. El 43% revisa salarios en abril.`;
     }
     case "incremento":
       return `El mercado otorgó en promedio ${fmtP(prom(M.map((e) => e.inc["2025"][0])), 2)} al personal operativo en 2025, contra ${fmtP(prom(M.map((e) => e.inc["2024"][0])), 2)} en 2024. Su empresa otorgó ${fmtP(CLI.inc["2025"][0], 2)} en 2025.`;
@@ -181,26 +139,32 @@ function speakForChart(chartId: MonitorChartId, M: Empresa[], CLI: Empresa): str
         .join(", ");
       return `${MESES[i]} concentra las revisiones: el ${fmtP(v[i], 0)} de las compañías. Su empresa revisa en ${mesesCli || "un mes no reportado"}.`;
     }
-    case "beneficios": {
-      const b = beneficiosMercado(M);
-      return `${b[0]?.label} y ${b[1]?.label.toLowerCase()} son los beneficios que más se incrementan (${fmtP(b[0]?.v, 0)} y ${fmtP(b[1]?.v, 0)} de las compañías). En ámbar, los que incluyó su empresa.`;
-    }
+    case "paquete":
+      return "El paquete típico del operativo: 10% en vales, 8.3% de fondo de ahorro, 50% de prima vacacional y 20 días de aguinaldo. El 60% da comedor.";
+    case "beneficios":
+      return "Una de cada tres empresas no movió ningún beneficio. Las demás subieron, sobre todo vales (45%) y fondo de ahorro (40%). El incremento en beneficios fue 2.9%.";
     case "incben":
       return `En 2025 el mercado incrementó los beneficios ${fmtP(prom(M.map((e) => e.inc["2025"][2])), 2)} para el personal operativo y ${fmtP(prom(M.map((e) => e.inc["2025"][3])), 2)} para el administrativo. Su empresa: ${fmtP(CLI.inc["2025"][2], 2)} y ${fmtP(CLI.inc["2025"][3], 2)}.`;
     case "negociacion": {
       const t = conteoLabels(M.map((e) => etapaNeg(e.neg)));
       return `${t[0]?.label}: ${fmtP(t[0]?.v, 0)} de las compañías. Su empresa: ${etapaNeg(CLI.neg) || "sin dato"}.`;
     }
-    case "capacitacion":
-      return `La empresa típica dio ${(mediana(M.map((e) => e.cap)) ?? 0).toFixed(1)} horas de capacitación por persona en el bimestre; la suya, ${(CLI.cap ?? 0).toFixed(1)} horas.`;
     case "rotserie": {
-      const s = serieRotIndices(M, datos.bimestres.length);
-      return `La rotación del mercado pasó de ${fmtP(s.total[0])} en ${datos.bimestres[0]} a ${fmtP(s.total[ULT])} en ${datos.bimestres[ULT]}. La mayor parte es no controlada: la deciden los empleados. Su empresa terminó en ${fmtP(CLI.rot[ULT])}.`;
+      const sx = datos.mercado?.sintesis?.rotacion;
+      const ed = datos.mercado?.rotacionEdicion;
+      const ultimo = sx?.ultimo ?? ed?.mercado ?? 0.0813;
+      const hace = sx?.haceUnAno ?? 0.1077;
+      const vol = sx?.voluntaria ?? ed?.voluntaria ?? 0.0559;
+      return `Bajó de ${fmtP(hace, 1)} a ${fmtP(ultimo, 1)} en ${datos.bimestres[ULT]}. Mediana ${fmtP(sx?.mediana ?? 0.0728, 1)}. Voluntaria ${fmtP(vol, 1)}. El filtro puede ver Tier o tamaño; la cifra base es el mercado completo.`;
+    }
+    case "cuandosevan": {
+      const sx = datos.mercado?.sintesis;
+      return `67% de las bajas antes del primer año. Mejor sueldo como causa: ${fmtP(sx?.causaSueldoPct ?? 0.718, 1)} de empresas. Reposición: ${fmtP(sx?.reposicionPct ?? 0.71, 0)} de contrataciones.`;
     }
     case "mixcontrata": {
       const mk = mixContratacion(M, ULT);
       const cl = mixContratacion([CLI], ULT);
-      return `En ${datos.bimestres[ULT]}, el ${fmtP(mk.pCr, 0)} de las contrataciones del mercado repusieron una baja y el ${fmtP(mk.pCn, 0)} abrieron posición nueva. Su empresa: ${fmtP(cl.pCr, 0)} reposición y ${fmtP(cl.pCn, 0)} nuevas.`;
+      return `Siete de cada diez contrataciones del mercado solo reponen a alguien que se fue (${fmtP(mk.pCr, 0)} reposición frente a ${fmtP(mk.pCn, 0)} posiciones nuevas en ${datos.bimestres[ULT]}). Su empresa: ${fmtP(cl.pCr, 0)} reposición y ${fmtP(cl.pCn, 0)} nuevas.`;
     }
     case "rotcomp": {
       const r = M.map((e) => e.rot[ULT]);
@@ -213,23 +177,19 @@ function speakForChart(chartId: MonitorChartId, M: Empresa[], CLI: Empresa): str
       return `"${c[0]?.label}" es la causa más citada: el ${fmtP(c[0]?.v, 0)} de las compañías la ve común o más frecuente. En ámbar, las causas que su empresa califica igual.`;
     }
     case "ausentismo": {
-      const s = datos.bimestres.map((_, i) => promSinCeros(M.map((e) => e.aus[i])));
-      const min = Math.min(...vals(s));
-      const max = Math.max(...vals(s));
-      return `El ausentismo del mercado se mueve entre ${fmtP(min, 2)} y ${fmtP(max, 2)}. Su empresa tuvo ${fmtP(CLI.aus[ULT], 2)} en ${datos.bimestres[ULT]}. Más ausentismo suele ir con más rotación.`;
+      const ae = datos.mercado?.ausentismoEdicion;
+      const cap = ae?.capacitacionHoras ?? mediana(M.map((e) => e.cap));
+      const total = ae?.total ?? promSinCeros(M.map((e) => e.aus[ULT]));
+      return `De cada 100 días que se debían trabajar, se faltaron ${fmtP(total, 2)} en ${datos.bimestres[ULT]}${ae?.justificado != null ? ` (justificado ${fmtP(ae.justificado, 2)}, injustificado ${fmtP(ae.injustificado ?? 0, 2)})` : ""}. La capacitación típica es ${(cap ?? 0).toFixed(1)} horas por persona en el bimestre; la suya, ${(CLI.cap ?? 0).toFixed(1)} h.`;
+    }
+    case "prediccion": {
+      const p = datos.mercado?.prediccion;
+      const seg = datos.mercado?.sintesis?.segmentos;
+      return `2026: ${fmtP(p?.rot2026 ?? 0.38, 0)} si la tendencia sigue. Rango del 80%: ${fmtP(p?.lo80 ?? 0.33, 0)} a ${fmtP(p?.hi80 ?? 0.44, 0)}. Si se detiene, ${fmtP(p?.siSeDetiene ?? 0.41, 0)}. ${seg?.altoRiesgo ?? 10} empresas en alto riesgo, ${seg?.estables ?? 20} estables y ${seg?.referentes ?? 10} referentes. La gráfica muestra la historia bimestral y, en azul, el pronóstico con su banda.`;
     }
     case "salrot": {
-      const med = mediana(M.map((e) => e.sal[0]));
-      const p = M.find((e) => e.id === CLI.id);
-      return `A menor salario de ingreso suele ir más rotación (ρ ≈ −0.35 en la muestra). Su empresa paga ${fmt$(p?.sal[0])} con rotación ${fmtP(p?.rot[ULT], 2)} frente a una mediana salarial de ${fmt$(med)}.`;
-    }
-    case "plantbubble": {
-      const h = (CLI.op || 0) + (CLI.adm || 0) + (CLI.otro || 0);
-      return `Su plantilla suma ${fmtN(h)} personas, rotación ${fmtP(CLI.rot[ULT], 2)} y ausentismo ${fmtP(CLI.aus[ULT], 2)}. El tamaño del punto refleja el ausentismo relativo en el bimestre.`;
-    }
-    case "rotmapa": {
-      const h = celdaRotMax(M, ULT);
-      return `La combinación con mayor rotación promedio en ${datos.edicion} es ${h.tier} · ${h.tam} (${fmtP(h.v, 2)}). Las celdas vacías no alcanzan el mínimo de empresas para mostrarse.`;
+      const d = datos.mercado?.sintesis?.drivers;
+      return `Bajas antes del año: +54% en las odds. Ausentismo: +22%. Salario sobre el mercado: −${fmtP(d?.oddsReduccionPct ?? 0.29, 0)} (OR ${(d?.orSalario ?? 0.71).toFixed(2)}). El personal menor de 23 años no es concluyente: su intervalo cruza el sin efecto. El 75% de la variación depende de cada empresa. Asociación, no causa.`;
     }
     case "perfilradar": {
       const r = perfilRadar(M, CLI);
@@ -249,5 +209,6 @@ export function getChartSpeakParagraph(chartId: MonitorChartId): string | null {
   const M = getMonitorEmpresas();
   const CLI = getDemoClient();
   const text = speakForChart(chartId, M, CLI);
-  return text?.trim() ? text.trim() : null;
+  if (!text?.trim()) return null;
+  return withSectionLead(chartId, text.trim());
 }

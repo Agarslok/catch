@@ -13,6 +13,7 @@ import type {
   MonitorSectionIndex,
   MonitorSectionKey,
 } from "./types";
+import { buildGeminiReferenceBlock } from "@/lib/monitor-content/dael-reference";
 import { buildContextForProvider, MAX_CONTEXT_BLOCK_BYTES, MAX_QUESTION_LENGTH } from "./context-policy";
 import { parseMonitorAiViewContext } from "./view-context";
 
@@ -135,8 +136,10 @@ export function validateMonitorAiRequest(
     return { ok: false, code: "CONTEXT_TOO_LARGE" };
   }
 
-  /** v2B: no se usa como evidencia numérica; solo metadatos de navegación en el servicio. */
-  const contextForProvider = buildContextForProvider("", sectionKey);
+  const contextForProvider = buildContextForProvider(
+    buildGeminiReferenceBlock({ sectionKey, chartId }),
+    sectionKey,
+  );
 
   const editionLabel =
     typed.editionLabel !== undefined ? String(typed.editionLabel).trim().slice(0, 80) : undefined;

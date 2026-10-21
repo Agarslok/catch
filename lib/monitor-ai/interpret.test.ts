@@ -30,7 +30,7 @@ describe("interpret context", () => {
     const ctx = buildInterpretModelContext({
       meetingId: "demo",
       instruction: "Explica esta gráfica",
-      snapshot: defaultControllerSnapshot({ stepIndex: findPasoIndexForChart("rotcomp") }),
+      snapshot: defaultControllerSnapshot({ stepIndex: findPasoIndexForChart("rotserie") }),
     });
     const raw = JSON.stringify(ctx);
     assert.equal(raw.includes('"empresas"'), false);
@@ -129,7 +129,7 @@ describe("interpret request validation", () => {
 describe("runMonitorAiInterpret", () => {
   const pasos = buildMonitorPasos();
   const hoja = pasos.findIndex((p) => p.tipo === "hoja");
-  const rotcomp = findPasoIndexForChart("rotcomp");
+  const rotcomp = findPasoIndexForChart("rotserie");
 
   it("inicio de presentación → go_to_section muestra", async () => {
     const r = await runMonitorAiInterpret(

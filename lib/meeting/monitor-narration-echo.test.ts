@@ -27,7 +27,7 @@ describe("monitor narration echo (plan → Tavus)", () => {
     const prep = preparePlanNarrationEcho(plan, hoja);
     assert.equal(prep.ok, true);
     if (!prep.ok) return;
-    assert.match(prep.text, /resumen de la sección/i);
+    assert.match(prep.text, /Quedó claro|muestra/i);
   });
 
   it("speakText vacío no prepara eco", () => {

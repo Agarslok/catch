@@ -3,7 +3,7 @@ import type { ScriptPoint } from "./script-types";
 export const PRESENTATION_HANDOFF_HEADLINE = "Presentación finalizada";
 export const PRESENTATION_HANDOFF_SUBLABEL = "Espacio de preguntas";
 export const PRESENTATION_HANDOFF_NARRATIVE =
-  "La presentación ha finalizado. Este es el momento para resolver sus dudas con el presentador y conversar sobre los hallazgos del informe.";
+  "Sesión cerrada. Ahora cada empresa a su ritmo: 40 empresas y 35,128 empleados, mediana $340, rotación 8.1% (10.8% hace un año), 67% de las bajas antes del año, y 2026 entre 33% y 44%.";
 
 export function isPresentationHandoffPoint(point: ScriptPoint | null | undefined): boolean {
   return point?.kind === "closing";

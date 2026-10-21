@@ -88,11 +88,12 @@ h1,h2,h3{font-family:var(--display); letter-spacing:-.01em}
 .recorrido em{font-style:normal; color:var(--suave); font-size:13px; margin-left:10px}
 
 /* escena de explicación: cifra a la izquierda, gráfico interactivo a la derecha */
-.explica{display:grid; grid-template-columns:minmax(300px,.9fr) minmax(0,1.3fr); gap:56px; align-items:center; min-height:58vh}
-.copia .kicker{color:var(--suave); font-size:14px; font-weight:700; margin:0 0 10px}
+.explica{display:grid; grid-template-columns:minmax(300px,.9fr) minmax(0,1.3fr); gap:56px; align-items:start; min-height:58vh}
+.copia .kicker{color:var(--azul); font-size:15px; font-weight:800; letter-spacing:.01em; margin:0 0 8px}
 .grande{font-family:var(--display); font-weight:700; font-size:clamp(64px,7.5vw,116px); line-height:1; letter-spacing:-.04em; color:var(--azul); margin:0}
 .grande-lab{font-size:18px; color:var(--suave); margin:8px 0 22px}
 .copia .lede{font-size:21px; line-height:1.5; margin:0 0 26px; max-width:34ch}
+.copia .lede strong{color:var(--tinta); font-weight:800}
 .stats{display:flex; flex-wrap:wrap; gap:36px; border-top:1px solid var(--borde)}
 .stats div{display:flex; flex-direction:column; gap:2px; padding-top:14px}
 .stats strong{font-family:var(--display); font-size:26px; color:var(--tinta)}
@@ -102,8 +103,15 @@ h1,h2,h3{font-family:var(--display); letter-spacing:-.01em}
 .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:22px}
 .chip{border:1px solid var(--borde); color:var(--suave); background:transparent; border-radius:999px; padding:4px 12px; font-size:13px}
 .chip:hover{border-color:var(--azul); color:var(--azul)}
-.grafico .tit{font-size:14px; color:var(--suave); margin:0 0 10px; display:flex; justify-content:space-between; gap:10px}
-.grafico .tit b{color:var(--tinta); font-weight:700}
+.grafico .tit{font-size:14px; color:var(--suave); margin:0 0 4px; display:flex; justify-content:space-between; gap:10px; align-items:baseline}
+.grafico .tit b{color:var(--tinta); font-family:var(--display); font-weight:700; font-size:22px; letter-spacing:-.02em; line-height:1.15}
+.grafico .nota-graf{margin:0 0 10px; color:var(--suave); font-size:14px; line-height:1.35}
+.paquete{width:100%}
+.paquete table{width:100%; border-collapse:collapse}
+.paquete th,.paquete td{text-align:left; padding:12px 8px; border-bottom:1px solid var(--borde)}
+.paquete th{font-size:12px; letter-spacing:.04em; text-transform:uppercase; color:var(--suave)}
+.paquete td{font-size:16px}
+.paquete td.num{font-family:var(--display); font-size:22px; color:var(--azul); text-align:right; white-space:nowrap}
 .lienzo{position:relative; height:400px}
 .toca{font-size:12.5px; color:var(--suave)}
 
@@ -117,7 +125,7 @@ h1,h2,h3{font-family:var(--display); letter-spacing:-.01em}
 .hoja .celda{animation:aparece .55s both}
 .hoja .celda:nth-child(2){animation-delay:.07s}.hoja .celda:nth-child(3){animation-delay:.14s}.hoja .celda:nth-child(4){animation-delay:.21s}
 @keyframes aparece{from{opacity:0; transform:translateY(8px)}to{opacity:1; transform:none}}
-.celda h2{margin:0; font-size:17px; color:var(--tinta)}
+.celda h2{margin:0; font-size:22px; font-family:var(--display); color:var(--tinta); letter-spacing:-.02em; line-height:1.15}
 .celda .sub{margin:2px 0 10px; color:var(--suave); font-size:13px}
 .hoja .lienzo--hoja{height:clamp(150px,20vh,210px); min-height:140px}
 .hoja--preview{gap:18px 22px; grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -140,8 +148,10 @@ h1,h2,h3{font-family:var(--display); letter-spacing:-.01em}
 .portada p.lede{font-size:21px; color:var(--suave); max-width:46ch; margin:18px 0 36px}
 .agenda{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; border-top:1px solid var(--borde)}
 .agenda div{padding:16px 18px 0 0}
-.agenda b{display:block; font-family:var(--display); color:var(--azul); font-size:17px; margin-bottom:4px}
-.agenda span{font-size:13px; color:var(--suave)}
+.agenda b{display:block; font-family:var(--display); color:var(--azul); font-size:18px; margin-bottom:4px}
+.agenda span{font-size:14px; color:var(--tinta); line-height:1.35}
+.agenda small{display:block; margin-top:4px; font-size:13px; color:var(--suave)}
+.portada--numero .grande{font-size:clamp(72px,8vw,120px); color:var(--azul)}
 .nota-anon{font-size:13px; color:var(--suave)}
 
 /* justificación del dato (panel inferior) */
@@ -230,14 +240,16 @@ body:has(.moderador){overflow:hidden}
 .mod-col:first-child h3{margin:0; padding:18px 18px 8px; font-size:12.5px; font-weight:700; letter-spacing:.02em; color:#bfe3f0; font-family:var(--texto)}
 .mod-col:last-child h3{margin:0; padding:18px 18px 8px; font-size:12.5px; font-weight:700; letter-spacing:.02em; color:var(--azul); font-family:var(--texto)}
 .pasos{list-style:none; margin:0; padding:0 10px 18px}
-.pasos .grupo{padding:12px 8px 4px; font-weight:800; color:#bfe3f0; font-size:14px}
+.moderador > .mod-col:first-child .pasos{padding-bottom:80px}
+.pasos .grupo{padding:14px 8px 6px; font-weight:800; color:#fff; font-size:15px; line-height:1.25}
+.pasos .grupo small{display:block; font-weight:500; font-size:12px; color:rgba(255,255,255,.62); margin-top:2px}
 .pasos button{width:100%; text-align:left; border:0; background:transparent; padding:6px 10px; border-radius:10px; font-size:14px; color:rgba(255,255,255,.72); display:flex; gap:8px; align-items:center}
 .pasos button:hover{color:#fff; background:rgba(255,255,255,.06)}
 .pasos button[aria-current="true"]{background:rgba(56,174,203,.2); color:#bfe3f0; font-weight:700}
 .pasos button .ok{margin-left:auto; font-size:12px; color:#7fd3e6}
 .mod-centro{padding:20px 26px; overflow-x:hidden; overflow-y:auto; min-height:0; max-height:100%; align-self:stretch; background:var(--pista); scrollbar-width:thin; scrollbar-color:rgba(39,120,177,.5) rgba(39,120,177,.1)}
 .mod-centro .titulo{display:flex; align-items:center; gap:10px; margin-bottom:12px}
-.mod-centro .titulo h2{margin:0; font-size:20px}
+.mod-centro .titulo h2{margin:0; font-family:var(--display); font-size:clamp(26px,2.2vw,34px); line-height:1.15; letter-spacing:-.02em}
 .pantalla{border:1px solid var(--borde); border-radius:16px; overflow:hidden; background:var(--superficie); transition:background .45s ease, box-shadow .45s ease, border-color .45s ease}
 .pantalla--cliente-preview.pantalla--modo-edicion-sim{background:#FFFFFF; border-color:rgba(39,120,177,.28); box-shadow:0 0 0 1px rgba(39,120,177,.1), 0 10px 28px rgba(39,120,177,.09)}
 .pantalla .barra{display:flex; justify-content:space-between; padding:8px 14px; font-size:12px; color:var(--suave); border-bottom:1px solid var(--borde); transition:background .45s ease, border-color .45s ease}
@@ -260,13 +272,15 @@ body:has(.moderador){overflow:hidden}
 .btn-modo-edicion-sim.is-activo{background:var(--azul); color:#fff; border-color:var(--azul); box-shadow:0 2px 10px rgba(39,120,177,.28)}
 .pantalla .dentro{padding:20px 22px}
 .pantalla .explica{min-height:0; gap:28px}
-.pantalla .grande{font-size:56px}
-.pantalla .copia .lede{font-size:16px}
+.pantalla .titular{font-size:clamp(22px,2vw,30px); margin-bottom:6px}
+.pantalla .grande{font-size:64px}
+.pantalla .copia .lede{font-size:16px; line-height:1.45}
 .pantalla .lienzo{height:270px}
 .pantalla .hoja{gap:22px 28px}
 .pantalla .hoja .lienzo{height:170px}
 .pantalla .kpi b{font-size:24px}
 .pantalla .portada .grande{font-size:38px}
+.pantalla .portada--numero .grande{font-size:72px; color:var(--azul)}
 .pantalla .agenda{grid-template-columns:repeat(2,1fr)}
 .controles{display:flex; gap:8px; align-items:center; margin:16px 0; flex-wrap:wrap}
 .controles .siguiente{margin-left:auto; color:var(--suave); font-size:13px}
@@ -355,6 +369,7 @@ body:has(.moderador){overflow:hidden}
 .central{flex:1; display:flex; flex-direction:column; justify-content:center}
 .central .explica{min-height:0}
 .nav-flotante-dock{position:fixed; left:50%; bottom:max(20px, env(safe-area-inset-bottom,0px)); transform:translateX(-50%); z-index:58; display:flex; align-items:center; justify-content:center; gap:6px; padding:4px 6px; border-radius:999px; pointer-events:none; background:rgba(15,47,72,.18); backdrop-filter:blur(4px); box-shadow:0 4px 20px rgba(15,47,72,.12)}
+.nav-flotante-dock--elevated{bottom:calc(max(20px, env(safe-area-inset-bottom,0px)) + 40px)}
 .nav-flotante-btn{pointer-events:auto; width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.38); background:rgba(15,47,72,.52); color:#fff; font-size:22px; line-height:1; display:grid; place-items:center; cursor:pointer; backdrop-filter:blur(6px); box-shadow:0 4px 14px rgba(15,47,72,.28); transition:background .2s,border-color .2s,transform .15s,opacity .2s}
 .nav-flotante-btn:hover:not(:disabled){background:rgba(39,120,177,.82); border-color:rgba(255,255,255,.55)}
 .nav-flotante-btn:active:not(:disabled){transform:scale(.96)}
@@ -639,7 +654,7 @@ html.catch-embed .demo{display:none!important}
   .velo{padding:12px; padding-bottom:max(12px,env(safe-area-inset-bottom,0px)); align-items:end}
   .fuente{max-height:min(50dvh,360px); overflow:auto}
   .fuente dl{grid-template-columns:minmax(0,1fr)}
-  .avatar-w{max-width:calc(100vw - 16px); left:8px; right:auto}
+  .avatar-w{max-width:calc(100vw - 16px); left:8px; right:auto; bottom:calc(55px + env(safe-area-inset-bottom,0px))}
   .fab{max-width:calc(100vw - 16px)}
   .panel-av{width:min(380px,calc(100vw - 16px)); max-height:min(70dvh,520px)}
   .cliente-avatar-en-vivo__media .avatar-video-media{min-height:0; max-height:36vh}
@@ -648,6 +663,7 @@ html.catch-embed .demo{display:none!important}
   .grande{font-size:clamp(40px,18vw,72px)}
   .titular{font-size:clamp(22px,6vw,32px)}
   .portada .grande{font-size:clamp(32px,12vw,52px)}
+  .portada--numero .grande{font-size:clamp(56px,18vw,88px); color:var(--azul)}
   .cliente .cabeza{padding:10px 12px 6px}
   .cliente .cuerpo{padding:8px 12px calc(16px + var(--catch-avatar-fab-clearance))}
   .cuerpo{padding:10px 12px 90px}
@@ -699,12 +715,13 @@ html.catch-embed .demo{display:none!important}
 <div id="capaModal"></div>
 <div id="fuente" class="fuente" role="region" aria-live="polite" aria-label="De dónde sale este dato"></div>
 <script>
-const DATOS = {"bimestres":["Jul-Ago 2024","Sep-Oct 2024","Nov-Dic 2024","Ene-Feb 2025","Mar-Abr 2025","May-Jun 2025","Jul-Ago 2025"],"edicion":"Jul-Ago 2025","beneficios":["Incremento en fondo ahorro","Incremento en vales despensa","Incremento en aguinaldo","Incremento en dias feriados","Incremento en prima vacacional","Uniformes","Bono por antiguedad","Bono por puntualidad","Bono por asistencia","Ayuda por defuncion","Ayuda por maternidad","Ayuda por paternidad","Ayuda escolar utiles","Ayuda escolar uniformes","Ayuda por matrimonio","Ayuda deportiva","Seguro de gastos medicos menores","Seguro de gastos medicos mayores","Seguro de gastos medicos para la familia"],"motivos":["Otro empleo mejor sueldo","Otro empleo mas cerca de su casa","Otro empleo mejor horario","Otro empleo mejor ruta de transporte","Otro empleo mejores prestaciones","Problemas con companeros","Problemas con jefe supervisor","Bajo rendimiento","Fin de contrato","Cambio de residencia","Conflictos con pareja familia","Enfermedad general","Estudios impedimento para seguir estudia","Horario complicado","Independizarse poner un negocio propio","Inseguridad en la zona","No tenia quien cuidara hijos familiares","Motivos personales sin especificar"],"empresas":[{"id":"EMP_01","proceso":"recubrimientos","procesos":["recubrimientos"],"tier":"Tier 1","tamano":"101 a 300","sindicato":0.0,"confed":"Sin sindicato","op":143.0,"adm":24.0,"otro":40.0,"muj":0.25,"edad":[0.41,0.3,0.12,0.15,0.02],"sal":[278.8,278.8,304.4,329.7],"inc":{"2024":[0.05,0.059,0.01,null],"2025":[0.097,0.059,null,0.022]},"mes":[1,0,0,0,0,0,0,0,0,0,0,0],"ben":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"No Aplica (Especifique)","cap":3.5,"mot":[5.0,0.0,0.0,0.0,3.0,2.0,2.0,4.0,4.0,3.0,5.0,4.0,4.0,3.0,4.0,0.0,5.0,5.0],"rot":[0.121,0.1146,0.1146,0.1,0.1278,0.1,0.0719],"rnc":[0.0318,0.0382,0.0382,0.0444,0.0389,0.0167,0.012],"rc":[0.0382,0.0382,0.0382,0.0556,0.0722,0.0778,0.0539],"aus":[0.078,0.0334,0.0387,0.0435,0.0492,0.0081,0.0498],"cn":[12.0,6.0,6.0,20.0,9.0,0.0,7.0],"cr":[19.0,10.0,10.0,18.0,20.0,6.0,4.0]},{"id":"EMP_02","proceso":null,"procesos":[],"tier":null,"tamano":"301 a 500","sindicato":1.0,"confed":"C.T.M.","op":331.0,"adm":136.0,"otro":0.0,"muj":0.33,"edad":[0.0,0.27,0.48,0.23,0.02],"sal":[375.0,432.0,491.0,740.0],"inc":{"2024":[0.08,0.05,null,0.055],"2025":[0.08,0.05,null,0.055]},"mes":[0,0,0,1,0,0,1,0,0,0,0,0],"ben":[1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":0.0,"mot":[2.0,1.0,0.0,1.0,1.0,1.0,2.0,2.0,2.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0,2.0],"rot":[0.0275,0.0275,0.0275,0.0275,0.0275,0.0275,0.0407],"rnc":[0.011,0.011,0.011,0.011,0.011,0.011,0.0171],"rc":[0.0165,0.0165,0.0165,0.0165,0.0165,0.0165,0.0214],"aus":[0.0025,0.0026,0.0026,0.0026,0.0026,0.0026,0.0026],"cn":[6.0,6.0,6.0,6.0,6.0,6.0,25.0],"cr":[1.0,1.0,1.0,1.0,1.0,1.0,10.0]},{"id":"EMP_03","proceso":"metalmecanica","procesos":["metalmecanica"],"tier":"Tier 1","tamano":"101 a 300","sindicato":1.0,"confed":"C.T.M.","op":76.0,"adm":58.0,"otro":66.0,"muj":0.35,"edad":[0.121,0.253,0.273,0.263,0.091],"sal":[370.0,396.0,430.0,641.0],"inc":{"2024":[0.11,0.1,null,null],"2025":[0.1,0.1,0.01,null]},"mes":[0,0,0,1,0,0,0,0,0,0,0,0],"ben":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":51.49,"mot":[1.0,1.0,0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,0.0,0.0,1.0,0.0,1.0,3.0],"rot":[0.0473,0.013,0.0066,0.1471,0.0308,0.0458,0.0],"rnc":[0.027,0.013,0.0066,0.0294,0.0077,0.0076,0.0],"rc":[0.0203,0.0,0.0,0.1176,0.0231,0.0305,0.0],"aus":[0.0117,0.0896,0.103,0.047,0.0483,0.0678,0.0711],"cn":[4.0,1.0,1.0,0.0,0.0,3.0,0.0],"cr":[null,1.0,null,0.0,0.0,0.0,5.0]},{"id":"EMP_04","proceso":"arnesera","procesos":["arnesera","electronico_electronica","plasticos"],"tier":"Tier 1","tamano":"1 a 100","sindicato":0.0,"confed":"Otro","op":8.0,"adm":16.0,"otro":1.0,"muj":0.67,"edad":[null,null,null,null,null],"sal":[278.8,313.8,351.4,370.0],"inc":{"2024":[0.2,0.03,null,null],"2025":[0.045,0.04,0.02,0.02]},"mes":[1,0,0,0,0,1,0,0,0,0,0,0],"ben":[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"No Aplica (Especifique)","cap":66.29,"mot":[3.0,3.0,2.0,3.0,3.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,null,0.0,0.0],"rot":[0.1304,0.0385,0.0385,0.0,0.04,0.0,0.0],"rnc":[0.1304,0.0385,0.0385,0.0,0.0,0.0,0.0],"rc":[0.0,0.0,0.0,0.0,0.04,0.0,0.0],"aus":[0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cn":[1.0,6.0,6.0,6.0,0.0,0.0,0.0],"cr":[1.0,1.0,1.0,1.0,0.0,0.0,0.0]},{"id":"EMP_05","proceso":"metalmecanica","procesos":["metalmecanica"],"tier":"Tier 2","tamano":"101 a 300","sindicato":1.0,"confed":"S.I.T.I.M.M.","op":99.0,"adm":51.0,"otro":2.0,"muj":0.547,"edad":[0.064,0.174,0.273,0.326,0.163],"sal":[299.0,318.0,360.0,400.0],"inc":{"2024":[0.087,0.075,null,null],"2025":[0.087,0.075,null,null]},"mes":[0,0,1,0,0,0,0,0,0,0,0,0],"ben":[1,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0],"neg":"No Aplica (Especifique)","cap":null,"mot":[2.0,1.0,2.0,null,1.0,2.0,1.0,2.0,2.0,1.0,3.0,1.0,1.0,2.0,1.0,1.0,4.0,1.0],"rot":[0.0807,0.0248,0.0375,0.0375,0.0506,0.0452,0.0533],"rnc":[0.0683,0.0186,0.0187,0.0312,0.038,0.0323,0.0333],"rc":[0.0124,0.0062,0.0187,0.0063,0.0127,0.0129,0.0133],"aus":[0.0208,0.0066,0.0158,0.0198,0.0406,0.0338,0.0277],"cn":[6.0,2.0,0.0,1.0,0.0,0.0,1.0],"cr":[13.0,7.0,0.0,6.0,3.0,6.0,3.0]},{"id":"EMP_06","proceso":"metalmecanica","procesos":["metalmecanica"],"tier":null,"tamano":"301 a 500","sindicato":1.0,"confed":"C.T.M.","op":200.0,"adm":146.0,"otro":0.0,"muj":0.53,"edad":[0.03,0.35,0.37,0.18,0.07],"sal":[346.5,379.0,422.5,460.9],"inc":{"2024":[0.12,0.05,0.01,null],"2025":[0.12,0.05,0.01,null]},"mes":[0,0,0,1,0,0,0,0,0,0,0,0],"ben":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":0.43,"mot":[3.0,0.0,3.0,1.0,2.0,2.0,1.0,4.0,2.0,1.0,2.0,1.0,3.0,4.0,1.0,0.0,3.0,3.0],"rot":[0.0978,0.0744,0.0359,0.0686,0.0223,0.0472,0.0376],"rnc":[0.0136,0.0165,0.0028,0.02,0.0112,0.0194,0.0087],"rc":[0.0842,0.0579,0.0331,0.0486,0.0028,0.025,0.0289],"aus":[0.0394,0.0285,0.047,0.0365,0.0267,0.0047,0.0099],"cn":[23.0,23.0,3.0,3.0,0.0,1.0,0.0],"cr":[24.0,24.0,22.0,5.0,7.0,13.0,2.0]},{"id":"EMP_07","proceso":null,"procesos":[],"tier":null,"tamano":"más de 1,000","sindicato":1.0,"confed":"Otro","op":1452.0,"adm":924.0,"otro":0.0,"muj":0.2,"edad":[0.267,0.554,null,0.168,0.01],"sal":[370.8,438.8,570.2,753.3],"inc":{"2024":[0.09,0.08,null,null],"2025":[0.07,0.08,0.015,0.015]},"mes":[0,0,1,1,0,0,0,0,0,0,0,0],"ben":[0,1,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":0.56,"mot":[3.0,1.0,3.0,1.0,2.0,1.0,1.0,2.0,null,1.0,1.0,1.0,0.0,1.0,2.0,1.0,2.0,3.0],"rot":[0.0502,0.0117,0.0411,0.0288,0.0213,0.0172,0.0438],"rnc":[0.0272,0.0078,0.0061,0.0099,0.0102,0.0142,0.0278],"rc":[0.0226,0.0039,0.0333,0.0189,0.0077,0.0025,0.0139],"aus":[0.0101,0.0079,0.0119,0.0074,0.0036,0.0023,0.0057],"cn":[10.0,null,0.0,0.0,3.0,94.0,0.0],"cr":[null,9.0,0.0,1.0,14.0,34.0,88.0]},{"id":"EMP_08","proceso":null,"procesos":[],"tier":null,"tamano":"501 a 1,000","sindicato":1.0,"confed":"C.T.M.","op":228.0,"adm":525.0,"otro":0.0,"muj":0.35,"edad":[0.325,0.33,0.204,0.141,0.0],"sal":[283.0,326.0,356.0,388.0],"inc":{"2024":[0.065,0.065,null,null],"2025":[0.063,0.05,null,null]},"mes":[0,1,0,1,0,0,0,0,0,0,0,0],"ben":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Ya tuvimos la revisión de incrementos salariales del 2026","cap":0.0,"mot":[4.0,1.0,1.0,1.0,1.0,2.0,1.0,3.0,4.0,4.0,5.0,1.0,3.0,4.0,3.0,1.0,4.0,5.0],"rot":[0.017,0.0302,0.0,0.0155,0.0347,0.0239,null],"rnc":[0.0071,0.0227,0.0,0.0155,0.0278,0.0199,0.0199],"rc":[0.0099,0.0076,0.0,0.0,0.0069,0.004,0.004],"aus":[0.0068,0.0029,0.0005,0.0237,0.0024,0.0026,0.0025],"cn":[5.0,2.0,0.0,9.0,5.0,65.0,65.0],"cr":[28.0,13.0,9.0,10.0,15.0,8.0,8.0]},{"id":"EMP_09","proceso":"fundicion","procesos":["fundicion"],"tier":"Tier 2","tamano":"101 a 300","sindicato":1.0,"confed":"C.T.M.","op":198.0,"adm":95.0,"otro":0.0,"muj":0.1,"edad":[0.099,null,0.302,0.366,0.233],"sal":[390.0,489.0,540.0,842.0],"inc":{"2024":[0.064,0.075,0.015,null],"2025":[0.065,0.05,0.01,null]},"mes":[0,1,0,1,0,0,0,0,0,0,0,0],"ben":[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],"neg":"Ya tuvimos la revisión de incrementos salariales del 2026","cap":1.56,"mot":[4.0,1.0,1.0,1.0,1.0,1.0,0.0,0.0,4.0,5.0,4.0,1.0,0.0,0.0,1.0,0.0,0.0,1.0],"rot":[0.1362,0.0512,0.0341,0.0309,0.0403,0.0136,0.0341],"rnc":[0.093,0.0273,0.0034,0.0137,0.0201,0.0102,0.0239],"rc":[0.0332,0.0205,0.0307,0.0103,0.0168,0.0,0.0068],"aus":[0.0216,0.0213,0.003,0.0193,0.0024,0.0121,0.0011],"cn":[0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cr":[12.0,8.0,5.0,9.0,10.0,3.0,6.0]},{"id":"EMP_10","proceso":null,"procesos":[],"tier":null,"tamano":"301 a 500","sindicato":0.0,"confed":null,"op":269.0,"adm":67.0,"otro":0.0,"muj":0.582,"edad":[0.126,0.277,0.126,0.283,0.189],"sal":[288.0,288.0,320.0,336.0],"inc":{"2024":[0.04,0.02,null,null],"2025":[0.05,0.08,null,null]},"mes":[1,0,0,0,0,0,0,0,0,0,0,0],"ben":[0,0,1,0,1,0,0,1,1,1,0,0,1,0,0,0,0,1,1],"neg":"No Aplica (Especifique)","cap":2.22,"mot":[5.0,1.0,1.0,1.0,1.0,1.0,1.0,4.0,5.0,1.0,3.0,1.0,1.0,1.0,0.0,0.0,0.0,3.0],"rot":[0.3814,0.2123,0.1429,0.2734,0.157,0.1166,0.1786],"rnc":[0.2442,0.1005,0.0468,0.2083,0.0291,0.105,0.1548],"rc":[0.1349,0.1119,0.0911,0.0651,0.064,0.0117,0.0238],"aus":[0.0214,0.026,0.0151,0.0208,0.0174,0.0128,0.0141],"cn":[55.0,5.0,5.0,2.0,2.0,2.0,0.0],"cr":[100.0,100.0,100.0,86.0,4.0,50.0,59.0]},{"id":"EMP_11","proceso":null,"procesos":[],"tier":null,"tamano":"301 a 500","sindicato":1.0,"confed":"C.T.M.","op":196.0,"adm":87.0,"otro":65.0,"muj":0.12,"edad":[0.2,0.19,0.25,0.26,0.1],"sal":[278.8,348.0,441.7,441.7],"inc":{"2024":[0.05,null,null,null],"2025":[0.05,null,null,null]},"mes":[1,0,0,0,0,0,0,0,0,0,0,0],"ben":[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":0.57,"mot":[4.0,2.0,2.0,1.0,3.0,1.0,2.0,2.0,2.0,2.0,3.0,0.0,0.0,0.0,3.0,0.0,1.0,4.0],"rot":[0.2657,0.2636,0.1163,0.1099,0.0674,0.0674,0.1378],"rnc":[0.2435,0.2093,0.0504,0.0879,0.0461,0.0461,0.0742],"rc":[0.0185,0.0543,0.0659,0.022,0.0177,0.0177,0.0247],"aus":[0.0237,0.0251,0.0178,0.0125,0.0116,0.0116,0.0189],"cn":[78.0,30.0,0.0,0.0,0.0,0.0,6.0],"cr":[26.0,23.0,22.0,30.0,21.0,21.0,12.0]},{"id":"EMP_12","proceso":"fundicion","procesos":["fundicion","metalmecanica"],"tier":null,"tamano":"1 a 100","sindicato":0.0,"confed":null,"op":54.0,"adm":41.0,"otro":4.0,"muj":0.157,"edad":[0.093,0.343,0.185,0.185,0.194],"sal":[300.0,336.0,357.0,386.0],"inc":{"2024":[0.15,0.2,0.2,0.2],"2025":[0.15,0.15,0.15,0.15]},"mes":[0,1,0,0,0,0,0,0,0,0,0,0],"ben":[1,1,0,0,0,1,1,1,1,0,1,0,0,0,0,1,0,1,1],"neg":"No Aplica (Especifique)","cap":0.56,"mot":[4.0,4.0,2.0,3.0,3.0,0.0,3.0,3.0,3.0,2.0,2.0,0.0,2.0,0.0,0.0,0.0,0.0,2.0],"rot":[0.0882,0.0808,0.0722,0.1188,0.0833,0.0426,0.0737],"rnc":[0.0784,0.0606,0.0619,0.1089,0.0833,0.0426,0.0632],"rc":[0.0098,0.0202,0.0,0.0099,0.0,0.0,0.0],"aus":[0.0233,0.0452,0.0348,0.0295,0.0213,0.0292,0.0316],"cn":[null,null,null,1.0,null,null,null],"cr":[6.0,6.0,2.0,16.0,6.0,3.0,4.0]},{"id":"EMP_13","proceso":"metalmecanica","procesos":["metalmecanica"],"tier":"Tier 2","tamano":"501 a 1,000","sindicato":1.0,"confed":"C.T.M.","op":619.0,"adm":174.0,"otro":0.0,"muj":0.13,"edad":[0.074,0.225,0.229,0.28,0.193],"sal":[371.1,445.4,519.6,623.5],"inc":{"2024":[0.07,0.057,null,null],"2025":[0.042,0.042,0.04,0.03]},"mes":[0,0,1,0,0,0,0,0,0,0,0,0],"ben":[0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":0.25,"mot":[4.0,3.0,1.0,2.0,4.0,1.0,1.0,3.0,3.0,2.0,2.0,0.0,0.0,2.0,0.0,0.0,2.0,2.0],"rot":[0.0859,0.0813,0.0605,0.0757,0.0652,0.0555,0.0769],"rnc":[0.065,0.0708,0.0484,0.0469,0.0063,0.0214,0.0404],"rc":[0.0139,0.007,0.0097,0.0084,0.059,0.029,0.0126],"aus":[0.0172,0.0191,0.0212,0.0163,0.0114,0.0165,0.0161],"cn":[13.0,4.0,2.0,1.0,0.0,6.0,20.0],"cr":[68.0,70.0,13.0,71.0,16.0,35.0,41.0]},{"id":"EMP_14","proceso":"fundicion","procesos":["fundicion","metalmecanica"],"tier":"Tier 2","tamano":"301 a 500","sindicato":1.0,"confed":"C.T.M.","op":260.0,"adm":121.0,"otro":null,"muj":0.3,"edad":[0.049,0.334,0.334,0.19,0.092],"sal":[294.0,343.0,402.0,452.0],"inc":{"2024":[0.07,0.045,0.02,null],"2025":[0.06,0.045,0.02,null]},"mes":[0,0,0,0,1,0,0,0,0,0,0,0],"ben":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Ya tuvimos la revisión de incrementos salariales del 2026","cap":2.1,"mot":[3.0,1.0,2.0,1.0,3.0,2.0,1.0,1.0,1.0,2.0,3.0,0.0,0.0,1.0,1.0,1.0,2.0,4.0],"rot":[0.1615,0.1522,0.0805,0.1161,0.0932,0.0761,0.0761],"rnc":[0.133,0.1076,0.046,0.102,0.0537,0.0525,0.0525],"rc":[0.0285,0.0446,0.0345,0.0255,0.0311,0.021,0.021],"aus":[0.0221,0.02,0.0173,0.0094,0.0093,0.0081,0.0085],"cn":[1.0,0.0,0.0,35.0,20.0,20.0,20.0],"cr":[69.0,24.0,2.0,8.0,15.0,15.0,15.0]},{"id":"EMP_15","proceso":"fundicion","procesos":["fundicion","quimicos_solventes_y_adhesivos"],"tier":"Tier 1","tamano":"más de 1,000","sindicato":1.0,"confed":"Otro","op":3109.0,"adm":1472.0,"otro":0.0,"muj":0.39,"edad":[0.108,0.218,0.383,0.29,0.001],"sal":[331.5,438.7,448.0,807.3],"inc":{"2024":[0.082,0.065,0.01,null],"2025":[0.082,0.065,0.074,null]},"mes":[0,1,0,0,0,1,0,0,1,0,0,0],"ben":[0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":0.26,"mot":[4.0,3.0,3.0,2.0,2.0,2.0,2.0,1.0,1.0,2.0,1.0,1.0,1.0,1.0,1.0,0.0,2.0,1.0],"rot":[0.1718,0.133,0.0969,0.114,0.0997,0.1195,0.1347],"rnc":[0.1391,0.1131,0.0788,0.0969,0.0807,0.1022,0.1015],"rc":[0.032,0.0185,0.0168,0.0144,0.0161,0.0241,0.0293],"aus":[0.0052,0.0047,0.0048,0.0178,0.0164,0.0233,0.0226],"cn":[39.0,12.0,40.0,16.0,15.0,22.0,22.0],"cr":[350.0,674.0,345.0,397.0,380.0,422.0,480.0]},{"id":"EMP_16","proceso":"metalmecanica","procesos":["metalmecanica"],"tier":"Tier 3","tamano":"101 a 300","sindicato":1.0,"confed":"S.I.T.I.M.M.","op":145.0,"adm":94.0,"otro":0.0,"muj":0.456,"edad":[0.109,0.244,0.264,0.301,0.083],"sal":[329.1,392.1,446.7,500.3],"inc":{"2024":[0.1,0.06,null,null],"2025":[0.15,0.05,0.03,null]},"mes":[0,0,1,0,0,0,0,0,0,1,0,0],"ben":[1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0],"neg":"Ya tuvimos la revisión de incrementos salariales del 2026","cap":1.02,"mot":[4.0,1.0,2.0,1.0,4.0,2.0,1.0,1.0,1.0,2.0,1.0,1.0,2.0,0.0,0.0,0.0,1.0,0.0],"rot":[0.1492,0.0933,0.0406,0.1067,0.1067,0.1004,0.1004],"rnc":[0.1271,0.0777,0.0406,0.08,0.08,0.0753,0.0753],"rc":[0.0166,0.0155,0.0,0.0267,0.0267,0.0251,0.0251],"aus":[0.0153,0.0147,0.0063,0.0091,0.0144,0.0135,0.0132],"cn":[0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cr":[10.0,24.0,24.0,60.0,60.0,60.0,60.0]},{"id":"EMP_17","proceso":"arnesera","procesos":["arnesera","metalmecanica"],"tier":"Tier 2","tamano":"1 a 100","sindicato":0.0,"confed":null,"op":19.0,"adm":17.0,"otro":null,"muj":0.15,"edad":[0.06,0.06,0.51,0.34,0.03],"sal":[285.7,385.7,457.1,642.9],"inc":{"2024":[0.08,0.08,null,null],"2025":[0.05,0.05,null,null]},"mes":[0,0,0,1,0,0,0,0,0,0,0,0],"ben":[0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0],"neg":"Ya tuvimos la revisión de incrementos salariales del 2026","cap":4.5,"mot":[3.0,1.0,0.0,0.0,2.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0],"rot":[0.0556,0.0,0.0,0.0,0.0278,0.0,0.0],"rnc":[0.0556,0.0,0.0,0.0,0.0,0.0,0.0],"rc":[0.0,0.0,0.0,0.0,0.0278,0.0,0.0],"aus":[0.0488,0.0221,0.0407,0.0362,0.0207,0.0,0.0455],"cn":[0.0,0.0,0.0,0.0,1.0,0.0,0.0],"cr":[2.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"id":"EMP_18","proceso":null,"procesos":[],"tier":null,"tamano":"más de 1,000","sindicato":1.0,"confed":"C.T.M.","op":672.0,"adm":125.0,"otro":236.0,"muj":0.52,"edad":[0.14,0.3,0.24,0.27,0.05],"sal":[368.0,448.0,649.3,746.8],"inc":{"2024":[0.2,0.08,null,null],"2025":[0.08,0.08,null,null]},"mes":[0,0,1,0,0,0,0,0,0,0,0,0],"ben":[1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":1.12,"mot":[3.0,3.0,0.0,1.0,2.0,0.0,0.0,2.0,0.0,2.0,3.0,2.0,1.0,1.0,1.0,0.0,3.0,3.0],"rot":[0.2836,0.1629,0.096,0.1371,0.0955,0.0567,0.0916],"rnc":[0.1953,0.1117,0.08,0.1143,0.0955,0.0567,0.0916],"rc":[0.0475,0.0197,0.016,0.0229,0.0,0.0,0.0],"aus":[0.0125,0.012,0.0326,0.0968,0.011,0.0556,0.009],"cn":[8.0,8.0,0.0,0.0,0.0,3.0,3.0],"cr":[194.0,194.0,35.0,89.0,10.0,42.0,42.0]},{"id":"EMP_19","proceso":"fundicion","procesos":["fundicion","metalmecanica"],"tier":null,"tamano":"más de 1,000","sindicato":1.0,"confed":"C.T.M.","op":682.0,"adm":485.0,"otro":86.0,"muj":0.24,"edad":[0.03,0.27,0.27,0.36,0.07],"sal":[476.0,577.0,750.0,900.0],"inc":{"2024":[0.05,0.078,0.024,0.022],"2025":[0.05,0.078,0.024,0.022]},"mes":[1,0,1,0,0,0,0,0,0,0,0,0],"ben":[0,0,1,0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":14.2,"mot":[4.0,0.0,0.0,0.0,1.0,1.0,1.0,2.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,2.0],"rot":[0.0347,0.0192,0.0151,0.0137,0.0133,0.0129,0.0146],"rnc":[0.0188,0.0115,0.0085,0.0082,0.008,0.0077,0.0077],"rc":[0.0059,0.0019,0.0028,0.0027,0.0027,0.0026,0.0034],"aus":[0.0185,0.006,0.0064,0.0268,0.0067,0.0065,0.007],"cn":[34.0,21.0,26.0,19.0,36.0,36.0,29.0],"cr":[29.0,27.0,18.0,24.0,23.0,23.0,38.0]},{"id":"EMP_20","proceso":"arnesera","procesos":["arnesera"],"tier":"Tier 1","tamano":"más de 1,000","sindicato":1.0,"confed":"C.T.M.","op":3125.0,"adm":978.0,"otro":0.0,"muj":0.61,"edad":[0.17,0.33,0.27,0.19,0.04],"sal":[330.0,380.0,425.7,546.3],"inc":{"2024":[0.07,0.055,null,null],"2025":[0.07,0.055,null,null]},"mes":[0,1,0,0,0,0,1,0,0,0,0,0],"ben":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":16.65,"mot":[2.0,2.0,1.0,0.0,1.0,2.0,2.0,2.0,0.0,3.0,3.0,2.0,1.0,1.0,1.0,0.0,4.0,4.0],"rot":[0.126,0.152,0.152,0.152,0.152,0.1109,0.1535],"rnc":[0.047,0.0232,0.0232,0.0232,0.0232,0.0441,0.0765],"rc":[0.079,0.1286,0.1286,0.1286,0.1286,0.0663,0.0763],"aus":[0.0913,0.042,0.043,0.043,0.043,0.0582,0.0554],"cn":[0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cr":[902.0,691.0,691.0,691.0,691.0,517.0,680.0]},{"id":"EMP_21","proceso":"metalmecanica","procesos":["metalmecanica"],"tier":"Tier 1","tamano":"101 a 300","sindicato":1.0,"confed":"S.I.T.I.M.M.","op":68.0,"adm":85.0,"otro":0.0,"muj":0.36,"edad":[0.03,0.16,0.39,0.35,0.07],"sal":[350.0,431.0,531.0,586.0],"inc":{"2024":[0.08,0.08,0.02,0.01],"2025":[0.08,0.08,0.02,0.01]},"mes":[0,0,1,0,0,0,1,0,0,0,0,0],"ben":[1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":2.89,"mot":[3.0,3.0,4.0,3.0,0.0,1.0,2.0,5.0,4.0,3.0,5.0,1.0,1.0,5.0,3.0,3.0,4.0,3.0],"rot":[0.0065,0.0066,0.0201,0.0134,0.0205,0.0066,0.0065],"rnc":[0.0065,0.0066,0.0067,0.0067,0.0068,0.0,0.0065],"rc":[0.0,0.0,0.0,0.0067,0.0137,0.0066,0.0],"aus":[0.0009,0.0012,0.0012,0.0011,0.0005,0.0009,0.0015],"cn":[0.0,0.0,0.0,0.0,0.0,2.0,0.0],"cr":[3.0,0.0,0.0,1.0,1.0,5.0,4.0]},{"id":"EMP_22","proceso":"metalmecanica","procesos":["metalmecanica"],"tier":"Tier 2","tamano":"501 a 1,000","sindicato":1.0,"confed":"C.T.M.","op":627.0,"adm":73.0,"otro":192.0,"muj":0.455,"edad":[0.116,0.167,0.153,0.382,0.183],"sal":[370.1,445.8,496.3,529.9],"inc":{"2024":[0.1,0.07,0.017,0.017],"2025":[0.07,0.07,0.01,0.01]},"mes":[0,1,0,0,0,0,0,0,0,0,0,0],"ben":[0,0,0,1,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":4.13,"mot":[4.0,4.0,1.0,1.0,2.0,1.0,2.0,2.0,4.0,3.0,3.0,2.0,2.0,1.0,1.0,2.0,4.0,3.0],"rot":[0.062,0.1685,0.0963,0.0639,0.1109,0.139,0.05],"rnc":[0.0234,0.0328,0.022,0.0545,0.0296,0.0369,0.0171],"rc":[0.0771,0.1357,0.0743,0.0093,0.0814,0.1005,0.0329],"aus":[0.0155,0.0089,0.0174,0.014,0.0186,0.0191,0.0089],"cn":[0.0,0.0,0.0,0.0,0.0,1.0,114.0],"cr":[75.0,24.0,3.0,94.0,108.0,4.0,null]},{"id":"EMP_23","proceso":"metalmecanica","procesos":["metalmecanica"],"tier":"Tier 1","tamano":"301 a 500","sindicato":1.0,"confed":"C.T.M.","op":326.0,"adm":156.0,"otro":0.0,"muj":null,"edad":[null,null,null,null,null],"sal":[331.4,357.7,374.6,453.3],"inc":{"2024":[0.07,0.07,null,null],"2025":[0.07,0.08,null,null]},"mes":[1,0,0,0,0,0,0,0,0,0,0,0],"ben":[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Ya tuvimos la revisión de incrementos salariales del 2026","cap":2.96,"mot":[2.0,2.0,3.0,3.0,3.0,3.0,2.0,1.0,2.0,1.0,4.0,3.0,3.0,3.0,1.0,1.0,5.0,5.0],"rot":[0.1157,0.1206,0.0521,0.1091,0.0738,0.0758,0.1079],"rnc":[0.0667,0.081,0.0229,0.0929,0.0512,0.0526,0.0705],"rc":[0.0039,0.0237,0.0292,0.0081,0.0225,0.0232,0.0373],"aus":[0.0035,0.0059,0.0161,0.0017,0.0103,0.0106,0.0417],"cn":[0.0,0.0,1.0,0.0,0.0,0.0,0.0],"cr":[40.0,57.0,25.0,0.0,30.0,30.0,74.0]},{"id":"EMP_24","proceso":"metalmecanica","procesos":["metalmecanica"],"tier":"Tier 1","tamano":"501 a 1,000","sindicato":1.0,"confed":"Otro","op":770.0,"adm":78.0,"otro":0.0,"muj":0.12,"edad":[0.151,0.309,0.262,0.224,0.054],"sal":[354.7,562.4,582.8,776.4],"inc":{"2024":[0.06,0.05,0.005,null],"2025":[0.07,0.05,0.005,null]},"mes":[0,0,1,1,0,0,0,0,0,0,0,0],"ben":[1,1,1,0,1,0,0,1,1,0,0,0,1,0,0,0,0,0,0],"neg":"Ya tuvimos la revisión de incrementos salariales del 2026","cap":11.6,"mot":[3.0,2.0,3.0,2.0,1.0,0.0,1.0,3.0,3.0,2.0,3.0,1.0,1.0,4.0,1.0,1.0,3.0,3.0],"rot":[0.1027,0.0874,0.0776,0.1889,0.1665,0.2111,0.2193],"rnc":[0.0667,0.0667,0.0667,0.2166,0.123,0.1722,0.145],"rc":[0.0361,0.0361,0.0361,0.0063,0.041,0.0389,0.079],"aus":[0.0483,0.0494,0.1273,0.0586,0.0326,0.0411,0.0471],"cn":[0.0,0.0,0.0,0.0,0.0,42.0,null],"cr":[33.0,33.0,33.0,33.0,36.0,174.0,172.0]},{"id":"EMP_25","proceso":"electronico_electronica","procesos":["electronico_electronica"],"tier":"Tier 1","tamano":"501 a 1,000","sindicato":1.0,"confed":"C.T.M.","op":494.0,"adm":87.0,"otro":6.0,"muj":0.57,"edad":[0.163,0.301,0.23,0.24,0.066],"sal":[332.0,359.0,403.0,432.0],"inc":{"2024":[0.05,null,null,null],"2025":[0.071,null,null,null]},"mes":[0,0,0,1,0,0,0,0,0,0,0,0],"ben":[1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":0.83,"mot":[2.0,1.0,0.0,0.0,2.0,1.0,1.0,1.0,1.0,1.0,1.0,2.0,1.0,0.0,0.0,1.0,3.0,3.0],"rot":[0.1092,0.113,0.0901,0.116,0.0702,0.1015,0.0568],"rnc":[0.0871,0.0971,0.0644,0.1099,0.064,0.0241,0.0568],"rc":[0.0221,0.0146,0.0258,0.0046,0.0062,0.0775,0.0],"aus":[0.0232,0.0262,0.0224,0.0231,0.0175,0.0867,0.0241],"cn":[0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cr":[102.0,108.0,2.0,3.0,24.0,0.0,19.0]},{"id":"EMP_26","proceso":"metalmecanica","procesos":["metalmecanica"],"tier":null,"tamano":"301 a 500","sindicato":1.0,"confed":"Otro","op":439.0,"adm":35.0,"otro":0.0,"muj":0.49,"edad":[0.15,0.23,0.15,0.22,0.25],"sal":[226.0,248.5,282.0,423.5],"inc":{"2024":[0.06,0.045,0.025,null],"2025":[0.06,0.045,0.025,null]},"mes":[1,0,0,0,0,0,0,0,0,0,0,0],"ben":[1,1,0,0,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0],"neg":"Ya tuvimos la revisión de incrementos salariales del 2026","cap":22.55,"mot":[1.0,3.0,1.0,2.0,1.0,2.0,1.0,1.0,1.0,3.0,3.0,1.0,1.0,1.0,0.0,0.0,4.0,5.0],"rot":[0.2553,0.2553,0.2553,0.2553,0.2553,0.2553,0.2553],"rnc":[0.2215,0.2215,0.2215,0.2215,0.2215,0.2215,0.2215],"rc":[0.0253,0.0253,0.0253,0.0253,0.0253,0.0253,0.0253],"aus":[0.0079,0.0081,0.0083,0.0083,0.0083,0.0083,0.0081],"cn":[29.0,29.0,29.0,29.0,29.0,29.0,29.0],"cr":[90.0,90.0,90.0,90.0,90.0,90.0,90.0]},{"id":"EMP_27","proceso":"plasticos","procesos":["plasticos"],"tier":"Tier 3","tamano":"1 a 100","sindicato":0.0,"confed":null,"op":0.0,"adm":12.0,"otro":0.0,"muj":null,"edad":[null,null,null,null,null],"sal":[633.3,766.7,850.0,900.0],"inc":{"2024":[null,0.057,null,0.057],"2025":[null,0.057,null,0.057]},"mes":[0,0,0,1,0,0,0,0,0,0,0,0],"ben":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"No Aplica (Especifique)","cap":6.67,"mot":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"rot":[0.0,0.0,0.0,0.0,0.0,0.0,0.0],"rnc":[0.0,0.0,0.0,0.0,0.0,0.0,0.0],"rc":[0.0,0.0,0.0,0.0,0.0,0.0,0.0],"aus":[0.0407,0.0,0.0484,0.0426,0.0233,0.0,0.0],"cn":[0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cr":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"id":"EMP_28","proceso":"metalmecanica","procesos":["metalmecanica"],"tier":"Tier 2","tamano":"más de 1,000","sindicato":1.0,"confed":"Otro","op":1540.0,"adm":446.0,"otro":0.0,"muj":0.11,"edad":[0.485,0.129,0.099,0.257,0.03],"sal":[378.0,455.0,575.0,818.0],"inc":{"2024":[0.08,0.08,0.005,0.02],"2025":[0.08,0.08,0.005,0.02]},"mes":[0,1,0,0,0,0,0,0,0,0,0,0],"ben":[1,1,1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":3.42,"mot":[3.0,3.0,2.0,3.0,3.0,3.0,4.0,2.0,2.0,2.0,4.0,0.0,0.0,0.0,2.0,2.0,2.0,4.0],"rot":[0.1372,0.1197,0.0686,0.0521,0.0103,0.0775,0.0775],"rnc":[0.1099,0.0997,0.0405,0.0355,0.008,0.0584,0.0584],"rc":[0.0197,0.02,0.028,0.0101,0.0023,0.0191,0.0191],"aus":[0.0434,0.0362,0.0389,0.0334,0.006,0.0574,0.0561],"cn":[20.0,20.0,0.0,0.0,0.0,0.0,0.0],"cr":[150.0,166.0,78.0,120.0,104.0,75.0,75.0]},{"id":"EMP_29","proceso":"plasticos","procesos":["plasticos"],"tier":"Tier 1","tamano":"más de 1,000","sindicato":1.0,"confed":"Otro","op":824.0,"adm":281.0,"otro":0.0,"muj":0.3,"edad":[0.15,0.222,0.234,0.314,0.08],"sal":[310.6,350.7,463.8,680.1],"inc":{"2024":[0.06,0.047,null,null],"2025":[0.07,0.047,0.01,null]},"mes":[0,0,0,1,1,0,1,0,0,0,0,0],"ben":[1,1,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":0.36,"mot":[3.0,1.0,1.0,1.0,2.0,1.0,2.0,2.0,2.0,1.0,3.0,1.0,1.0,0.0,1.0,1.0,3.0,0.0],"rot":[0.1263,0.081,0.0508,0.1411,0.0876,0.1272,0.1059],"rnc":[0.1015,0.0693,0.0457,0.121,0.0769,0.0956,0.0842],"rc":[0.0248,0.0117,0.0051,0.0202,0.0107,0.0315,0.0217],"aus":[0.0348,0.0322,0.0284,0.0494,0.029,0.0327,0.0303],"cn":[10.0,10.0,44.0,24.0,24.0,70.0,66.0],"cr":[115.0,115.0,47.0,110.0,83.0,70.0,106.0]},{"id":"EMP_30","proceso":"interiores_textil_piel","procesos":["interiores_textil_piel"],"tier":"Tier 2","tamano":"101 a 300","sindicato":0.0,"confed":null,"op":181.0,"adm":50.0,"otro":5.0,"muj":0.565,"edad":[0.162,0.316,0.279,0.199,0.044],"sal":[304.0,320.8,388.1,575.0],"inc":{"2024":[0.08,0.06,0.01,0.01],"2025":[0.08,0.06,0.01,0.01]},"mes":[1,1,0,0,0,0,0,0,0,0,0,0],"ben":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"No Aplica (Especifique)","cap":3.12,"mot":[3.0,1.0,1.0,3.0,2.0,1.0,1.0,2.0,3.0,2.0,3.0,null,2.0,0.0,0.0,1.0,3.0,3.0],"rot":[0.1084,0.1084,0.0167,0.0167,0.0167,0.0167,0.1515],"rnc":[0.0739,0.0739,0.0056,0.0056,0.0056,0.0056,0.1082],"rc":[0.0197,0.0197,0.0111,0.0111,0.0111,0.0111,0.0433],"aus":[0.0383,0.0392,0.0659,0.0672,0.0672,0.0672,0.0407],"cn":[6.0,6.0,0.0,0.0,0.0,0.0,15.0],"cr":[19.0,19.0,3.0,3.0,3.0,3.0,35.0]},{"id":"EMP_31","proceso":"fundicion","procesos":["fundicion","metalmecanica"],"tier":"Tier 1","tamano":"501 a 1,000","sindicato":1.0,"confed":"C.T.M.","op":240.0,"adm":470.0,"otro":0.0,"muj":0.15,"edad":[0.051,0.278,0.376,0.253,0.043],"sal":[346.0,396.0,458.0,531.0],"inc":{"2024":[0.08,0.08,null,null],"2025":[0.065,0.065,0.01,null]},"mes":[0,0,0,1,1,0,0,0,0,0,0,0],"ben":[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":3.38,"mot":[3.0,0.0,0.0,0.0,0.0,0.0,0.0,2.0,2.0,2.0,3.0,1.0,0.0,0.0,0.0,0.0,0.0,3.0],"rot":[0.0277,0.0349,0.0175,0.0291,0.0304,0.0344,0.0296],"rnc":[0.0198,0.0081,0.004,0.0146,0.0106,0.0106,0.0099],"rc":[0.0079,0.0269,0.0121,0.0146,0.0198,0.0238,0.0197],"aus":[0.003,0.0025,0.0043,0.0025,0.0049,0.0037,0.0078],"cn":[null,3.0,0.0,0.0,0.0,0.0,0.0],"cr":[30.0,2.0,7.0,22.0,12.0,5.0,12.0]},{"id":"EMP_32","proceso":"plasticos","procesos":["plasticos"],"tier":"Tier 2","tamano":"1 a 100","sindicato":1.0,"confed":"C.T.M.","op":38.0,"adm":46.0,"otro":5.0,"muj":null,"edad":[null,null,null,null,null],"sal":[344.3,380.2,608.3,730.0],"inc":{"2024":[0.06,0.05,null,null],"2025":[0.07,0.06,0.05,null]},"mes":[0,1,0,1,0,0,0,0,0,0,0,0],"ben":[0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Ya tuvimos la revisión de incrementos salariales del 2026","cap":3.76,"mot":[1.0,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1.0],"rot":[0.0104,0.0104,0.0104,0.0104,0.0,0.0119,0.0119],"rnc":[0.0104,0.0104,0.0104,0.0104,0.0,0.0,0.0],"rc":[0.0,0.0,0.0,0.0,0.0,0.0119,0.0119],"aus":[0.0065,0.0066,0.0068,0.0068,0.001,0.0025,0.0024],"cn":[0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cr":[8.0,8.0,8.0,8.0,0.0,0.0,0.0]},{"id":"EMP_33","proceso":"metalmecanica","procesos":["metalmecanica"],"tier":"Tier 1","tamano":"101 a 300","sindicato":1.0,"confed":"C.T.M.","op":93.0,"adm":63.0,"otro":0.0,"muj":0.15,"edad":[0.1,0.28,0.33,0.13,0.16],"sal":[346.7,378.6,411.5,466.6],"inc":{"2024":[0.09,0.085,0.01,0.01],"2025":[0.1,0.08,null,null]},"mes":[0,1,0,0,0,0,0,0,0,0,0,0],"ben":[1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":17.63,"mot":[2.0,0.0,0.0,0.0,1.0,0.0,3.0,3.0,3.0,1.0,0.0,0.0,3.0,0.0,1.0,0.0,0.0,null],"rot":[0.0727,0.0429,0.0189,0.0318,0.0063,0.0253,0.0385],"rnc":[0.0364,0.0368,0.0063,0.0318,0.0,0.0063,0.0321],"rc":[0.0364,0.0061,0.0126,0.0,0.0063,0.019,0.0064],"aus":[0.0011,0.0008,0.0006,0.001,0.0009,0.001,0.0004],"cn":[0.0,0.0,0.0,1.0,0.0,0.0,0.0],"cr":[10.0,5.0,1.0,0.0,1.0,0.0,5.0]},{"id":"EMP_34","proceso":"electronico_electronica","procesos":["electronico_electronica","metalmecanica"],"tier":"Tier 1","tamano":"501 a 1,000","sindicato":1.0,"confed":"Otro","op":391.0,"adm":296.0,"otro":0.0,"muj":0.283,"edad":[0.1,0.14,0.55,0.2,0.01],"sal":[335.0,410.0,511.0,831.0],"inc":{"2024":[0.056,0.05,0.04,null],"2025":[0.06,null,null,null]},"mes":[0,0,1,0,0,0,0,0,0,0,0,0],"ben":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":0.44,"mot":[1.0,2.0,2.0,1.0,3.0,1.0,1.0,1.0,1.0,3.0,1.0,2.0,2.0,null,2.0,1.0,3.0,2.0],"rot":[0.0355,0.0144,0.0158,0.0345,0.0164,0.0395,0.0422],"rnc":[0.025,0.0039,0.0039,0.0053,0.0014,0.0085,0.0058],"rc":[0.0092,0.0066,0.0118,0.0279,0.0151,0.031,0.0364],"aus":[0.0083,0.018,0.0048,0.0059,0.0335,0.0081,0.0208],"cn":[5.0,0.0,0.0,0.0,0.0,0.0,0.0],"cr":[19.0,6.0,1.0,7.0,1.0,2.0,1.0]},{"id":"EMP_35","proceso":null,"procesos":[],"tier":null,"tamano":"101 a 300","sindicato":0.0,"confed":"C.T.M.","op":77.0,"adm":47.0,"otro":3.0,"muj":0.162,"edad":[0.072,0.432,0.108,0.216,0.173],"sal":[278.8,278.8,351.3,577.4],"inc":{"2024":[0.1,0.1,0.1,0.1],"2025":[0.1,0.1,0.1,0.1]},"mes":[0,1,0,0,0,0,0,0,0,0,0,0],"ben":[0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,0,0,1,1],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":0.74,"mot":[3.0,null,null,3.0,3.0,2.0,3.0,2.0,2.0,2.0,2.0,2.0,3.0,2.0,2.0,2.0,2.0,2.0],"rot":[0.125,0.0753,0.0522,0.0741,0.0938,0.0938,0.0968],"rnc":[0.1118,0.0685,0.0522,0.0296,0.0781,0.0781,0.0968],"rc":[0.0132,0.0068,0.0,0.0444,0.0156,0.0156,0.0],"aus":[0.0186,0.0198,0.0186,0.0079,0.0109,0.0109,0.0088],"cn":[0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cr":[0.0,12.0,9.0,6.0,2.0,2.0,0.0]},{"id":"EMP_36","proceso":"electronico_electronica","procesos":["electronico_electronica"],"tier":"Tier 2","tamano":"más de 1,000","sindicato":1.0,"confed":"C.T.M.","op":1267.0,"adm":405.0,"otro":0.0,"muj":0.57,"edad":[0.22,0.34,0.23,0.17,0.04],"sal":[346.3,400.6,420.6,441.6],"inc":{"2024":[0.07,0.058,0.028,0.02],"2025":[0.07,0.06,null,null]},"mes":[0,0,1,1,0,0,0,0,0,0,0,0],"ben":[1,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":3.75,"mot":[4.0,3.0,3.0,1.0,5.0,2.0,3.0,1.0,2.0,4.0,3.0,4.0,2.0,3.0,3.0,1.0,5.0,5.0],"rot":[0.1154,0.1154,0.0646,0.1219,0.0865,0.0741,0.0616],"rnc":[0.0933,0.0933,0.0423,0.0975,0.067,0.056,0.0472],"rc":[0.0221,0.0221,0.0127,0.0119,0.0106,0.0105,0.0084],"aus":[0.046,0.047,0.0331,0.0946,0.0279,0.0847,0.0188],"cn":[20.0,20.0,30.0,173.0,0.0,1.0,0.0],"cr":[147.0,147.0,78.0,78.0,156.0,41.0,66.0]},{"id":"EMP_37","proceso":"metalmecanica","procesos":["metalmecanica","recubrimientos"],"tier":"Tier 1","tamano":"más de 1,000","sindicato":1.0,"confed":"Otro","op":964.0,"adm":480.0,"otro":null,"muj":null,"edad":[null,null,null,null,null],"sal":[400.0,479.0,624.0,790.0],"inc":{"2024":[0.07,null,null,null],"2025":[0.07,null,0.01,null]},"mes":[0,0,0,1,0,0,0,0,0,0,0,0],"ben":[1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0],"neg":"No Aplica (Especifique)","cap":4.85,"mot":[3.0,2.0,3.0,2.0,1.0,1.0,1.0,2.0,1.0,1.0,1.0,1.0,1.0,1.0,2.0,1.0,1.0,3.0],"rot":[0.0138,0.0138,0.0143,0.0133,0.01,0.0152,0.0111],"rnc":[0.0083,0.009,0.0048,0.0073,0.0047,0.0083,0.0062],"rc":[0.0048,0.0042,0.0027,0.0053,0.0054,0.0055,0.0042],"aus":[0.0406,0.0445,0.0402,0.035,0.0454,0.0032,0.0376],"cn":[0.0,0.0,0.0,30.0,8.0,0.0,10.0],"cr":[24.0,18.0,35.0,20.0,2.0,3.0,15.0]},{"id":"EMP_38","proceso":"arnesera","procesos":["arnesera","metalmecanica"],"tier":"Tier 1","tamano":"más de 1,000","sindicato":1.0,"confed":"C.T.M.","op":2863.0,"adm":699.0,"otro":0.0,"muj":0.52,"edad":[0.22,0.26,0.21,0.24,0.07],"sal":[349.0,349.0,358.0,367.0],"inc":{"2024":[0.06,0.06,0.02,0.01],"2025":[0.06,0.06,null,null]},"mes":[0,1,1,1,0,0,0,0,0,0,0,0],"ben":[1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":0.18,"mot":[3.0,null,null,null,3.0,null,null,null,3.0,null,null,null,null,null,null,null,3.0,3.0],"rot":[0.1189,0.0119,0.0804,0.1189,0.1375,0.1447,0.1398],"rnc":[0.0651,0.0651,0.0421,0.0851,0.0891,0.0948,0.0817],"rc":[0.0386,0.0386,0.0251,0.0212,0.037,0.0364,0.0435],"aus":[0.0191,0.0004,0.0263,0.0186,0.0195,0.0211,0.0196],"cn":[225.0,225.0,52.0,120.0,133.0,800.0,800.0],"cr":[211.0,211.0,118.0,407.0,352.0,743.0,743.0]},{"id":"EMP_39","proceso":"plasticos","procesos":["plasticos"],"tier":"Tier 1","tamano":"más de 1,000","sindicato":1.0,"confed":"C.T.M.","op":1151.0,"adm":320.0,"otro":0.0,"muj":0.47,"edad":[0.11,0.29,0.3,0.25,0.05],"sal":[322.1,363.2,439.6,540.9],"inc":{"2024":[0.058,0.062,0.01,null],"2025":[0.058,0.062,0.01,null]},"mes":[1,0,1,0,0,0,0,0,0,0,0,0],"ben":[1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":3.35,"mot":[4.0,3.0,2.0,1.0,0.0,1.0,2.0,1.0,1.0,4.0,4.0,3.0,2.0,1.0,2.0,1.0,3.0,5.0],"rot":[0.1212,0.0429,0.0971,0.1265,0.1016,0.0986,0.0986],"rnc":[0.1206,0.0239,0.0939,0.1265,0.0899,0.0802,0.0802],"rc":[0.0007,0.0006,0.0019,0.0,0.0104,0.0177,0.0177],"aus":[0.0778,0.0647,0.0641,0.0473,0.0964,0.0509,0.0497],"cn":[250.0,250.0,18.0,0.0,30.0,0.0,0.0],"cr":[59.0,26.0,85.0,172.0,108.0,64.0,64.0]},{"id":"EMP_40","proceso":"metalmecanica","procesos":["metalmecanica"],"tier":"Tier 1","tamano":"301 a 500","sindicato":1.0,"confed":"S.I.T.I.M.M.","op":316.0,"adm":98.0,"otro":0.0,"muj":0.283,"edad":[null,null,null,null,null],"sal":[398.0,419.0,495.0,596.0],"inc":{"2024":[0.08,0.08,0.013,0.005],"2025":[0.065,0.065,0.013,0.005]},"mes":[0,0,0,1,0,0,0,0,0,0,0,0],"ben":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"neg":"Pendiente de realizarlo, aun no llega la fecha","cap":2.44,"mot":[2.0,2.0,3.0,1.0,1.0,1.0,1.0,1.0,1.0,3.0,2.0,1.0,1.0,2.0,2.0,2.0,3.0,1.0],"rot":[0.0249,0.0092,0.0093,0.035,0.0117,0.0141,0.0242],"rnc":[0.0204,0.0023,0.0,0.0233,0.0093,0.0047,0.0048],"rc":[0.0023,0.0046,0.0093,0.0047,0.0023,0.0094,0.0193],"aus":[0.0208,0.0251,0.0189,0.0105,0.0101,0.0141,0.0165],"cn":[2.0,0.0,0.0,1.0,0.0,1.0,1.0],"cr":[2.0,2.0,1.0,10.0,4.0,3.0,null]}]};
+const DATOS = {"bimestres": ["Jul-Ago 2024", "Sep-Oct 2024", "Nov-Dic 2024", "Ene-Feb 2025", "Mar-Abr 2025", "May-Jun 2025", "Jul-Ago 2025"], "edicion": "Jul-Ago 2025", "beneficios": ["Incremento en fondo ahorro", "Incremento en vales despensa", "Incremento en aguinaldo", "Incremento en dias feriados", "Incremento en prima vacacional", "Uniformes", "Bono por antiguedad", "Bono por puntualidad", "Bono por asistencia", "Ayuda por defuncion", "Ayuda por maternidad", "Ayuda por paternidad", "Ayuda escolar utiles", "Ayuda escolar uniformes", "Ayuda por matrimonio", "Ayuda deportiva", "Seguro de gastos medicos menores", "Seguro de gastos medicos mayores", "Seguro de gastos medicos para la familia"], "motivos": ["Otro empleo mejor sueldo", "Otro empleo mas cerca de su casa", "Otro empleo mejor horario", "Otro empleo mejor ruta de transporte", "Otro empleo mejores prestaciones", "Problemas con companeros", "Problemas con jefe supervisor", "Bajo rendimiento", "Fin de contrato", "Cambio de residencia", "Conflictos con pareja familia", "Enfermedad general", "Estudios impedimento para seguir estudia", "Horario complicado", "Independizarse poner un negocio propio", "Inseguridad en la zona", "No tenia quien cuidara hijos familiares", "Motivos personales sin especificar"], "empresas": [{"id": "EMP_01", "proceso": "recubrimientos", "procesos": ["recubrimientos"], "tier": "Tier 1", "tamano": "101 a 300", "sindicato": 0, "confed": "Sin sindicato", "op": 143, "adm": 24, "otro": 40, "muj": 0.25, "edad": [0.41, 0.3, 0.12, 0.15, 0.02], "sal": [278.8, 278.8, 304.4, 329.7], "inc": {"2024": [0.05, 0.059, 0.01, null], "2025": [0.097, 0.059, null, 0.022]}, "mes": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "No Aplica (Especifique)", "cap": 3.5, "mot": [5, 0, 0, 0, 3, 2, 2, 4, 4, 3, 5, 4, 4, 3, 4, 0, 5, 5], "rot": [0.121, 0.1146, 0.1146, 0.1, 0.1278, 0.1, 0.0719], "rnc": [0.0318, 0.0382, 0.0382, 0.0444, 0.0389, 0.0167, 0.012], "rc": [0.0382, 0.0382, 0.0382, 0.0556, 0.0722, 0.0778, 0.0539], "aus": [0.078, 0.0334, 0.0387, 0.0435, 0.0492, 0.0081, 0.0498], "cn": [12, 6, 6, 20, 9, 0, 7], "cr": [19, 10, 10, 18, 20, 6, 4]}, {"id": "EMP_02", "proceso": null, "procesos": [], "tier": null, "tamano": "301 a 500", "sindicato": 1, "confed": "C.T.M.", "op": 331, "adm": 136, "otro": 0, "muj": 0.33, "edad": [0, 0.27, 0.48, 0.23, 0.02], "sal": [375, 432, 491, 740], "inc": {"2024": [0.08, 0.05, null, 0.055], "2025": [0.08, 0.05, null, 0.055]}, "mes": [0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0], "ben": [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 0, "mot": [2, 1, 0, 1, 1, 1, 2, 2, 2, 1, 1, 0, 1, 0, 1, 0, 1, 2], "rot": [0.0275, 0.0275, 0.0275, 0.0275, 0.0275, 0.0275, 0.0407], "rnc": [0.011, 0.011, 0.011, 0.011, 0.011, 0.011, 0.0171], "rc": [0.0165, 0.0165, 0.0165, 0.0165, 0.0165, 0.0165, 0.0214], "aus": [0.0025, 0.0026, 0.0026, 0.0026, 0.0026, 0.0026, 0.0026], "cn": [6, 6, 6, 6, 6, 6, 25], "cr": [1, 1, 1, 1, 1, 1, 10]}, {"id": "EMP_03", "proceso": "metalmecanica", "procesos": ["metalmecanica"], "tier": "Tier 1", "tamano": "101 a 300", "sindicato": 1, "confed": "C.T.M.", "op": 76, "adm": 58, "otro": 66, "muj": 0.35, "edad": [0.121, 0.253, 0.273, 0.263, 0.091], "sal": [370, 396, 430, 641], "inc": {"2024": [0.11, 0.1, null, null], "2025": [0.1, 0.1, 0.01, null]}, "mes": [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 51.49, "mot": [1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 3], "rot": [0.0473, 0.013, 0.0066, 0.1471, 0.0308, 0.0458, 0], "rnc": [0.027, 0.013, 0.0066, 0.0294, 0.0077, 0.0076, 0], "rc": [0.0203, 0, 0, 0.1176, 0.0231, 0.0305, 0], "aus": [0.0117, 0.0896, 0.103, 0.047, 0.0483, 0.0678, 0.0711], "cn": [4, 1, 1, 0, 0, 3, 0], "cr": [null, 1, null, 0, 0, 0, 5]}, {"id": "EMP_04", "proceso": "arnesera", "procesos": ["arnesera", "electronico_electronica", "plasticos"], "tier": "Tier 1", "tamano": "1 a 100", "sindicato": 0, "confed": "Otro", "op": 8, "adm": 16, "otro": 1, "muj": 0.67, "edad": [null, null, null, null, null], "sal": [278.8, 313.8, 351.4, 370], "inc": {"2024": [0.2, 0.03, null, null], "2025": [0.045, 0.04, 0.02, 0.02]}, "mes": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "No Aplica (Especifique)", "cap": 66.29, "mot": [3, 3, 2, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null, 0, 0], "rot": [0.1304, 0.0385, 0.0385, 0, 0.04, 0, 0], "rnc": [0.1304, 0.0385, 0.0385, 0, 0, 0, 0], "rc": [0, 0, 0, 0, 0.04, 0, 0], "aus": [0, 0, 0, 0, 0, 0, 0], "cn": [1, 6, 6, 6, 0, 0, 0], "cr": [1, 1, 1, 1, 0, 0, 0]}, {"id": "EMP_05", "proceso": "metalmecanica", "procesos": ["metalmecanica"], "tier": "Tier 2", "tamano": "101 a 300", "sindicato": 1, "confed": "S.I.T.I.M.M.", "op": 99, "adm": 51, "otro": 2, "muj": 0.547, "edad": [0.064, 0.174, 0.273, 0.326, 0.163], "sal": [299, 318, 360, 400], "inc": {"2024": [0.087, 0.075, null, null], "2025": [0.087, 0.075, null, null]}, "mes": [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "No Aplica (Especifique)", "cap": null, "mot": [2, 1, 2, null, 1, 2, 1, 2, 2, 1, 3, 1, 1, 2, 1, 1, 4, 1], "rot": [0.0807, 0.0248, 0.0375, 0.0375, 0.0506, 0.0452, 0.0533], "rnc": [0.0683, 0.0186, 0.0187, 0.0312, 0.038, 0.0323, 0.0333], "rc": [0.0124, 0.0062, 0.0187, 0.0063, 0.0127, 0.0129, 0.0133], "aus": [0.0208, 0.0066, 0.0158, 0.0198, 0.0406, 0.0338, 0.0277], "cn": [6, 2, 0, 1, 0, 0, 1], "cr": [13, 7, 0, 6, 3, 6, 3]}, {"id": "EMP_06", "proceso": "metalmecanica", "procesos": ["metalmecanica"], "tier": null, "tamano": "301 a 500", "sindicato": 1, "confed": "C.T.M.", "op": 200, "adm": 146, "otro": 0, "muj": 0.53, "edad": [0.03, 0.35, 0.37, 0.18, 0.07], "sal": [346.5, 379, 422.5, 460.9], "inc": {"2024": [0.12, 0.05, 0.01, null], "2025": [0.12, 0.05, 0.01, null]}, "mes": [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 0.43, "mot": [3, 0, 3, 1, 2, 2, 1, 4, 2, 1, 2, 1, 3, 4, 1, 0, 3, 3], "rot": [0.0978, 0.0744, 0.0359, 0.0686, 0.0223, 0.0472, 0.0376], "rnc": [0.0136, 0.0165, 0.0028, 0.02, 0.0112, 0.0194, 0.0087], "rc": [0.0842, 0.0579, 0.0331, 0.0486, 0.0028, 0.025, 0.0289], "aus": [0.0394, 0.0285, 0.047, 0.0365, 0.0267, 0.0047, 0.0099], "cn": [23, 23, 3, 3, 0, 1, 0], "cr": [24, 24, 22, 5, 7, 13, 2]}, {"id": "EMP_07", "proceso": null, "procesos": [], "tier": null, "tamano": "más de 1,000", "sindicato": 1, "confed": "Otro", "op": 1452, "adm": 924, "otro": 0, "muj": 0.2, "edad": [0.267, 0.554, null, 0.168, 0.01], "sal": [370.8, 438.8, 570.2, 753.3], "inc": {"2024": [0.09, 0.08, null, null], "2025": [0.07, 0.08, 0.015, 0.015]}, "mes": [0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 0.56, "mot": [3, 1, 3, 1, 2, 1, 1, 2, null, 1, 1, 1, 0, 1, 2, 1, 2, 3], "rot": [0.0502, 0.0117, 0.0411, 0.0288, 0.0213, 0.0172, 0.0438], "rnc": [0.0272, 0.0078, 0.0061, 0.0099, 0.0102, 0.0142, 0.0278], "rc": [0.0226, 0.0039, 0.0333, 0.0189, 0.0077, 0.0025, 0.0139], "aus": [0.0101, 0.0079, 0.0119, 0.0074, 0.0036, 0.0023, 0.0057], "cn": [10, null, 0, 0, 3, 94, 0], "cr": [null, 9, 0, 1, 14, 34, 88]}, {"id": "EMP_08", "proceso": null, "procesos": [], "tier": null, "tamano": "501 a 1,000", "sindicato": 1, "confed": "C.T.M.", "op": 228, "adm": 525, "otro": 0, "muj": 0.35, "edad": [0.325, 0.33, 0.204, 0.141, 0], "sal": [283, 326, 356, 388], "inc": {"2024": [0.065, 0.065, null, null], "2025": [0.063, 0.05, null, null]}, "mes": [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Ya tuvimos la revisión de incrementos salariales del 2026", "cap": 0, "mot": [4, 1, 1, 1, 1, 2, 1, 3, 4, 4, 5, 1, 3, 4, 3, 1, 4, 5], "rot": [0.017, 0.0302, 0, 0.0155, 0.0347, 0.0239, null], "rnc": [0.0071, 0.0227, 0, 0.0155, 0.0278, 0.0199, 0.0199], "rc": [0.0099, 0.0076, 0, 0, 0.0069, 0.004, 0.004], "aus": [0.0068, 0.0029, 0.0005, 0.0237, 0.0024, 0.0026, 0.0025], "cn": [5, 2, 0, 9, 5, 65, 65], "cr": [28, 13, 9, 10, 15, 8, 8]}, {"id": "EMP_09", "proceso": "fundicion", "procesos": ["fundicion"], "tier": "Tier 2", "tamano": "101 a 300", "sindicato": 1, "confed": "C.T.M.", "op": 198, "adm": 95, "otro": 0, "muj": 0.1, "edad": [0.099, null, 0.302, 0.366, 0.233], "sal": [390, 489, 540, 842], "inc": {"2024": [0.064, 0.075, 0.015, null], "2025": [0.065, 0.05, 0.01, null]}, "mes": [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], "neg": "Ya tuvimos la revisión de incrementos salariales del 2026", "cap": 1.56, "mot": [4, 1, 1, 1, 1, 1, 0, 0, 4, 5, 4, 1, 0, 0, 1, 0, 0, 1], "rot": [0.1362, 0.0512, 0.0341, 0.0309, 0.0403, 0.0136, 0.0341], "rnc": [0.093, 0.0273, 0.0034, 0.0137, 0.0201, 0.0102, 0.0239], "rc": [0.0332, 0.0205, 0.0307, 0.0103, 0.0168, 0, 0.0068], "aus": [0.0216, 0.0213, 0.003, 0.0193, 0.0024, 0.0121, 0.0011], "cn": [0, 0, 0, 0, 0, 0, 0], "cr": [12, 8, 5, 9, 10, 3, 6]}, {"id": "EMP_10", "proceso": null, "procesos": [], "tier": null, "tamano": "301 a 500", "sindicato": 0, "confed": null, "op": 269, "adm": 67, "otro": 0, "muj": 0.582, "edad": [0.126, 0.277, 0.126, 0.283, 0.189], "sal": [288, 288, 320, 336], "inc": {"2024": [0.04, 0.02, null, null], "2025": [0.05, 0.08, null, null]}, "mes": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1], "neg": "No Aplica (Especifique)", "cap": 2.22, "mot": [5, 1, 1, 1, 1, 1, 1, 4, 5, 1, 3, 1, 1, 1, 0, 0, 0, 3], "rot": [0.3814, 0.2123, 0.1429, 0.2734, 0.157, 0.1166, 0.1786], "rnc": [0.2442, 0.1005, 0.0468, 0.2083, 0.0291, 0.105, 0.1548], "rc": [0.1349, 0.1119, 0.0911, 0.0651, 0.064, 0.0117, 0.0238], "aus": [0.0214, 0.026, 0.0151, 0.0208, 0.0174, 0.0128, 0.0141], "cn": [55, 5, 5, 2, 2, 2, 0], "cr": [100, 100, 100, 86, 4, 50, 59]}, {"id": "EMP_11", "proceso": null, "procesos": [], "tier": null, "tamano": "301 a 500", "sindicato": 1, "confed": "C.T.M.", "op": 196, "adm": 87, "otro": 65, "muj": 0.12, "edad": [0.2, 0.19, 0.25, 0.26, 0.1], "sal": [278.8, 348, 441.7, 441.7], "inc": {"2024": [0.05, null, null, null], "2025": [0.05, null, null, null]}, "mes": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 0.57, "mot": [4, 2, 2, 1, 3, 1, 2, 2, 2, 2, 3, 0, 0, 0, 3, 0, 1, 4], "rot": [0.2657, 0.2636, 0.1163, 0.1099, 0.0674, 0.0674, 0.1378], "rnc": [0.2435, 0.2093, 0.0504, 0.0879, 0.0461, 0.0461, 0.0742], "rc": [0.0185, 0.0543, 0.0659, 0.022, 0.0177, 0.0177, 0.0247], "aus": [0.0237, 0.0251, 0.0178, 0.0125, 0.0116, 0.0116, 0.0189], "cn": [78, 30, 0, 0, 0, 0, 6], "cr": [26, 23, 22, 30, 21, 21, 12]}, {"id": "EMP_12", "proceso": "fundicion", "procesos": ["fundicion", "metalmecanica"], "tier": null, "tamano": "1 a 100", "sindicato": 0, "confed": null, "op": 54, "adm": 41, "otro": 4, "muj": 0.157, "edad": [0.093, 0.343, 0.185, 0.185, 0.194], "sal": [300, 336, 357, 386], "inc": {"2024": [0.15, 0.2, 0.2, 0.2], "2025": [0.15, 0.15, 0.15, 0.15]}, "mes": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1], "neg": "No Aplica (Especifique)", "cap": 0.56, "mot": [4, 4, 2, 3, 3, 0, 3, 3, 3, 2, 2, 0, 2, 0, 0, 0, 0, 2], "rot": [0.0882, 0.0808, 0.0722, 0.1188, 0.0833, 0.0426, 0.0737], "rnc": [0.0784, 0.0606, 0.0619, 0.1089, 0.0833, 0.0426, 0.0632], "rc": [0.0098, 0.0202, 0, 0.0099, 0, 0, 0], "aus": [0.0233, 0.0452, 0.0348, 0.0295, 0.0213, 0.0292, 0.0316], "cn": [null, null, null, 1, null, null, null], "cr": [6, 6, 2, 16, 6, 3, 4]}, {"id": "EMP_13", "proceso": "metalmecanica", "procesos": ["metalmecanica"], "tier": "Tier 2", "tamano": "501 a 1,000", "sindicato": 1, "confed": "C.T.M.", "op": 619, "adm": 174, "otro": 0, "muj": 0.13, "edad": [0.074, 0.225, 0.229, 0.28, 0.193], "sal": [371.1, 445.4, 519.6, 623.5], "inc": {"2024": [0.07, 0.057, null, null], "2025": [0.042, 0.042, 0.04, 0.03]}, "mes": [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 0.25, "mot": [4, 3, 1, 2, 4, 1, 1, 3, 3, 2, 2, 0, 0, 2, 0, 0, 2, 2], "rot": [0.0859, 0.0813, 0.0605, 0.0757, 0.0652, 0.0555, 0.0769], "rnc": [0.065, 0.0708, 0.0484, 0.0469, 0.0063, 0.0214, 0.0404], "rc": [0.0139, 0.007, 0.0097, 0.0084, 0.059, 0.029, 0.0126], "aus": [0.0172, 0.0191, 0.0212, 0.0163, 0.0114, 0.0165, 0.0161], "cn": [13, 4, 2, 1, 0, 6, 20], "cr": [68, 70, 13, 71, 16, 35, 41]}, {"id": "EMP_14", "proceso": "fundicion", "procesos": ["fundicion", "metalmecanica"], "tier": "Tier 2", "tamano": "301 a 500", "sindicato": 1, "confed": "C.T.M.", "op": 260, "adm": 121, "otro": null, "muj": 0.3, "edad": [0.049, 0.334, 0.334, 0.19, 0.092], "sal": [294, 343, 402, 452], "inc": {"2024": [0.07, 0.045, 0.02, null], "2025": [0.06, 0.045, 0.02, null]}, "mes": [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Ya tuvimos la revisión de incrementos salariales del 2026", "cap": 2.1, "mot": [3, 1, 2, 1, 3, 2, 1, 1, 1, 2, 3, 0, 0, 1, 1, 1, 2, 4], "rot": [0.1615, 0.1522, 0.0805, 0.1161, 0.0932, 0.0761, 0.0761], "rnc": [0.133, 0.1076, 0.046, 0.102, 0.0537, 0.0525, 0.0525], "rc": [0.0285, 0.0446, 0.0345, 0.0255, 0.0311, 0.021, 0.021], "aus": [0.0221, 0.02, 0.0173, 0.0094, 0.0093, 0.0081, 0.0085], "cn": [1, 0, 0, 35, 20, 20, 20], "cr": [69, 24, 2, 8, 15, 15, 15]}, {"id": "EMP_15", "proceso": "fundicion", "procesos": ["fundicion", "quimicos_solventes_y_adhesivos"], "tier": "Tier 1", "tamano": "más de 1,000", "sindicato": 1, "confed": "Otro", "op": 3109, "adm": 1472, "otro": 0, "muj": 0.39, "edad": [0.108, 0.218, 0.383, 0.29, 0.001], "sal": [331.5, 438.7, 448, 807.3], "inc": {"2024": [0.082, 0.065, 0.01, null], "2025": [0.082, 0.065, 0.074, null]}, "mes": [0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0], "ben": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 0.26, "mot": [4, 3, 3, 2, 2, 2, 2, 1, 1, 2, 1, 1, 1, 1, 1, 0, 2, 1], "rot": [0.1718, 0.133, 0.0969, 0.114, 0.0997, 0.1195, 0.1347], "rnc": [0.1391, 0.1131, 0.0788, 0.0969, 0.0807, 0.1022, 0.1015], "rc": [0.032, 0.0185, 0.0168, 0.0144, 0.0161, 0.0241, 0.0293], "aus": [0.0052, 0.0047, 0.0048, 0.0178, 0.0164, 0.0233, 0.0226], "cn": [39, 12, 40, 16, 15, 22, 22], "cr": [350, 674, 345, 397, 380, 422, 480]}, {"id": "EMP_16", "proceso": "metalmecanica", "procesos": ["metalmecanica"], "tier": "Tier 3", "tamano": "101 a 300", "sindicato": 1, "confed": "S.I.T.I.M.M.", "op": 145, "adm": 94, "otro": 0, "muj": 0.456, "edad": [0.109, 0.244, 0.264, 0.301, 0.083], "sal": [329.1, 392.1, 446.7, 500.3], "inc": {"2024": [0.1, 0.06, null, null], "2025": [0.15, 0.05, 0.03, null]}, "mes": [0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0], "ben": [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Ya tuvimos la revisión de incrementos salariales del 2026", "cap": 1.02, "mot": [4, 1, 2, 1, 4, 2, 1, 1, 1, 2, 1, 1, 2, 0, 0, 0, 1, 0], "rot": [0.1492, 0.0933, 0.0406, 0.1067, 0.1067, 0.1004, 0.1004], "rnc": [0.1271, 0.0777, 0.0406, 0.08, 0.08, 0.0753, 0.0753], "rc": [0.0166, 0.0155, 0, 0.0267, 0.0267, 0.0251, 0.0251], "aus": [0.0153, 0.0147, 0.0063, 0.0091, 0.0144, 0.0135, 0.0132], "cn": [0, 0, 0, 0, 0, 0, 0], "cr": [10, 24, 24, 60, 60, 60, 60]}, {"id": "EMP_17", "proceso": "arnesera", "procesos": ["arnesera", "metalmecanica"], "tier": "Tier 2", "tamano": "1 a 100", "sindicato": 0, "confed": null, "op": 19, "adm": 17, "otro": null, "muj": 0.15, "edad": [0.06, 0.06, 0.51, 0.34, 0.03], "sal": [285.7, 385.7, 457.1, 642.9], "inc": {"2024": [0.08, 0.08, null, null], "2025": [0.05, 0.05, null, null]}, "mes": [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Ya tuvimos la revisión de incrementos salariales del 2026", "cap": 4.5, "mot": [3, 1, 0, 0, 2, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0], "rot": [0.0556, 0, 0, 0, 0.0278, 0, 0], "rnc": [0.0556, 0, 0, 0, 0, 0, 0], "rc": [0, 0, 0, 0, 0.0278, 0, 0], "aus": [0.0488, 0.0221, 0.0407, 0.0362, 0.0207, 0, 0.0455], "cn": [0, 0, 0, 0, 1, 0, 0], "cr": [2, 0, 0, 0, 0, 0, 0]}, {"id": "EMP_18", "proceso": null, "procesos": [], "tier": null, "tamano": "más de 1,000", "sindicato": 1, "confed": "C.T.M.", "op": 672, "adm": 125, "otro": 236, "muj": 0.52, "edad": [0.14, 0.3, 0.24, 0.27, 0.05], "sal": [368, 448, 649.3, 746.8], "inc": {"2024": [0.2, 0.08, null, null], "2025": [0.08, 0.08, null, null]}, "mes": [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 1.12, "mot": [3, 3, 0, 1, 2, 0, 0, 2, 0, 2, 3, 2, 1, 1, 1, 0, 3, 3], "rot": [0.2836, 0.1629, 0.096, 0.1371, 0.0955, 0.0567, 0.0916], "rnc": [0.1953, 0.1117, 0.08, 0.1143, 0.0955, 0.0567, 0.0916], "rc": [0.0475, 0.0197, 0.016, 0.0229, 0, 0, 0], "aus": [0.0125, 0.012, 0.0326, 0.0968, 0.011, 0.0556, 0.009], "cn": [8, 8, 0, 0, 0, 3, 3], "cr": [194, 194, 35, 89, 10, 42, 42]}, {"id": "EMP_19", "proceso": "fundicion", "procesos": ["fundicion", "metalmecanica"], "tier": null, "tamano": "más de 1,000", "sindicato": 1, "confed": "C.T.M.", "op": 682, "adm": 485, "otro": 86, "muj": 0.24, "edad": [0.03, 0.27, 0.27, 0.36, 0.07], "sal": [476, 577, 750, 900], "inc": {"2024": [0.05, 0.078, 0.024, 0.022], "2025": [0.05, 0.078, 0.024, 0.022]}, "mes": [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 14.2, "mot": [4, 0, 0, 0, 1, 1, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2], "rot": [0.0347, 0.0192, 0.0151, 0.0137, 0.0133, 0.0129, 0.0146], "rnc": [0.0188, 0.0115, 0.0085, 0.0082, 0.008, 0.0077, 0.0077], "rc": [0.0059, 0.0019, 0.0028, 0.0027, 0.0027, 0.0026, 0.0034], "aus": [0.0185, 0.006, 0.0064, 0.0268, 0.0067, 0.0065, 0.007], "cn": [34, 21, 26, 19, 36, 36, 29], "cr": [29, 27, 18, 24, 23, 23, 38]}, {"id": "EMP_20", "proceso": "arnesera", "procesos": ["arnesera"], "tier": "Tier 1", "tamano": "más de 1,000", "sindicato": 1, "confed": "C.T.M.", "op": 3125, "adm": 978, "otro": 0, "muj": 0.61, "edad": [0.17, 0.33, 0.27, 0.19, 0.04], "sal": [330, 380, 425.7, 546.3], "inc": {"2024": [0.07, 0.055, null, null], "2025": [0.07, 0.055, null, null]}, "mes": [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], "ben": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 16.65, "mot": [2, 2, 1, 0, 1, 2, 2, 2, 0, 3, 3, 2, 1, 1, 1, 0, 4, 4], "rot": [0.126, 0.152, 0.152, 0.152, 0.152, 0.1109, 0.1535], "rnc": [0.047, 0.0232, 0.0232, 0.0232, 0.0232, 0.0441, 0.0765], "rc": [0.079, 0.1286, 0.1286, 0.1286, 0.1286, 0.0663, 0.0763], "aus": [0.0913, 0.042, 0.043, 0.043, 0.043, 0.0582, 0.0554], "cn": [0, 0, 0, 0, 0, 0, 0], "cr": [902, 691, 691, 691, 691, 517, 680]}, {"id": "EMP_21", "proceso": "metalmecanica", "procesos": ["metalmecanica"], "tier": "Tier 1", "tamano": "101 a 300", "sindicato": 1, "confed": "S.I.T.I.M.M.", "op": 68, "adm": 85, "otro": 0, "muj": 0.36, "edad": [0.03, 0.16, 0.39, 0.35, 0.07], "sal": [350, 431, 531, 586], "inc": {"2024": [0.08, 0.08, 0.02, 0.01], "2025": [0.08, 0.08, 0.02, 0.01]}, "mes": [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0], "ben": [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 2.89, "mot": [3, 3, 4, 3, 0, 1, 2, 5, 4, 3, 5, 1, 1, 5, 3, 3, 4, 3], "rot": [0.0065, 0.0066, 0.0201, 0.0134, 0.0205, 0.0066, 0.0065], "rnc": [0.0065, 0.0066, 0.0067, 0.0067, 0.0068, 0, 0.0065], "rc": [0, 0, 0, 0.0067, 0.0137, 0.0066, 0], "aus": [0.0009, 0.0012, 0.0012, 0.0011, 0.0005, 0.0009, 0.0015], "cn": [0, 0, 0, 0, 0, 2, 0], "cr": [3, 0, 0, 1, 1, 5, 4]}, {"id": "EMP_22", "proceso": "metalmecanica", "procesos": ["metalmecanica"], "tier": "Tier 2", "tamano": "501 a 1,000", "sindicato": 1, "confed": "C.T.M.", "op": 627, "adm": 73, "otro": 192, "muj": 0.455, "edad": [0.116, 0.167, 0.153, 0.382, 0.183], "sal": [370.1, 445.8, 496.3, 529.9], "inc": {"2024": [0.1, 0.07, 0.017, 0.017], "2025": [0.07, 0.07, 0.01, 0.01]}, "mes": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 4.13, "mot": [4, 4, 1, 1, 2, 1, 2, 2, 4, 3, 3, 2, 2, 1, 1, 2, 4, 3], "rot": [0.062, 0.1685, 0.0963, 0.0639, 0.1109, 0.139, 0.05], "rnc": [0.0234, 0.0328, 0.022, 0.0545, 0.0296, 0.0369, 0.0171], "rc": [0.0771, 0.1357, 0.0743, 0.0093, 0.0814, 0.1005, 0.0329], "aus": [0.0155, 0.0089, 0.0174, 0.014, 0.0186, 0.0191, 0.0089], "cn": [0, 0, 0, 0, 0, 1, 114], "cr": [75, 24, 3, 94, 108, 4, null]}, {"id": "EMP_23", "proceso": "metalmecanica", "procesos": ["metalmecanica"], "tier": "Tier 1", "tamano": "301 a 500", "sindicato": 1, "confed": "C.T.M.", "op": 326, "adm": 156, "otro": 0, "muj": null, "edad": [null, null, null, null, null], "sal": [331.4, 357.7, 374.6, 453.3], "inc": {"2024": [0.07, 0.07, null, null], "2025": [0.07, 0.08, null, null]}, "mes": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Ya tuvimos la revisión de incrementos salariales del 2026", "cap": 2.96, "mot": [2, 2, 3, 3, 3, 3, 2, 1, 2, 1, 4, 3, 3, 3, 1, 1, 5, 5], "rot": [0.1157, 0.1206, 0.0521, 0.1091, 0.0738, 0.0758, 0.1079], "rnc": [0.0667, 0.081, 0.0229, 0.0929, 0.0512, 0.0526, 0.0705], "rc": [0.0039, 0.0237, 0.0292, 0.0081, 0.0225, 0.0232, 0.0373], "aus": [0.0035, 0.0059, 0.0161, 0.0017, 0.0103, 0.0106, 0.0417], "cn": [0, 0, 1, 0, 0, 0, 0], "cr": [40, 57, 25, 0, 30, 30, 74]}, {"id": "EMP_24", "proceso": "metalmecanica", "procesos": ["metalmecanica"], "tier": "Tier 1", "tamano": "501 a 1,000", "sindicato": 1, "confed": "Otro", "op": 770, "adm": 78, "otro": 0, "muj": 0.12, "edad": [0.151, 0.309, 0.262, 0.224, 0.054], "sal": [354.7, 562.4, 582.8, 776.4], "inc": {"2024": [0.06, 0.05, 0.005, null], "2025": [0.07, 0.05, 0.005, null]}, "mes": [0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], "neg": "Ya tuvimos la revisión de incrementos salariales del 2026", "cap": 11.6, "mot": [3, 2, 3, 2, 1, 0, 1, 3, 3, 2, 3, 1, 1, 4, 1, 1, 3, 3], "rot": [0.1027, 0.0874, 0.0776, 0.1889, 0.1665, 0.2111, 0.2193], "rnc": [0.0667, 0.0667, 0.0667, 0.2166, 0.123, 0.1722, 0.145], "rc": [0.0361, 0.0361, 0.0361, 0.0063, 0.041, 0.0389, 0.079], "aus": [0.0483, 0.0494, 0.1273, 0.0586, 0.0326, 0.0411, 0.0471], "cn": [0, 0, 0, 0, 0, 42, null], "cr": [33, 33, 33, 33, 36, 174, 172]}, {"id": "EMP_25", "proceso": "electronico_electronica", "procesos": ["electronico_electronica"], "tier": "Tier 1", "tamano": "501 a 1,000", "sindicato": 1, "confed": "C.T.M.", "op": 494, "adm": 87, "otro": 6, "muj": 0.57, "edad": [0.163, 0.301, 0.23, 0.24, 0.066], "sal": [332, 359, 403, 432], "inc": {"2024": [0.05, null, null, null], "2025": [0.071, null, null, null]}, "mes": [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 0.83, "mot": [2, 1, 0, 0, 2, 1, 1, 1, 1, 1, 1, 2, 1, 0, 0, 1, 3, 3], "rot": [0.1092, 0.113, 0.0901, 0.116, 0.0702, 0.1015, 0.0568], "rnc": [0.0871, 0.0971, 0.0644, 0.1099, 0.064, 0.0241, 0.0568], "rc": [0.0221, 0.0146, 0.0258, 0.0046, 0.0062, 0.0775, 0], "aus": [0.0232, 0.0262, 0.0224, 0.0231, 0.0175, 0.0867, 0.0241], "cn": [0, 0, 0, 0, 0, 0, 0], "cr": [102, 108, 2, 3, 24, 0, 19]}, {"id": "EMP_26", "proceso": "metalmecanica", "procesos": ["metalmecanica"], "tier": null, "tamano": "301 a 500", "sindicato": 1, "confed": "Otro", "op": 439, "adm": 35, "otro": 0, "muj": 0.49, "edad": [0.15, 0.23, 0.15, 0.22, 0.25], "sal": [226, 248.5, 282, 423.5], "inc": {"2024": [0.06, 0.045, 0.025, null], "2025": [0.06, 0.045, 0.025, null]}, "mes": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0], "neg": "Ya tuvimos la revisión de incrementos salariales del 2026", "cap": 22.55, "mot": [1, 3, 1, 2, 1, 2, 1, 1, 1, 3, 3, 1, 1, 1, 0, 0, 4, 5], "rot": [0.2553, 0.2553, 0.2553, 0.2553, 0.2553, 0.2553, 0.2553], "rnc": [0.2215, 0.2215, 0.2215, 0.2215, 0.2215, 0.2215, 0.2215], "rc": [0.0253, 0.0253, 0.0253, 0.0253, 0.0253, 0.0253, 0.0253], "aus": [0.0079, 0.0081, 0.0083, 0.0083, 0.0083, 0.0083, 0.0081], "cn": [29, 29, 29, 29, 29, 29, 29], "cr": [90, 90, 90, 90, 90, 90, 90]}, {"id": "EMP_27", "proceso": "plasticos", "procesos": ["plasticos"], "tier": "Tier 3", "tamano": "1 a 100", "sindicato": 0, "confed": null, "op": 0, "adm": 12, "otro": 0, "muj": null, "edad": [null, null, null, null, null], "sal": [633.3, 766.7, 850, 900], "inc": {"2024": [null, 0.057, null, 0.057], "2025": [null, 0.057, null, 0.057]}, "mes": [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "No Aplica (Especifique)", "cap": 6.67, "mot": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], "rot": [0, 0, 0, 0, 0, 0, 0], "rnc": [0, 0, 0, 0, 0, 0, 0], "rc": [0, 0, 0, 0, 0, 0, 0], "aus": [0.0407, 0, 0.0484, 0.0426, 0.0233, 0, 0], "cn": [0, 0, 0, 0, 0, 0, 0], "cr": [0, 0, 0, 0, 0, 0, 0]}, {"id": "EMP_28", "proceso": "metalmecanica", "procesos": ["metalmecanica"], "tier": "Tier 2", "tamano": "más de 1,000", "sindicato": 1, "confed": "Otro", "op": 1540, "adm": 446, "otro": 0, "muj": 0.11, "edad": [0.485, 0.129, 0.099, 0.257, 0.03], "sal": [378, 455, 575, 818], "inc": {"2024": [0.08, 0.08, 0.005, 0.02], "2025": [0.08, 0.08, 0.005, 0.02]}, "mes": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 3.42, "mot": [3, 3, 2, 3, 3, 3, 4, 2, 2, 2, 4, 0, 0, 0, 2, 2, 2, 4], "rot": [0.1372, 0.1197, 0.0686, 0.0521, 0.0103, 0.0775, 0.0775], "rnc": [0.1099, 0.0997, 0.0405, 0.0355, 0.008, 0.0584, 0.0584], "rc": [0.0197, 0.02, 0.028, 0.0101, 0.0023, 0.0191, 0.0191], "aus": [0.0434, 0.0362, 0.0389, 0.0334, 0.006, 0.0574, 0.0561], "cn": [20, 20, 0, 0, 0, 0, 0], "cr": [150, 166, 78, 120, 104, 75, 75]}, {"id": "EMP_29", "proceso": "plasticos", "procesos": ["plasticos"], "tier": "Tier 1", "tamano": "más de 1,000", "sindicato": 1, "confed": "Otro", "op": 824, "adm": 281, "otro": 0, "muj": 0.3, "edad": [0.15, 0.222, 0.234, 0.314, 0.08], "sal": [310.6, 350.7, 463.8, 680.1], "inc": {"2024": [0.06, 0.047, null, null], "2025": [0.07, 0.047, 0.01, null]}, "mes": [0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0], "ben": [1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 0.36, "mot": [3, 1, 1, 1, 2, 1, 2, 2, 2, 1, 3, 1, 1, 0, 1, 1, 3, 0], "rot": [0.1263, 0.081, 0.0508, 0.1411, 0.0876, 0.1272, 0.1059], "rnc": [0.1015, 0.0693, 0.0457, 0.121, 0.0769, 0.0956, 0.0842], "rc": [0.0248, 0.0117, 0.0051, 0.0202, 0.0107, 0.0315, 0.0217], "aus": [0.0348, 0.0322, 0.0284, 0.0494, 0.029, 0.0327, 0.0303], "cn": [10, 10, 44, 24, 24, 70, 66], "cr": [115, 115, 47, 110, 83, 70, 106]}, {"id": "EMP_30", "proceso": "interiores_textil_piel", "procesos": ["interiores_textil_piel"], "tier": "Tier 2", "tamano": "101 a 300", "sindicato": 0, "confed": null, "op": 181, "adm": 50, "otro": 5, "muj": 0.565, "edad": [0.162, 0.316, 0.279, 0.199, 0.044], "sal": [304, 320.8, 388.1, 575], "inc": {"2024": [0.08, 0.06, 0.01, 0.01], "2025": [0.08, 0.06, 0.01, 0.01]}, "mes": [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "No Aplica (Especifique)", "cap": 3.12, "mot": [3, 1, 1, 3, 2, 1, 1, 2, 3, 2, 3, null, 2, 0, 0, 1, 3, 3], "rot": [0.1084, 0.1084, 0.0167, 0.0167, 0.0167, 0.0167, 0.1515], "rnc": [0.0739, 0.0739, 0.0056, 0.0056, 0.0056, 0.0056, 0.1082], "rc": [0.0197, 0.0197, 0.0111, 0.0111, 0.0111, 0.0111, 0.0433], "aus": [0.0383, 0.0392, 0.0659, 0.0672, 0.0672, 0.0672, 0.0407], "cn": [6, 6, 0, 0, 0, 0, 15], "cr": [19, 19, 3, 3, 3, 3, 35]}, {"id": "EMP_31", "proceso": "fundicion", "procesos": ["fundicion", "metalmecanica"], "tier": "Tier 1", "tamano": "501 a 1,000", "sindicato": 1, "confed": "C.T.M.", "op": 240, "adm": 470, "otro": 0, "muj": 0.15, "edad": [0.051, 0.278, 0.376, 0.253, 0.043], "sal": [346, 396, 458, 531], "inc": {"2024": [0.08, 0.08, null, null], "2025": [0.065, 0.065, 0.01, null]}, "mes": [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 3.38, "mot": [3, 0, 0, 0, 0, 0, 0, 2, 2, 2, 3, 1, 0, 0, 0, 0, 0, 3], "rot": [0.0277, 0.0349, 0.0175, 0.0291, 0.0304, 0.0344, 0.0296], "rnc": [0.0198, 0.0081, 0.004, 0.0146, 0.0106, 0.0106, 0.0099], "rc": [0.0079, 0.0269, 0.0121, 0.0146, 0.0198, 0.0238, 0.0197], "aus": [0.003, 0.0025, 0.0043, 0.0025, 0.0049, 0.0037, 0.0078], "cn": [null, 3, 0, 0, 0, 0, 0], "cr": [30, 2, 7, 22, 12, 5, 12]}, {"id": "EMP_32", "proceso": "plasticos", "procesos": ["plasticos"], "tier": "Tier 2", "tamano": "1 a 100", "sindicato": 1, "confed": "C.T.M.", "op": 38, "adm": 46, "otro": 5, "muj": null, "edad": [null, null, null, null, null], "sal": [344.3, 380.2, 608.3, 730], "inc": {"2024": [0.06, 0.05, null, null], "2025": [0.07, 0.06, 0.05, null]}, "mes": [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Ya tuvimos la revisión de incrementos salariales del 2026", "cap": 3.76, "mot": [1, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1], "rot": [0.0104, 0.0104, 0.0104, 0.0104, 0, 0.0119, 0.0119], "rnc": [0.0104, 0.0104, 0.0104, 0.0104, 0, 0, 0], "rc": [0, 0, 0, 0, 0, 0.0119, 0.0119], "aus": [0.0065, 0.0066, 0.0068, 0.0068, 0.001, 0.0025, 0.0024], "cn": [0, 0, 0, 0, 0, 0, 0], "cr": [8, 8, 8, 8, 0, 0, 0]}, {"id": "EMP_33", "proceso": "metalmecanica", "procesos": ["metalmecanica"], "tier": "Tier 1", "tamano": "101 a 300", "sindicato": 1, "confed": "C.T.M.", "op": 93, "adm": 63, "otro": 0, "muj": 0.15, "edad": [0.1, 0.28, 0.33, 0.13, 0.16], "sal": [346.7, 378.6, 411.5, 466.6], "inc": {"2024": [0.09, 0.085, 0.01, 0.01], "2025": [0.1, 0.08, null, null]}, "mes": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 17.63, "mot": [2, 0, 0, 0, 1, 0, 3, 3, 3, 1, 0, 0, 3, 0, 1, 0, 0, null], "rot": [0.0727, 0.0429, 0.0189, 0.0318, 0.0063, 0.0253, 0.0385], "rnc": [0.0364, 0.0368, 0.0063, 0.0318, 0, 0.0063, 0.0321], "rc": [0.0364, 0.0061, 0.0126, 0, 0.0063, 0.019, 0.0064], "aus": [0.0011, 0.0008, 0.0006, 0.001, 0.0009, 0.001, 0.0004], "cn": [0, 0, 0, 1, 0, 0, 0], "cr": [10, 5, 1, 0, 1, 0, 5]}, {"id": "EMP_34", "proceso": "electronico_electronica", "procesos": ["electronico_electronica", "metalmecanica"], "tier": "Tier 1", "tamano": "501 a 1,000", "sindicato": 1, "confed": "Otro", "op": 391, "adm": 296, "otro": 0, "muj": 0.283, "edad": [0.1, 0.14, 0.55, 0.2, 0.01], "sal": [335, 410, 511, 831], "inc": {"2024": [0.056, 0.05, 0.04, null], "2025": [0.06, null, null, null]}, "mes": [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 0.44, "mot": [1, 2, 2, 1, 3, 1, 1, 1, 1, 3, 1, 2, 2, null, 2, 1, 3, 2], "rot": [0.0355, 0.0144, 0.0158, 0.0345, 0.0164, 0.0395, 0.0422], "rnc": [0.025, 0.0039, 0.0039, 0.0053, 0.0014, 0.0085, 0.0058], "rc": [0.0092, 0.0066, 0.0118, 0.0279, 0.0151, 0.031, 0.0364], "aus": [0.0083, 0.018, 0.0048, 0.0059, 0.0335, 0.0081, 0.0208], "cn": [5, 0, 0, 0, 0, 0, 0], "cr": [19, 6, 1, 7, 1, 2, 1]}, {"id": "EMP_35", "proceso": null, "procesos": [], "tier": null, "tamano": "101 a 300", "sindicato": 0, "confed": "C.T.M.", "op": 77, "adm": 47, "otro": 3, "muj": 0.162, "edad": [0.072, 0.432, 0.108, 0.216, 0.173], "sal": [278.8, 278.8, 351.3, 577.4], "inc": {"2024": [0.1, 0.1, 0.1, 0.1], "2025": [0.1, 0.1, 0.1, 0.1]}, "mes": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 0.74, "mot": [3, null, null, 3, 3, 2, 3, 2, 2, 2, 2, 2, 3, 2, 2, 2, 2, 2], "rot": [0.125, 0.0753, 0.0522, 0.0741, 0.0938, 0.0938, 0.0968], "rnc": [0.1118, 0.0685, 0.0522, 0.0296, 0.0781, 0.0781, 0.0968], "rc": [0.0132, 0.0068, 0, 0.0444, 0.0156, 0.0156, 0], "aus": [0.0186, 0.0198, 0.0186, 0.0079, 0.0109, 0.0109, 0.0088], "cn": [0, 0, 0, 0, 0, 0, 0], "cr": [0, 12, 9, 6, 2, 2, 0]}, {"id": "EMP_36", "proceso": "electronico_electronica", "procesos": ["electronico_electronica"], "tier": "Tier 2", "tamano": "más de 1,000", "sindicato": 1, "confed": "C.T.M.", "op": 1267, "adm": 405, "otro": 0, "muj": 0.57, "edad": [0.22, 0.34, 0.23, 0.17, 0.04], "sal": [346.3, 400.6, 420.6, 441.6], "inc": {"2024": [0.07, 0.058, 0.028, 0.02], "2025": [0.07, 0.06, null, null]}, "mes": [0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 3.75, "mot": [4, 3, 3, 1, 5, 2, 3, 1, 2, 4, 3, 4, 2, 3, 3, 1, 5, 5], "rot": [0.1154, 0.1154, 0.0646, 0.1219, 0.0865, 0.0741, 0.0616], "rnc": [0.0933, 0.0933, 0.0423, 0.0975, 0.067, 0.056, 0.0472], "rc": [0.0221, 0.0221, 0.0127, 0.0119, 0.0106, 0.0105, 0.0084], "aus": [0.046, 0.047, 0.0331, 0.0946, 0.0279, 0.0847, 0.0188], "cn": [20, 20, 30, 173, 0, 1, 0], "cr": [147, 147, 78, 78, 156, 41, 66]}, {"id": "EMP_37", "proceso": "metalmecanica", "procesos": ["metalmecanica", "recubrimientos"], "tier": "Tier 1", "tamano": "más de 1,000", "sindicato": 1, "confed": "Otro", "op": 964, "adm": 480, "otro": null, "muj": null, "edad": [null, null, null, null, null], "sal": [400, 479, 624, 790], "inc": {"2024": [0.07, null, null, null], "2025": [0.07, null, 0.01, null]}, "mes": [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "No Aplica (Especifique)", "cap": 4.85, "mot": [3, 2, 3, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 3], "rot": [0.0138, 0.0138, 0.0143, 0.0133, 0.01, 0.0152, 0.0111], "rnc": [0.0083, 0.009, 0.0048, 0.0073, 0.0047, 0.0083, 0.0062], "rc": [0.0048, 0.0042, 0.0027, 0.0053, 0.0054, 0.0055, 0.0042], "aus": [0.0406, 0.0445, 0.0402, 0.035, 0.0454, 0.0032, 0.0376], "cn": [0, 0, 0, 30, 8, 0, 10], "cr": [24, 18, 35, 20, 2, 3, 15]}, {"id": "EMP_38", "proceso": "arnesera", "procesos": ["arnesera", "metalmecanica"], "tier": "Tier 1", "tamano": "más de 1,000", "sindicato": 1, "confed": "C.T.M.", "op": 2863, "adm": 699, "otro": 0, "muj": 0.52, "edad": [0.22, 0.26, 0.21, 0.24, 0.07], "sal": [349, 349, 358, 367], "inc": {"2024": [0.06, 0.06, 0.02, 0.01], "2025": [0.06, 0.06, null, null]}, "mes": [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 0.18, "mot": [3, null, null, null, 3, null, null, null, 3, null, null, null, null, null, null, null, 3, 3], "rot": [0.1189, 0.0119, 0.0804, 0.1189, 0.1375, 0.1447, 0.1398], "rnc": [0.0651, 0.0651, 0.0421, 0.0851, 0.0891, 0.0948, 0.0817], "rc": [0.0386, 0.0386, 0.0251, 0.0212, 0.037, 0.0364, 0.0435], "aus": [0.0191, 0.0004, 0.0263, 0.0186, 0.0195, 0.0211, 0.0196], "cn": [225, 225, 52, 120, 133, 800, 800], "cr": [211, 211, 118, 407, 352, 743, 743]}, {"id": "EMP_39", "proceso": "plasticos", "procesos": ["plasticos"], "tier": "Tier 1", "tamano": "más de 1,000", "sindicato": 1, "confed": "C.T.M.", "op": 1151, "adm": 320, "otro": 0, "muj": 0.47, "edad": [0.11, 0.29, 0.3, 0.25, 0.05], "sal": [322.1, 363.2, 439.6, 540.9], "inc": {"2024": [0.058, 0.062, 0.01, null], "2025": [0.058, 0.062, 0.01, null]}, "mes": [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 3.35, "mot": [4, 3, 2, 1, 0, 1, 2, 1, 1, 4, 4, 3, 2, 1, 2, 1, 3, 5], "rot": [0.1212, 0.0429, 0.0971, 0.1265, 0.1016, 0.0986, 0.0986], "rnc": [0.1206, 0.0239, 0.0939, 0.1265, 0.0899, 0.0802, 0.0802], "rc": [0.0007, 0.0006, 0.0019, 0, 0.0104, 0.0177, 0.0177], "aus": [0.0778, 0.0647, 0.0641, 0.0473, 0.0964, 0.0509, 0.0497], "cn": [250, 250, 18, 0, 30, 0, 0], "cr": [59, 26, 85, 172, 108, 64, 64]}, {"id": "EMP_40", "proceso": "metalmecanica", "procesos": ["metalmecanica"], "tier": "Tier 1", "tamano": "301 a 500", "sindicato": 1, "confed": "S.I.T.I.M.M.", "op": 316, "adm": 98, "otro": 0, "muj": 0.283, "edad": [null, null, null, null, null], "sal": [398, 419, 495, 596], "inc": {"2024": [0.08, 0.08, 0.013, 0.005], "2025": [0.065, 0.065, 0.013, 0.005]}, "mes": [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], "ben": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "neg": "Pendiente de realizarlo, aun no llega la fecha", "cap": 2.44, "mot": [2, 2, 3, 1, 1, 1, 1, 1, 1, 3, 2, 1, 1, 2, 2, 2, 3, 1], "rot": [0.0249, 0.0092, 0.0093, 0.035, 0.0117, 0.0141, 0.0242], "rnc": [0.0204, 0.0023, 0, 0.0233, 0.0093, 0.0047, 0.0048], "rc": [0.0023, 0.0046, 0.0093, 0.0047, 0.0023, 0.0094, 0.0193], "aus": [0.0208, 0.0251, 0.0189, 0.0105, 0.0101, 0.0141, 0.0165], "cn": [2, 0, 0, 1, 0, 1, 1], "cr": [2, 2, 1, 10, 4, 3, null]}], "mercado": {"cuandosevan": {"nEmpresas": 38, "antesPrimerAno": 0.67, "labels": ["1.er mes", "Rango 2", "Antes de 1 año", "Rango 4", "Rango 5"], "acumulado": [0.2, 0.43, 0.67, 0.88, 1.0]}, "ausentismoEdicion": {"total": 0.0225, "justificado": 0.0179, "injustificado": 0.0093, "capacitacionHoras": 2.89, "nAus": 39, "nCap": 39}, "prediccion": {"rot2026": 0.38, "lo80": 0.33, "hi80": 0.44, "siSeDetiene": 0.41}, "rotacionEdicion": {"mercado": 0.0813, "mediana": 0.0728, "voluntaria": 0.0559, "involuntaria": 0.0224, "haceUnAno": 0.1077}, "sintesis": {"empresas": 40, "empleados": 35128, "composicion": {"op": 0.7, "adm": 0.28, "otro": 0.02}, "mujeres": {"pct": 0.386, "n": 37}, "tier": {"t2": 0.514, "t1": 0.486, "n": 35}, "procesoTopPct": 0.429, "salario": {"mediana": 340, "p25": 300, "p75": 370, "escalera": [340, 383, 444, 561], "crecimientoPct": 0.65}, "incrementoOp": {"2024": 0.0818, "2025": 0.0751}, "sinRevision": 23, "paqueteTipico": {"valesPct": 0.1, "aguinaldoDias": 20}, "rotacion": {"ultimo": 0.0813, "haceUnAno": 0.1077, "voluntaria": 0.0559, "involuntaria": 0.0224, "mediana": 0.0728, "promedio": 0.0813}, "causaSueldoPct": 0.718, "reposicionPct": 0.71, "tiempoExtraPct": 0.25, "drivers": {"orSalario": 0.71, "oddsReduccionPct": 0.29}, "segmentos": {"referentes": 10, "estables": 20, "altoRiesgo": 10, "casiSeguras": 8}}}};
 const CLIENTE = 'EMP_39';
 
 // ======================= utilidades =======================
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rico = s => esc(s).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 const num = v => (v === null || v === undefined || Number.isNaN(v)) ? null : v;
 const fmtP = (v, d = 1) => v == null ? '—' : (v * 100).toFixed(d) + '%';
 const fmtN = v => v == null ? '—' : Math.round(v).toLocaleString('es-MX');
@@ -845,14 +862,14 @@ const GLOSARIO = {
   'Ausentismo': 'Faltas divididas entre empleados por días hábiles del bimestre.',
   'Incremento': 'Porcentaje de aumento otorgado en el año a salarios o beneficios.',
   'Contrato colectivo': 'Acuerdo entre la empresa y el sindicato que fija salarios y prestaciones; se revisa cada año.',
-  'Benchmark': 'Comparación de su empresa contra el resto del mercado que participa en el Monitor.',
+  'Benchmark': 'Lectura del conjunto de empresas que participan en el Monitor. En esta reunión se ve el mercado completo, no una empresa.',
 };
 
 // ======================= gráficos por sección =======================
 const tuya = 'Su empresa';
 function baseOpc(compacto, extra = {}) {   // estilo minimalista: sin bordes de ejes, rejilla tenue
   const f = {family: 'Nunito Sans', size: compacto ? 10 : 12};
-  return Object.assign({responsive: true, maintainAspectRatio: false, animation: modoPDF ? false : {duration: 650, easing: 'easeOutCubic'},
+  return Object.assign({responsive: true, maintainAspectRatio: false, animation: modoPDF ? false : {duration: 650, easing: 'easeOutCubic'}, transitions: {resize: {animation: {duration: 0}}},
     plugins: {legend: {display: false, labels: {color: col('--suave'), usePointStyle: true, pointStyle: 'circle', boxWidth: 8, font: f}},
       tooltip: {backgroundColor: '#FFFFFF', titleColor: '#232222', bodyColor: '#5B6168', borderColor: '#E6E7E8', borderWidth: 1, padding: 10, cornerRadius: 10, titleFont: {family: 'Nunito Sans', weight: '700'}, bodyFont: {family: 'Nunito Sans'}, displayColors: false}},
     scales: {x: {border: {display: false}, ticks: {color: col('--suave'), font: f}, grid: {display: false}},
@@ -880,138 +897,131 @@ function configOrdenadas(filas, compacto, fmt, lineas) {
 }
 
 const SECCIONES = [
- {id: 'muestra', nombre: 'Contexto y Muestra', icono: 'pin',
-  kpis: M => { const tot = M.reduce((s, e) => s + (e.op || 0) + (e.adm || 0) + (e.otro || 0), 0);
-    const muj = M.reduce((s, e) => s + (e.muj ?? 0) * ((e.op || 0) + (e.adm || 0) + (e.otro || 0)), 0) / M.filter(e => e.muj != null).reduce((s, e) => s + (e.op || 0) + (e.adm || 0) + (e.otro || 0), 0);
-    return [{v: M.length, l: 'Empresas en la muestra'}, {v: fmtN(tot), l: 'Empleados'}, {v: fmtP(muj, 0), l: 'Mujeres (ponderado por empleados)'},
-            {v: fmtN((CLI.op || 0) + (CLI.adm || 0) + (CLI.otro || 0)), l: 'Empleados de su empresa', t: true}]; },
+ {id: 'muestra', nombre: 'Contexto', pregunta: '¿Quiénes estamos aquí?', icono: 'pin',
+  kpis: () => { const sx = sintesisMeta(); const c = sx.composicion || {};
+    return [{v: sx.empresas ?? 40, l: 'Empresas'}, {v: fmtN(sx.empleados ?? 35128), l: 'Empleados'},
+            {v: fmtP(c.op ?? 0.70, 0), l: 'Personal operativo'}, {v: fmtP(sx.mujeres?.pct ?? 0.386, 1), l: 'Mujeres en la plantilla'}]; },
   graficos: [
-   {id: 'plantilla', titulo: 'Empleados por tipo de personal', sub: 'Suma de la muestra', glos: ['Benchmark'],
-    texto: M => { const op = M.reduce((s, e) => s + (e.op || 0), 0), ad = M.reduce((s, e) => s + (e.adm || 0), 0), ot = M.reduce((s, e) => s + (e.otro || 0), 0), t = op + ad + ot;
-      return `La muestra reúne ${M.length} empresas con ${fmtN(t)} empleados. El ${fmtP(op / t, 0)} es personal operativo y el ${fmtP(ad / t, 0)} administrativo. Su empresa aporta ${fmtN(CLI.op + CLI.adm + (CLI.otro || 0))} empleados, el ${fmtP((CLI.op + CLI.adm + (CLI.otro || 0)) / t, 1)} del total.`; },
-    nota: 'Recalcar que todo lo que sigue compara a la empresa contra este grupo.',
-    config: (M, c) => { const o = baseOpc(c); o.plugins.tooltip.callbacks = {label: x => ' ' + fmtN(x.raw) + ' empleados'};
-      return {type: 'bar', data: {labels: ['Operativo', 'Administrativo', 'Otro'], datasets: [{data: ['op', 'adm', 'otro'].map(k => M.reduce((s, e) => s + (e[k] || 0), 0)), backgroundColor: [col('--navy'), col('--azul'), col('--cyan')], borderRadius: 6}]}, options: o}; }},
-   {id: 'procesos', titulo: 'Principales procesos', sub: '% de compañías que realizan cada proceso', glos: ['Benchmark'],
-    texto: M => { const f = conteoProcesos(M); return `${f[0].label} es el proceso más común: lo realiza el ${fmtP(f[0].v, 0)} de las compañías. Su empresa trabaja en ${(CLI.procesos || []).map(p => PROCESO[p]).join(' y ')}, marcado en ámbar.`; },
-    nota: 'Una empresa puede marcar varios procesos.',
-    config: (M, c) => { const f = conteoProcesos(M); return barrasH(f.map(x => x.label), f.map(x => x.v), f.map(x => (CLI.procesos || []).includes(x.k)), c); }},
-   {id: 'tier', titulo: 'Nivel en la cadena automotriz', sub: '% de compañías por Tier', glos: ['Tier'],
-    texto: M => { const t = conteo(M.map(e => e.tier)); const sind = prom(M.map(e => e.sindicato)); return `El ${fmtP(t[0].v, 0)} de las compañías es ${t[0].label}. Su empresa es ${CLI.tier}. El ${fmtP(sind, 0)} de las compañías tiene sindicato.`; },
-    nota: 'Tier 1 surte directo a la armadora; ayuda a ubicar a la empresa en la cadena.',
-    config: (M, c) => { const t = conteo(M.map(e => e.tier)); return barrasH(t.map(x => x.label), t.map(x => x.v), t.map(x => x.label === CLI.tier), c); }},
-   {id: 'tamano', titulo: 'Tamaño de las compañías', sub: '% de la muestra en cada rango de empleados', glos: ['Benchmark'],
-    texto: M => { const t = conteoTamano(M); const i = t.findIndex(x => x.label === CLI.tamano); return `El ${fmtP(t[0].v, 0)} de las compañías tiene entre ${t[0].label.toLowerCase()} empleados. La suya (${CLI.tamano || 'sin dato'}) está en el segmento resaltado en ámbar.`; },
-    nota: 'Complementa el Tier: aquí se ve el tamaño de plantilla, no el nivel en la cadena.',
-    config: (M, c) => configPie(conteoTamano(M).map(x => ({label: x.label, v: x.v, marcar: x.label === CLI.tamano})), c) },
+   {id: 'plantilla', titulo: 'Empleados por tipo de personal', sub: '40 empresas · 70% operativo · 38.6% mujeres', glos: ['Benchmark'],
+    texto: M => { const sx = sintesisMeta(); const c = sx.composicion || {}; return `Son **${sx.empresas ?? 40} empresas**. El **${fmtP(c.op ?? 0.70, 0)} es personal operativo**, el ${fmtP(c.adm ?? 0.28, 0)} administrativo y el ${fmtP(c.otro ?? 0.02, 0)} otro personal. El **${fmtP(sx.mujeres?.pct ?? 0.386, 1)} de la plantilla son mujeres** (${sx.mujeres?.n ?? 37} empresas reportaron el dato).`; },
+    nota: 'Diga 40 empresas, 70% operativo y 38.6% mujeres. El dato de mujeres lo reportaron 37 de 40. No hable de Tier ni de una empresa en esta lámina.',
+    config: (M, compacto) => { const sx = sintesisMeta(); const comp = sx.composicion || {}; const op = comp.op ?? 0.70, ad = comp.adm ?? 0.28, ot = comp.otro ?? 0.02;
+      const o = baseOpc(compacto); o.indexAxis = 'y'; o.plugins.legend.display = true; o.plugins.legend.position = compacto ? 'bottom' : 'top';
+      o.scales.x = Object.assign({stacked: true, max: 1, grid: {display: false}}, o.scales.x || {}); o.scales.y = Object.assign({stacked: true}, o.scales.y || {});
+      o.scales.x.ticks = Object.assign({}, o.scales.x.ticks, pctEje); o.plugins.tooltip.callbacks = {label: x => ' ' + x.dataset.label + ': ' + fmtP(x.raw, 0)};
+      return {type: 'bar', data: {labels: ['Composición de plantilla'], datasets: [
+        {label: 'Operativo', data: [op], backgroundColor: col('--navy'), stack: 'p'},
+        {label: 'Administrativo', data: [ad], backgroundColor: col('--azul'), stack: 'p'},
+        {label: 'Otro', data: [ot], backgroundColor: col('--cyan'), stack: 'p'}]}, options: o}; }},
+   {id: 'tamano', titulo: 'Empresas de todos los tamaños', sub: '5 · 10 · 7 · 8 · 10 empresas · 80% con sindicato', glos: ['Benchmark'],
+    texto: () => `Hay empresas de todos los tamaños: **5** de 1 a 100, **10** de 101 a 300, **7** de 301 a 500, **8** de 501 a 1,000 y **10** de más de 1,000. El **80%** tiene sindicato.`,
+    nota: 'Cada tamaño tiene su color: 5, 10, 7, 8 y 10 empresas. El 80% tiene sindicato. Aquí se ve el tamaño de plantilla, no el Tier.',
+    config: (M, c) => { const oficial = [['1 a 100', 5], ['101 a 300', 10], ['301 a 500', 7], ['501 a 1,000', 8], ['Más de 1,000', 10]]; return configPie(oficial.map(([label, n]) => ({label, v: n / 40, n})), c); } },
    {id: 'edad', titulo: 'Edad del personal', sub: 'Mercado ponderado por empleados contra su empresa', glos: ['Ponderado por empleados'],
     texto: M => { const d = edadMercado(M); return `En el mercado, el ${fmtP(d[0], 0)} del personal tiene menos de 23 años; en su empresa, el ${fmtP(CLI.edad[0], 0)}. Una plantilla más joven suele rotar más: es la asociación más fuerte que encontramos en los datos.`; },
     nota: 'Puente al tema de rotación (ρ = +0.44 entre % menor de 23 y rotación).',
     config: (M, c) => { const o = baseOpc(c); o.plugins.legend.display = true; o.scales.y.ticks = Object.assign({}, o.scales.y.ticks, pctEje); o.plugins.tooltip.callbacks = {label: x => ' ' + x.dataset.label + ': ' + fmtP(x.raw, 0)};
       return {type: 'bar', data: {labels: ['< 23', '23-29', '30-37', '38-50', '> 50'], datasets: [{label: 'Mercado', data: edadMercado(M), backgroundColor: col('--cyan'), borderRadius: 4}, {label: tuya, data: CLI.edad, backgroundColor: col('--ambar'), borderRadius: 4}]}, options: o}; }},
+   {id: 'tier', titulo: 'Nivel en la cadena automotriz', sub: '% de compañías por Tier', glos: ['Tier'],
+    texto: M => { const t = conteo(M.map(e => e.tier)); const sind = prom(M.map(e => e.sindicato)); return `El ${fmtP(t[0].v, 0)} de las compañías es ${t[0].label}. Su empresa es ${CLI.tier}. El ${fmtP(sind, 0)} de las compañías tiene sindicato.`; },
+    nota: 'Tier 1 surte directo a la armadora; ayuda a ubicar a la empresa en la cadena.',
+    config: (M, c) => { const t = conteo(M.map(e => e.tier)); return barrasH(t.map(x => x.label), t.map(x => x.v), t.map(x => x.label === CLI.tier), c); }},
+   {id: 'procesos', titulo: 'Principales procesos', sub: '% de compañías que realizan cada proceso', glos: ['Benchmark'],
+    texto: M => { const f = conteoProcesos(M); return `${f[0].label} es el proceso más común: lo realiza el ${fmtP(f[0].v, 0)} de las compañías. Su empresa trabaja en ${(CLI.procesos || []).map(p => PROCESO[p]).join(' y ')}, marcado en ámbar.`; },
+    nota: 'Una empresa puede marcar varios procesos.',
+    config: (M, c) => { const f = conteoProcesos(M); return barrasH(f.map(x => x.label), f.map(x => x.v), f.map(x => (CLI.procesos || []).includes(x.k)), c); }},
   ]},
- {id: 'salarios', nombre: 'Personal y Salarios', icono: 'peso',
-  kpis: M => [{v: fmt$(mediana(M.map(e => e.sal[0]))), l: 'Salario diario inicial (mediana)'}, {v: fmt$(CLI.sal[0]), l: 'Su salario diario inicial', t: true},
-              {v: fmtP(prom(M.map(e => e.inc['2025'][0])), 2), l: 'Incremento operativo 2025 (promedio)'}, {v: fmtP(CLI.inc['2025'][0], 2), l: 'Su incremento operativo 2025', t: true}],
+ {id: 'salarios', nombre: 'Compensación', pregunta: '¿Cuánto paga el mercado?', icono: 'peso',
+  kpis: () => { const s = sintesisMeta().salario || {}; return [{v: fmt$(s.mediana ?? 340), l: 'Mediana al ingreso'}, {v: (fmt$(s.p25 ?? 300)) + '–' + (fmt$(s.p75 ?? 370)), l: 'Mitad de las empresas'},
+              {v: fmtP(s.crecimientoPct ?? 0.65, 0), l: 'Del inicial al máximo'}, {v: '13 de 40', l: 'Pagan bajo el mínimo 2026'}]; },
   graficos: [
-   {id: 'salini', titulo: 'Salario diario inicial del personal operativo', sub: 'Cada barra es una empresa; la suya en ámbar', glos: ['Mediana'],
-    texto: M => { const med = mediana(M.map(e => e.sal[0])); const pos = rango(M.map(e => e.sal[0]), CLI.sal[0]); return `La mediana del mercado es ${fmt$(med)} diarios. Su empresa paga ${fmt$(CLI.sal[0])}, ${CLI.sal[0] < med ? 'por debajo' : 'por arriba'} de la mediana: el ${fmtP(pos, 0)} de las empresas paga menos que usted.`; },
-    nota: 'Es el dato que más se asocia a la rotación (ρ = −0.35): a menor salario de ingreso, más rotación.',
-    config: (M, c) => configOrdenadas(ordenadas(M, e => e.sal[0]), c, fmt$, [{label: 'Mediana', v: mediana(M.map(e => e.sal[0]))}]) },
-   {id: 'escalera', titulo: 'Escalera salarial operativa', sub: 'Percentiles del mercado y su empresa, salario diario', glos: ['Escalera salarial', 'Percentil 25 y 75'],
-    texto: M => { const esc = CLI.sal[3] / CLI.sal[0] - 1, escM = mediana(M.map(e => e.sal[3] && e.sal[0] ? e.sal[3] / e.sal[0] - 1 : null)); return `Del salario inicial al máximo, su escalera crece ${fmtP(esc, 0)}; en la empresa típica del mercado, ${fmtP(escM, 0)}. Una escalera corta deja poco incentivo para quedarse.`; },
-    nota: 'Mostrar la línea ámbar contra la banda P25-P75.',
-    config: (M, c) => { const o = baseOpc(c); o.plugins.legend.display = true; o.plugins.filler = {drawTime: 'beforeDatasetsDraw'}; o.plugins.tooltip.callbacks = {label: x => ' ' + x.dataset.label + ': ' + fmt$(x.raw)};
-      const lv = q => [0, 1, 2, 3].map(i => cuantil(M.map(e => e.sal[i]), q));
-      return {type: 'line', data: {labels: ['Inicial', 'Intermedio bajo', 'Intermedio alto', 'Máximo'], datasets: [
-        {label: 'Percentil 75', data: lv(.75), borderColor: col('--borde'), backgroundColor: col('--cielo'), fill: '+1', pointRadius: 0},
-        {label: 'Percentil 25', data: lv(.25), borderColor: col('--borde'), pointRadius: 0},
-        {label: 'Mediana', data: lv(.5), borderColor: col('--azul'), borderWidth: 2},
-        {label: tuya, data: CLI.sal, borderColor: col('--ambar'), borderWidth: 3}]}, options: o}; }},
-   {id: 'incremento', titulo: 'Incremento salarial otorgado', sub: 'Promedio simple de compañías contra su empresa', glos: ['Incremento', 'Promedio simple'],
+   {id: 'salini', titulo: 'Salario diario inicial', sub: 'En azul, entre $300 y $370 · línea negra: mediana $340', glos: ['Mediana'],
+    texto: () => { const s = sintesisMeta().salario || {}; return `La **mitad de las empresas** paga entre **${fmt$(s.p25 ?? 300)} y ${fmt$(s.p75 ?? 370)}** diarios a quien ingresa. La mediana es **${fmt$(s.mediana ?? 340)}**. **13 de 40** pagan menos que el mínimo de 2026 (**$315**).`; },
+    nota: 'La mitad está entre $300 y $370: esas barras van en azul y la mediana en negro. 13 de 40 están bajo el mínimo 2026 de $315.04. No señale una empresa.',
+    config: (M, c) => configSalarioIngreso(M, c) },
+   {id: 'escalera', titulo: 'Escalera salarial', sub: '$300 · $340 inicial · $561 máximo · 43% revisa en abril', glos: ['Escalera salarial', 'Percentil 25 y 75'],
+    texto: () => { const s = sintesisMeta().salario || {}; return `En medianas, un operativo pasa de **${fmt$(s.escalera?.[0] ?? 340)}** a **${fmt$(s.escalera?.[3] ?? 561)}** diarios (**${fmtP(s.crecimientoPct ?? 0.65, 0)}** más). El rango central al ingreso empieza en **$300**. El **43%** revisa salarios en abril.`; },
+    nota: 'Línea negra: mediana unida de $340 a $561. Líneas azules: piso y techo del 50% central, también unidos. Eje X: nivel. Eje Y: pesos diarios. Abajo: $300 del rango, $340 inicial, $561 máximo y 43% revisa en abril.',
+    config: (M, c) => configEscalera(M, c) },
+   {id: 'incremento', titulo: 'Incremento 2025', sub: '7.5% al operativo · 2.9% en beneficios', glos: ['Incremento', 'Promedio simple'],
     texto: M => `El mercado otorgó en promedio ${fmtP(prom(M.map(e => e.inc['2025'][0])), 2)} al personal operativo en 2025, contra ${fmtP(prom(M.map(e => e.inc['2024'][0])), 2)} en 2024. Su empresa otorgó ${fmtP(CLI.inc['2025'][0], 2)} en 2025.`,
     nota: 'El incremento bajó de 2024 a 2025 en el mercado.',
     config: (M, c) => { const o = baseOpc(c); o.plugins.legend.display = true; o.scales.y.ticks = Object.assign({}, o.scales.y.ticks, pctEje); o.plugins.tooltip.callbacks = {label: x => ' ' + x.dataset.label + ': ' + fmtP(x.raw, 2)};
       const L = ['Operativo 2024', 'Operativo 2025', 'Administrativo 2024', 'Administrativo 2025'], k = [['2024', 0], ['2025', 0], ['2024', 1], ['2025', 1]];
       return {type: 'bar', data: {labels: L, datasets: [{label: 'Mercado', data: k.map(([a, i]) => prom(M.map(e => e.inc[a][i]))), backgroundColor: col('--cyan'), borderRadius: 4},
         {label: tuya, data: k.map(([a, i]) => CLI.inc[a][i]), backgroundColor: col('--ambar'), borderRadius: 4}]}, options: o}; }},
-   {id: 'mes', titulo: 'Mes de revisión salarial', sub: '% de compañías que incrementan en cada mes', glos: ['Contrato colectivo'],
+   {id: 'mes', titulo: 'Mes de revisión', sub: 'Abril concentra el 43% de las empresas', glos: ['Contrato colectivo'],
     texto: M => { const v = mesesMercado(M); const i = v.indexOf(Math.max(...v)); return `${['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'][i]} concentra las revisiones: el ${fmtP(v[i], 0)} de las compañías. Su empresa revisa en ${CLI.mes.map((x, j) => x ? MESES[j] : null).filter(Boolean).join(', ') || 'un mes no reportado'}.`; },
     nota: 'Útil para anticipar presiones salariales en la región.',
     config: (M, c) => { const v = mesesMercado(M); const o = baseOpc(c); o.scales.y.ticks = Object.assign({}, o.scales.y.ticks, pctEje); o.plugins.tooltip.callbacks = {label: x => ' ' + fmtP(x.raw, 0)};
       return {type: 'bar', data: {labels: MESES, datasets: [{data: v, backgroundColor: CLI.mes.map(x => x ? col('--ambar') : col('--cyan')), borderRadius: 4}]}, options: o}; }},
-  ]},
- {id: 'beneficios', nombre: 'Beneficios', icono: 'mas',
-  kpis: M => { const b = beneficiosMercado(M); return [{v: b[0].label, l: `Beneficio más común (${fmtP(b[0].v, 0)})`}, {v: CLI.ben.reduce((s, x) => s + x, 0), l: 'Beneficios incluidos por su empresa', t: true},
-    {v: (mediana(M.map(e => e.cap)) ?? 0).toFixed(1) + ' h', l: 'Capacitación por persona (mediana)'}, {v: (CLI.cap ?? 0).toFixed(1) + ' h', l: 'Su capacitación por persona', t: true}]; },
-  graficos: [
-   {id: 'beneficios', titulo: 'Beneficios incluidos en el incremento', sub: '% de compañías que respondieron', glos: ['Incremento'],
-    texto: M => { const b = beneficiosMercado(M); return `${b[0].label} y ${b[1].label.toLowerCase()} son los beneficios que más se incrementan (${fmtP(b[0].v, 0)} y ${fmtP(b[1].v, 0)} de las compañías). En ámbar, los que incluyó su empresa.`; },
-    nota: 'Comparar el paquete del cliente con los más comunes.',
-    config: (M, c) => { const b = beneficiosMercado(M).slice(0, 10); return barrasH(b.map(x => x.label), b.map(x => x.v), b.map(x => CLI.ben[x.i] === 1), c); }},
-   {id: 'incben', titulo: 'Incremento en beneficios 2025', sub: 'Promedio simple de compañías contra su empresa', glos: ['Incremento'],
-    texto: M => `En 2025 el mercado incrementó los beneficios ${fmtP(prom(M.map(e => e.inc['2025'][2])), 2)} para el personal operativo y ${fmtP(prom(M.map(e => e.inc['2025'][3])), 2)} para el administrativo. Su empresa: ${fmtP(CLI.inc['2025'][2], 2)} y ${fmtP(CLI.inc['2025'][3], 2)}.`,
-    nota: 'Los beneficios crecen menos que el salario.',
-    config: (M, c) => { const o = baseOpc(c); o.plugins.legend.display = true; o.scales.y.ticks = Object.assign({}, o.scales.y.ticks, pctEje); o.plugins.tooltip.callbacks = {label: x => ' ' + x.dataset.label + ': ' + fmtP(x.raw, 2)};
-      return {type: 'bar', data: {labels: ['Operativo', 'Administrativo'], datasets: [{label: 'Mercado', data: [2, 3].map(i => prom(M.map(e => e.inc['2025'][i]))), backgroundColor: col('--cyan'), borderRadius: 4},
-        {label: tuya, data: [2, 3].map(i => CLI.inc['2025'][i]), backgroundColor: col('--ambar'), borderRadius: 4}]}, options: o}; }},
    {id: 'negociacion', titulo: 'Estatus del contrato colectivo', sub: 'Compañías por etapa de la revisión', glos: ['Contrato colectivo'],
     texto: M => { const t = conteo(M.map(e => etapa(e.neg))); return `${t[0].label}: ${fmtP(t[0].v, 0)} de las compañías. Su empresa: ${etapa(CLI.neg) || 'sin dato'}.`; },
     nota: 'Indica cuántas empresas ya cerraron su negociación del año.',
     config: (M, c) => { const t = conteo(M.map(e => etapa(e.neg))); const o = baseOpc(c); delete o.scales; o.plugins.legend.display = true; o.plugins.legend.position = c ? 'bottom' : 'right'; o.plugins.tooltip.callbacks = {label: x => ' ' + x.label + ': ' + fmtP(x.raw, 0)};
       return {type: 'doughnut', data: {labels: t.map(x => x.label), datasets: [{data: t.map(x => x.v), backgroundColor: [col('--navy'), col('--azul'), col('--cyan'), col('--borde'), col('--ambar')], borderWidth: 0}]}, options: Object.assign(o, {cutout: '62%'})}; }},
-   {id: 'capacitacion', titulo: 'Horas de capacitación por persona', sub: 'En el bimestre; cada barra es una empresa', glos: ['Mediana'],
-    texto: M => `La empresa típica dio ${(mediana(M.map(e => e.cap)) ?? 0).toFixed(1)} horas de capacitación por persona en el bimestre; la suya, ${(CLI.cap ?? 0).toFixed(1)} horas.`,
-    nota: 'Algunas empresas dan más de 10 horas; la mediana evita que pesen de más.',
-    config: (M, c) => configOrdenadas(ordenadas(M, e => e.cap), c, v => v.toFixed(1) + ' h', [{label: 'Mediana', v: mediana(M.map(e => e.cap))}]) },
   ]},
- {id: 'indicadores', nombre: 'Indicadores', icono: 'kpi',
-  kpis: M => [{v: fmtP(promSinCeros(M.map(e => e.rot[ULT])), 2), l: 'Rotación del mercado (promedio simple sin ceros)'}, {v: fmtP(CLI.rot[ULT], 2), l: 'Su rotación', t: true},
-              {v: fmtP(mediana(M.map(e => e.rot[ULT]).filter(v => v > 0)), 2), l: 'Rotación mediana'}, {v: fmtP(promSinCeros(M.map(e => e.aus[ULT])), 2), l: 'Ausentismo del mercado'}],
+ {id: 'beneficios', nombre: 'Prestaciones', pregunta: '¿Qué se ofrece además del salario?', icono: 'mas',
+  kpis: () => [{v: '33%', l: 'No movió ningún beneficio'}, {v: '45%', l: 'Subió vales de despensa'}, {v: '40%', l: 'Subió fondo de ahorro'}, {v: '2.9%', l: 'Incremento en beneficios'}],
   graficos: [
-   {id: 'rotserie', titulo: 'Rotación bimestral por tipo', sub: 'Mercado (promedio simple sin ceros) y su empresa', glos: ['Rotación no controlada', 'Rotación controlada', 'Sin ceros'],
-    texto: M => { const s = serieRot(M); return `La rotación del mercado pasó de ${fmtP(s.total[0])} en ${DATOS.bimestres[0]} a ${fmtP(s.total[ULT])} en ${DATOS.bimestres[ULT]}. La mayor parte es no controlada: la deciden los empleados. Su empresa terminó en ${fmtP(CLI.rot[ULT])}.`; },
-    nota: 'La línea ámbar es el cliente; las barras, el mercado.',
-    config: (M, c) => { const s = serieRot(M); const o = baseOpc(c); o.plugins.legend.display = true; o.scales.x.stacked = true; o.scales.y.stacked = true; o.scales.y.ticks = Object.assign({}, o.scales.y.ticks, pctEje); o.plugins.tooltip.callbacks = {label: x => ' ' + x.dataset.label + ': ' + fmtP(x.raw)};
-      return {type: 'bar', data: {labels: DATOS.bimestres, datasets: [{label: 'No controlada', order: 1, data: s.nc, backgroundColor: col('--navy'), stack: 'm'}, {label: 'Controlada', order: 1, data: s.ct, backgroundColor: col('--cyan'), stack: 'm'},
-        {type: 'line', order: 0, label: tuya, data: CLI.rot, borderColor: col('--ambar'), backgroundColor: col('--ambar'), borderWidth: 3, stack: 'c'}]}, options: o}; }},
-   {id: 'mixcontrata', titulo: 'Contrataciones del bimestre', sub: 'Reposición de bajas frente a posiciones nuevas (mercado)', glos: ['Rotación'],
-    texto: M => { const mk = mixContratacion(M); const cl = mixContratacion([CLI]); return `En ${DATOS.bimestres[ULT]}, el ${fmtP(mk.pCr, 0)} de las contrataciones del mercado repusieron una baja y el ${fmtP(mk.pCn, 0)} abrieron posición nueva. Su empresa: ${fmtP(cl.pCr, 0)} reposición y ${fmtP(cl.pCn, 0)} nuevas.`; },
-    nota: 'Misma lectura que «Contratamos para reponer»: la rotación temprana encarece el reclutamiento.',
-    config: (M, c) => { const m = mixContratacion(M); const o = baseOpc(c); delete o.scales; o.plugins.legend.display = true; o.plugins.legend.position = c ? 'bottom' : 'right'; o.plugins.tooltip.callbacks = {label: x => ' ' + x.label + ': ' + fmtP(x.raw, 0)};
-      return {type: 'pie', data: {labels: ['Reposición de bajas', 'Posiciones nuevas'], datasets: [{data: [m.pCr, m.pCn], backgroundColor: [col('--navy'), col('--cyan')], borderWidth: 0}]}, options: o}; }},
-   {id: 'rotcomp', titulo: `Rotación por compañía (${DATOS.edicion})`, sub: 'Cada barra es una empresa; la suya en ámbar', glos: ['Promedio simple', 'Mediana', 'Rotación'],
+   {id: 'beneficios', titulo: 'Qué se movió además del salario', sub: '33% no movió nada · vales 45% · fondo 40% · beneficios 2.9%', glos: ['Incremento'],
+    texto: () => `**Una de cada tres** empresas no movió ningún beneficio. Las demás subieron, sobre todo **vales (45%)** y **fondo de ahorro (40%)**. El incremento en beneficios fue **2.9%**.`,
+    nota: 'Descripción corta: una de cada tres no movió beneficios. 45% subió vales, 40% el fondo y el incremento en beneficios es 2.9%. El paquete del 10% es la lámina anterior.',
+    config: (M, c) => configMovioBeneficios(c) },
+   {id: 'incben', titulo: 'Incremento en beneficios', sub: '2.9% al operativo en 2025', glos: ['Incremento'],
+    texto: M => `En 2025 el mercado incrementó los beneficios ${fmtP(prom(M.map(e => e.inc['2025'][2])), 2)} para el personal operativo y ${fmtP(prom(M.map(e => e.inc['2025'][3])), 2)} para el administrativo. Su empresa: ${fmtP(CLI.inc['2025'][2], 2)} y ${fmtP(CLI.inc['2025'][3], 2)}.`,
+    nota: 'Los beneficios crecen menos que el salario.',
+    config: (M, c) => { const o = baseOpc(c); o.plugins.legend.display = true; o.scales.y.ticks = Object.assign({}, o.scales.y.ticks, pctEje); o.plugins.tooltip.callbacks = {label: x => ' ' + x.dataset.label + ': ' + fmtP(x.raw, 2)};
+      return {type: 'bar', data: {labels: ['Operativo', 'Administrativo'], datasets: [{label: 'Mercado', data: [2, 3].map(i => prom(M.map(e => e.inc['2025'][i]))), backgroundColor: col('--cyan'), borderRadius: 4},
+        {label: tuya, data: [2, 3].map(i => CLI.inc['2025'][i]), backgroundColor: col('--ambar'), borderRadius: 4}]}, options: o}; }},
+  ]},
+ {id: 'indicadores', nombre: 'Insights clave', pregunta: '¿Cuánta gente se va, y cuándo?', icono: 'kpi',
+  kpis: M => { const cv = cuandosevanMeta(); const mk = mixContratacion(M); const ae = mercadoMeta().ausentismoEdicion || {}; const r = sintesisMeta().rotacion || {}; return [{v: fmtP(r.ultimo ?? mercadoMeta().rotacionEdicion?.mercado ?? promSinCeros(M.map(e => e.rot[ULT])), 1), l: 'Rotación del mercado (Jul–Ago 2025)'}, {v: fmtP(cv.antesAno, 0), l: 'Bajas antes del primer año'}, {v: fmtP(ae.total ?? promSinCeros(M.map(e => e.aus[ULT])), 2), l: 'Ausentismo del mercado'}, {v: fmtP(mk.pCr, 0), l: 'Contrataciones por reposición'}]; },
+  graficos: [
+   {id: 'rotserie', titulo: 'Rotación del mercado', sub: '8.1% en Jul–Ago 2025 · 10.8% hace un año · filtre por Tier o tamaño', glos: ['Rotación', 'Sin ceros'], filtra: true,
+    texto: M => { const r = sintesisMeta().rotacion || {}; if (M.length !== EMP.length) { const ult = serieRot(M).total[ULT]; return `En este corte la rotación es **${fmtP(ult, 1)}** (**${M.length} empresas**). El mercado completo bajó de **${fmtP(r.haceUnAno ?? 0.1077, 1)}** a **${fmtP(r.ultimo ?? 0.0813, 1)}**.`; } return `Bajó de **${fmtP(r.haceUnAno ?? 0.1077, 1)}** a **${fmtP(r.ultimo ?? 0.0813, 1)}** en un año. Dos de cada tres bajas las decide el empleado. La mediana es **${fmtP(r.mediana ?? 0.0728, 1)}**. Voluntaria **${fmtP(r.voluntaria ?? 0.0559, 1)}**.`; },
+    nota: 'De 10.8% a 8.1%. Mediana 7.3% y voluntaria 5.6%. El filtro muestra todo el mercado, Tier 1, 2 o 3, y los tamaños. Con menos de 5 empresas se vuelve a mostrar el mercado completo.',
+    config: (M, c) => { const s = serieRot(M); const o = baseOpc(c); o.plugins.legend.display = true; o.scales.y.ticks = Object.assign({}, o.scales.y.ticks, pctEje, {color: '#232222'}); o.scales.x.ticks.color = '#232222'; o.plugins.tooltip.callbacks = {label: x => ' ' + x.dataset.label + ': ' + fmtP(x.raw, 1)};
+      return {type: 'line', data: {labels: DATOS.bimestres, datasets: [
+        {label: 'Mercado', data: s.total, borderColor: '#1B4F7A', backgroundColor: 'rgba(39,120,177,.12)', borderWidth: 3, tension: 0.25, fill: true, pointRadius: c ? 3 : 5, pointBackgroundColor: '#232222'}]}, options: o}; }},
+   {id: 'rotcomp', titulo: 'Cada empresa, sin nombre', sub: 'Mediana 7.3% · promedio 8.1% · la suya en ámbar', glos: ['Promedio simple', 'Mediana', 'Rotación'],
     texto: M => { const r = M.map(e => e.rot[ULT]); const p = promSinCeros(r), md = mediana(r.filter(v => v > 0)); return `El promedio simple es ${fmtP(p, 2)} y la mediana ${fmtP(md, 2)}: unas pocas empresas con rotación muy alta jalan el promedio. Su empresa, con ${fmtP(CLI.rot[ULT], 2)}, está ${CLI.rot[ULT] > p ? 'por arriba' : 'por abajo'} de ambos.`; },
     nota: 'Mostrar por qué la mediana describe mejor a la empresa típica.',
-    config: (M, c) => { const r = M.map(e => e.rot[ULT]); return configOrdenadas(ordenadas(M, e => e.rot[ULT]), c, v => fmtP(v, 2), [{label: 'Promedio simple sin ceros', v: promSinCeros(r)}, {label: 'Mediana', v: mediana(r.filter(v => v > 0))}]); }},
-   {id: 'causas', titulo: 'Causas de rotación', sub: '% de compañías que califican la causa como común o más', glos: ['Rotación no controlada'],
+    config: (M, c) => { const r = M.map(e => e.rot[ULT]); const md = mercadoMeta().rotacionEdicion?.mediana; return configOrdenadas(ordenadas(M, e => e.rot[ULT]), c, v => fmtP(v, 2), [{label: 'Promedio simple sin ceros', v: promSinCeros(r)}, {label: 'Mediana', v: md ?? mediana(r.filter(v => v > 0))}]); }},
+   {id: 'cuandosevan', titulo: 'Cuándo se van', sub: '67% antes del primer año · 20% en el primer mes', glos: ['Rotación temprana'],
+    texto: () => { const d = cuandosevanMeta(); const sx = sintesisMeta(); return `El **${fmtP(d.acum[0], 0)}** se va en el primer mes y el **${fmtP(d.antesAno, 0)}** antes del primer año (n = ${d.n}). Por eso el **${fmtP(sx.reposicionPct ?? 0.71, 0)}** de las contrataciones solo repone bajas. La causa más común: **mejor sueldo (${fmtP(sx.causaSueldoPct ?? 0.718, 0)})**.`; },
+    nota: '20% en el primer mes y 67% antes del año (n=38). 71% de las contrataciones es reposición. Mejor sueldo: 72%.',
+    config: (M, c) => configCuandosevan(M, c) },
+   {id: 'causas', titulo: 'La causa número uno', sub: 'Mejor sueldo en otro empleo · 72%', glos: ['Rotación no controlada'],
     texto: M => { const c = causasMercado(M); return `"${c[0].label}" es la causa más citada: el ${fmtP(c[0].v, 0)} de las compañías la ve común o más frecuente. En ámbar, las causas que su empresa califica igual.`; },
     nota: 'Coincide con el salario de ingreso por debajo de la mediana del cliente.',
     config: (M, c) => { const k = causasMercado(M).slice(0, 10); return barrasH(k.map(x => x.label), k.map(x => x.v), k.map(x => (CLI.mot[x.i] ?? 0) >= 3), c); }},
-   {id: 'ausentismo', titulo: 'Ausentismo bimestral', sub: 'Mercado (promedio simple sin ceros) y su empresa', glos: ['Ausentismo'],
-    texto: M => { const s = DATOS.bimestres.map((_, i) => promSinCeros(M.map(e => e.aus[i]))); return `El ausentismo del mercado se mueve entre ${fmtP(Math.min(...vals(s)), 2)} y ${fmtP(Math.max(...vals(s)), 2)}. Su empresa tuvo ${fmtP(CLI.aus[ULT], 2)} en ${DATOS.bimestres[ULT]}. Más ausentismo suele ir con más rotación.`; },
-    nota: 'Cierra la sección: ausentismo y rotación se mueven juntos (ρ = +0.35).',
+   {id: 'ausentismo', titulo: 'Ausentismo', sub: '2.25% del mercado en Jul–Ago 2025 · su empresa en ámbar', glos: ['Ausentismo'],
+    texto: M => { const ae = mercadoMeta().ausentismoEdicion || {}; const cap = ae.capacitacionHoras ?? mediana(M.map(e => e.cap)); return `De cada 100 días que se debían trabajar, se faltaron ${fmtP(ae.total ?? promSinCeros(M.map(e => e.aus[ULT])), 2)} en ${DATOS.bimestres[ULT]} (justificado ${fmtP(ae.justificado ?? 0, 2)}, injustificado ${fmtP(ae.injustificado ?? 0, 2)}). La capacitación típica es ${(cap ?? 0).toFixed(1)} horas por persona en el bimestre; la suya, ${(CLI.cap ?? 0).toFixed(1)} h.`; },
+    nota: 'La incapacidad proviene de otra pregunta (semestral).',
     config: (M, c) => { const o = baseOpc(c); o.plugins.legend.display = true; o.scales.y.ticks = Object.assign({}, o.scales.y.ticks, {callback: v => (v * 100).toFixed(1) + '%'}); o.plugins.tooltip.callbacks = {label: x => ' ' + x.dataset.label + ': ' + fmtP(x.raw, 2)};
       return {type: 'line', data: {labels: DATOS.bimestres, datasets: [{label: 'Mercado', data: DATOS.bimestres.map((_, i) => promSinCeros(M.map(e => e.aus[i]))), borderColor: col('--azul'), borderWidth: 2.5},
         {label: tuya, data: CLI.aus, borderColor: col('--ambar'), borderWidth: 3}]}, options: o}; }},
+   {id: 'mixcontrata', titulo: 'Contrataciones por bimestre', sub: 'Reposición de bajas frente a posiciones nuevas (mercado)', glos: ['Rotación'],
+    texto: M => { const mk = mixContratacion(M); const cl = mixContratacion([CLI]); return `Siete de cada diez contrataciones del mercado solo reponen a alguien que se fue (${fmtP(mk.pCr, 0)} reposición frente a ${fmtP(mk.pCn, 0)} posiciones nuevas en ${DATOS.bimestres[ULT]}). Su empresa: ${fmtP(cl.pCr, 0)} reposición y ${fmtP(cl.pCn, 0)} nuevas.`; },
+    nota: 'Se contrata sobre todo para reponer, no para crecer.',
+    config: (M, c) => { const o = baseOpc(c); o.plugins.legend.display = true; o.scales.x.stacked = true; o.scales.y.stacked = true; o.scales.y.ticks = Object.assign({}, o.scales.y.ticks, pctEje); o.plugins.tooltip.callbacks = {label: x => ' ' + x.dataset.label + ': ' + fmtP(x.raw, 0)};
+      const reps = DATOS.bimestres.map((_, i) => mixContratacionBimestre(M, i).pCr);
+      const nuev = DATOS.bimestres.map((_, i) => mixContratacionBimestre(M, i).pCn);
+      return {type: 'bar', data: {labels: DATOS.bimestres, datasets: [{label: 'Reposición de bajas', data: reps, backgroundColor: col('--navy'), stack: 'm'}, {label: 'Posiciones nuevas', data: nuev, backgroundColor: col('--cyan'), stack: 'm'}]}, options: o}; }},
   ]},
- {id: 'patrones', nombre: 'Patrones y relaciones', icono: 'chart',
-  kpis: M => [{v: fmtP(mixContratacion(M).pCr, 0), l: 'Contrataciones por reposición (mercado)'}, {v: fmtP(CLI.rot[ULT], 2), l: 'Su rotación', t: true},
-    {v: fmt$(CLI.sal[0]), l: 'Su salario inicial'}, {v: fmtP(perfilRadar(M).cli[0], 0), l: 'Percentil en rotación (menor es mejor)'}],
+ {id: 'patrones', nombre: 'Qué viene', pregunta: '¿Qué esperar en 2026?', icono: 'chart',
+  kpis: () => { const p = prediccionMeta(); return [{v: fmtP(p.rot2026, 0), l: 'Si la tendencia sigue'}, {v: fmtP(p.lo80, 0) + '–' + fmtP(p.hi80, 0), l: 'Rango del 80%'}, {v: fmtP(p.siSeDetiene, 0), l: 'Si se detiene'}, {v: String(p.altoRiesgo), l: 'Empresas en alto riesgo'}]; },
   graficos: [
-   {id: 'salrot', titulo: 'Salario inicial y rotación', sub: 'Cada punto es una empresa; la suya en ámbar', glos: ['Rotación', 'Mediana'],
-    texto: M => { const p = puntosSalRot(M).find(x => x.id === CLIENTE); const med = mediana(M.map(e => e.sal[0])); return `A menor salario de ingreso suele ir más rotación (ρ ≈ −0.35 en la muestra). Su empresa paga ${fmt$(p?.x)} con rotación ${fmtP(p?.y, 2)} frente a una mediana salarial de ${fmt$(med)}.`; },
-    nota: 'Dispersión: dos variables numéricas a la vez.',
-    config: (M, c) => configScatter(puntosSalRot(M), c, fmt$, fmtP) },
-   {id: 'plantbubble', titulo: 'Plantilla, rotación y ausentismo', sub: 'Eje X: empleados · Y: rotación · tamaño del punto: ausentismo', glos: ['Ausentismo', 'Rotación'],
-    texto: M => { const h = (CLI.op || 0) + (CLI.adm || 0) + (CLI.otro || 0); return `Su plantilla suma ${fmtN(h)} personas, rotación ${fmtP(CLI.rot[ULT], 2)} y ausentismo ${fmtP(CLI.aus[ULT], 2)}. El tamaño del punto refleja el ausentismo relativo en el bimestre.`; },
-    nota: 'Burbujas: una tercera variable por el área del punto.',
-    config: (M, c) => configBubble(puntosBubble(M), c) },
-   {id: 'rotmapa', titulo: 'Rotación por Tier y tamaño', sub: 'Intensidad del color = rotación promedio del segmento', glos: ['Tier', 'Promedio simple'],
-    texto: M => { const h = celdaRotMax(M); return `La combinación con mayor rotación promedio en ${DATOS.edicion} es ${h.tier} · ${h.tamano} (${fmtP(h.v, 2)}). Las celdas vacías no alcanzan el mínimo de empresas para mostrarse.`; },
-    nota: 'Heatmap: dos categorías y un valor de intensidad.',
-    config: (M, c) => configHeatmapRot(M, c) },
-   {id: 'perfilradar', titulo: 'Perfil relativo de su empresa', sub: 'Percentil en cada dimensión (100 = mejor posición en la muestra)', glos: ['Benchmark', 'Ausentismo', 'Incremento'],
+   {id: 'prediccion', titulo: 'Rotación esperada 2026', sub: 'Historia y pronóstico del mercado · escenario base', glos: ['Rotación'],
+    texto: () => { const p = prediccionMeta(); return `Si la tendencia sigue, esperamos **${fmtP(p.rot2026, 0)}** anual. El rango del 80% va de **${fmtP(p.lo80, 0)} a ${fmtP(p.hi80, 0)}**. Si se detiene, **${fmtP(p.siSeDetiene, 0)}**. Hay **${p.altoRiesgo} empresas en alto riesgo**, ${p.estables} estables y ${p.referentes} referentes. Es un escenario, no un hecho.`; },
+    nota: 'Línea negra: historia bimestral. Azul punteada: pronóstico. Banda clara: rango del 80%. Diga 38% si sigue, 33% a 44%, 41% si se detiene y 10 empresas en alto riesgo. Jul–Ago y Ene–Feb suben; Nov–Dic baja.',
+    config: (M, c) => configPrediccion(M, c) },
+   {id: 'salrot', titulo: 'Qué mueve la rotación', sub: 'Odds ratio por desviación · intervalo del 90%', glos: ['Drivers', 'Rotación'],
+    texto: () => { const d = sintesisMeta().drivers || {}; return `Las bajas antes del año suben las odds de rotación (**+54%**). El ausentismo también (**+22%**). Pagar sobre el mercado las baja (**−${fmtP(d.oddsReduccionPct ?? 0.29, 0)}**). El **75%** de la variación depende de cada empresa, no del tamaño ni del Tier.`; },
+    nota: 'Diagrama de bosque: a la derecha de «sin efecto» sube las odds; a la izquierda las baja. +54% bajas tempranas, −29% salario sobre el mercado (OR 0.71), +22% ausentismo. Menor de 23 años cruza el cero: no es concluyente. Asociación, no causa.',
+    config: (M, c) => configForest(c) },
+   {id: 'perfilradar', titulo: 'Su empresa frente al mercado', sub: '100 = mejor posición de la muestra en esa dimensión', glos: ['Benchmark', 'Ausentismo', 'Incremento'],
     texto: M => { const r = perfilRadar(M); const peor = r.labels[r.cli.indexOf(Math.min(...r.cli))]; return `El radar compara su posición relativa en rotación, ausentismo, salario, incremento y capacitación. La dimensión más baja para usted es ${peor.toLowerCase()}.`; },
     nota: 'Radar: varias métricas en un solo vistazo.',
     config: (M, c) => configRadar(perfilRadar(M), c) },
@@ -1029,6 +1039,256 @@ function etapa(t) { if (!t) return null; if (/pendiente/i.test(t)) return 'Pendi
 function serieRot(M) { const total = [], nc = [], ct = []; DATOS.bimestres.forEach((_, i) => { const p = M.filter(e => (e.rot[i] ?? 0) > 0); total.push(prom(p.map(e => e.rot[i]))); nc.push(prom(p.map(e => e.rnc[i]))); ct.push(prom(p.map(e => e.rc[i]))); }); return {total, nc, ct}; }
 function conteoTamano(M) { const n = M.length, c = {}; M.forEach(e => { const t = e.tamano || 'Sin dato'; c[t] = (c[t] || 0) + 1; }); return TAMANOS.filter(t => c[t]).map(t => ({label: t, v: c[t] / n})).concat(c['Sin dato'] ? [{label: 'Sin dato', v: c['Sin dato'] / n}] : []).sort((a, b) => b.v - a.v); }
 function mixContratacion(lista) { const i = ULT; let cn = 0, cr = 0; lista.forEach(e => { cn += num(e.cn?.[i]) || 0; cr += num(e.cr?.[i]) || 0; }); const t = cn + cr || 1; return {cn, cr, total: t, pCn: cn / t, pCr: cr / t}; }
+function mixContratacionBimestre(lista, i) { let cn = 0, cr = 0; lista.forEach(e => { cn += num(e.cn?.[i]) || 0; cr += num(e.cr?.[i]) || 0; }); const t = cn + cr || 1; return {cn, cr, total: t, pCn: cn / t, pCr: cr / t}; }
+function mercadoMeta() { return DATOS.mercado || {}; }
+function cuandosevanMeta() {
+  const m = mercadoMeta().cuandosevan || {};
+  return {
+    labels: m.labels || ['Hasta 1 mes', '1 a 3 meses', '3 a 6 meses', '6 a 12 meses', 'Más de 1 año'],
+    acum: m.acumulado || [0.20, 0.43, 0.67, 0.88, 1],
+    antesAno: m.antesPrimerAno ?? 0.67,
+    n: m.nEmpresas ?? 38,
+  };
+}
+function prediccionMeta() {
+  const p = mercadoMeta().prediccion || {};
+  const seg = mercadoMeta().sintesis?.segmentos || {};
+  return {
+    rot2026: p.rot2026 ?? 0.38, lo80: p.lo80 ?? 0.33, hi80: p.hi80 ?? 0.44, siSeDetiene: p.siSeDetiene ?? 0.41,
+    referentes: seg.referentes ?? 10, estables: seg.estables ?? 20, altoRiesgo: seg.altoRiesgo ?? 10, casiSeguras: seg.casiSeguras ?? 8,
+  };
+}
+function sintesisMeta() { return mercadoMeta().sintesis || {}; }
+function etiquetasNegras(textoEn) {
+  return {id: 'etiqNegras', afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    const horizontal = chart.options.indexAxis === 'y';
+    ctx.save();
+    ctx.fillStyle = '#232222';
+    ctx.font = '700 13px "Nunito Sans", sans-serif';
+    chart.data.datasets.forEach((ds, di) => {
+      if (ds.type === 'line') return;
+      const meta = chart.getDatasetMeta(di);
+      if (meta.hidden) return;
+      meta.data.forEach((bar, i) => {
+        const raw = ds.data[i];
+        if (raw == null) return;
+        const txt = textoEn(raw, i, ds);
+        if (!txt) return;
+        if (horizontal) { ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(txt, bar.x + 8, bar.y); }
+        else { ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(txt, bar.x, bar.y - 6); }
+      });
+    });
+    ctx.restore();
+  }};
+}
+function configCuandosevan(M, c) {
+  const d = cuandosevanMeta();
+  const colores = ['#C9D6E2', '#7DCFB6', '#1B4F7A', '#2778B1', '#38AECB'];
+  const o = baseOpc(c, {indexAxis: 'y'});
+  o.scales.x.ticks = Object.assign({}, o.scales.x.ticks, pctEje, {color: '#232222'});
+  o.scales.x.max = 1.08;
+  o.scales.y.ticks.color = '#232222';
+  o.layout = {padding: {right: 52}};
+  o.plugins.legend.display = false;
+  o.plugins.tooltip.callbacks = {label: x => ' ' + fmtP(x.raw, 0) + ' acumulado'};
+  const txt = d.acum.map(v => fmtP(v, 0));
+  return {type: 'bar', data: {labels: d.labels, datasets: [{label: 'Bajas acumuladas', data: d.acum, backgroundColor: d.acum.map((_, i) => colores[i % colores.length]), borderRadius: 6, barPercentage: 0.72}]}, options: o, plugins: [etiquetasNegras((raw, i) => txt[i])]};
+}
+function etiquetaBimestreCorta(b) { return String(b).replace(' 20', ' '); }
+function configPrediccion(M, compacto) {
+  const hist = serieRot(M).total.slice();
+  const oficial = sintesisMeta().rotacion || {};
+  if (oficial.haceUnAno != null) hist[0] = oficial.haceUnAno;
+  if (oficial.ultimo != null) hist[hist.length - 1] = oficial.ultimo;
+  const futuro = ['Sep-Oct 2025', 'Nov-Dic 2025', 'Ene-Feb 2026', 'Mar-Abr 2026', 'May-Jun 2026', 'Jul-Ago 2026', 'Sep-Oct 2026', 'Nov-Dic 2026'];
+  const pron = [0.074, 0.055, 0.048, 0.072, 0.063, 0.076, 0.049, 0.068];
+  const banda = [[0.066, 0.082], [0.046, 0.066], [0.040, 0.056], [0.058, 0.080], [0.054, 0.074], [0.064, 0.086], [0.038, 0.060], [0.054, 0.084]];
+  const labels = DATOS.bimestres.concat(futuro);
+  const nH = hist.length;
+  const huecos = n => Array(n).fill(null);
+  const ultimo = hist[nH - 1];
+  const historia = hist.concat(huecos(pron.length));
+  const techo = huecos(nH - 1).concat([ultimo], banda.map(b => b[1]));
+  const piso = huecos(nH - 1).concat([ultimo], banda.map(b => b[0]));
+  const mediana = huecos(nH - 1).concat([ultimo], pron);
+  const o = baseOpc(compacto);
+  o.plugins.legend.display = true;
+  o.plugins.legend.position = 'bottom';
+  o.plugins.legend.labels.color = '#232222';
+  o.plugins.legend.labels.filter = it => it.datasetIndex !== 2;
+  o.scales.y.min = 0;
+  o.scales.y.max = 0.14;
+  o.scales.y.ticks.color = '#232222';
+  o.scales.y.ticks.maxTicksLimit = 8;
+  o.scales.y.afterBuildTicks = scale => { scale.ticks = [0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14].map(value => ({value})); };
+  o.scales.y.ticks.callback = v => Math.round(v * 100) + '%';
+  o.scales.x.ticks.color = '#232222';
+  o.scales.x.ticks.maxRotation = 50;
+  o.scales.x.ticks.minRotation = 40;
+  o.scales.x.ticks.autoSkip = false;
+  o.scales.x.ticks.callback = (v, i) => (i % 2 === 0 ? etiquetaBimestreCorta(labels[i] || '') : '');
+  o.layout = {padding: {top: 8, right: 8}};
+  o.plugins.tooltip.callbacks = {label: x => x.raw == null ? '' : ' ' + x.dataset.label + ': ' + fmtP(x.raw, 1)};
+  const punto = {pointRadius: compacto ? 3 : 4, pointHoverRadius: 6, pointHitRadius: 12, tension: 0.15, spanGaps: false};
+  return {type: 'line', data: {labels, datasets: [
+    {label: 'Historia', data: historia, borderColor: '#232222', backgroundColor: '#232222', borderWidth: 2.4, ...punto},
+    {label: 'Rango del 80%', data: techo, borderColor: 'rgba(56,174,203,.35)', backgroundColor: 'rgba(167,214,232,.55)', fill: '+1', pointRadius: 0, pointHitRadius: 10, borderWidth: 1, tension: 0.15, spanGaps: false},
+    {label: 'Piso del 80%', data: piso, borderColor: 'rgba(56,174,203,.35)', backgroundColor: 'rgba(167,214,232,.55)', pointRadius: 0, pointHitRadius: 10, borderWidth: 1, tension: 0.15, spanGaps: false},
+    {label: 'Pronóstico (mediana)', data: mediana, borderColor: '#2778B1', backgroundColor: '#2778B1', borderDash: [6, 4], borderWidth: 2.4, ...punto},
+  ]}, options: o};
+}
+function configForest(compacto) {
+  const filas = [
+    {l: 'Bajas antes del primer año', est: 0.54, lo: 0.34, hi: 0.74, color: '#E8B089', dot: '#C46A3A'},
+    {l: 'Salario inicial sobre el mercado', est: -0.29, lo: -0.46, hi: -0.12, color: '#9DCFB8', dot: '#2F9D78'},
+    {l: 'Ausentismo', est: 0.22, lo: 0.08, hi: 0.40, color: '#E8B089', dot: '#C46A3A'},
+    {l: 'Personal menor de 23 años', est: null, lo: -0.18, hi: 0.22, color: '#D9E0E6', dot: '#D9E0E6'},
+  ];
+  const yDe = i => filas.length - 1 - i;
+  const o = baseOpc(compacto);
+  o.plugins.legend.display = false;
+  o.scales.x.type = 'linear';
+  o.scales.x.min = -0.62;
+  o.scales.x.max = 0.95;
+  o.scales.x.grid.color = '#E6E7E8';
+  o.scales.x.ticks.color = '#232222';
+  o.scales.x.ticks.autoSkip = false;
+  o.scales.x.afterBuildTicks = scale => { scale.ticks = [-0.5, 0, 0.5, 0.9].map(value => ({value})); };
+  o.scales.x.ticks.callback = v => v === 0 ? 'sin efecto' : (v > 0 ? '+' : '') + Math.round(v * 100) + '%';
+  o.scales.y.type = 'linear';
+  o.scales.y.min = -0.45;
+  o.scales.y.max = filas.length - 0.55;
+  o.scales.y.grid.display = false;
+  o.scales.y.ticks.color = '#232222';
+  o.scales.y.ticks.autoSkip = false;
+  o.scales.y.ticks.maxTicksLimit = 6;
+  o.scales.y.afterBuildTicks = scale => { scale.ticks = [0, 1, 2, 3].map(value => ({value})); };
+  o.scales.y.ticks.callback = v => filas[filas.length - 1 - v]?.l || '';
+  o.plugins.tooltip.mode = 'nearest';
+  o.plugins.tooltip.intersect = true;
+  o.layout = {padding: {right: 12}};
+  o.plugins.tooltip.callbacks = {
+    title: items => items[0]?.dataset?.label || '',
+    label: c => {
+      const f = filas.find(x => x.l === c.dataset.label);
+      if (!f || f.est == null) return ' No concluyente: el intervalo cruza el sin efecto';
+      const signo = f.est > 0 ? '+' : '−';
+      return ' ' + signo + Math.round(Math.abs(f.est) * 100) + '% en las odds';
+    },
+  };
+  const datasets = filas.map((f, i) => {
+    const y = yDe(i);
+    const data = f.est == null
+      ? [{x: f.lo, y}, {x: f.hi, y}]
+      : [{x: f.lo, y}, {x: f.est, y}, {x: f.hi, y}];
+    return {
+      label: f.l,
+      data,
+      showLine: true,
+      borderColor: f.color,
+      backgroundColor: f.dot,
+      borderWidth: compacto ? 12 : 16,
+      borderCapStyle: 'round',
+      pointRadius: f.est == null ? 0 : [0, compacto ? 5 : 7, 0],
+      pointHoverRadius: f.est == null ? 0 : [0, 9, 0],
+      pointHitRadius: 16,
+      pointBorderColor: '#FFFFFF',
+      pointBorderWidth: f.est == null ? 0 : 2,
+    };
+  });
+  return {type: 'scatter', catchHit: 'fila', data: {datasets}, options: o, plugins: [{id: 'lineaSinEfecto', afterDraw(chart) {
+    const x = chart.scales.x.getPixelForValue(0);
+    const area = chart.chartArea;
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.strokeStyle = '#C5CED6';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, area.top);
+    ctx.lineTo(x, area.bottom);
+    ctx.stroke();
+    ctx.restore();
+  }}]};
+}
+function configSalarioIngreso(M, compacto) {
+  const filas = ordenadas(M, e => e.sal[0]);
+  const s = sintesisMeta().salario || {};
+  const lo = s.p25 ?? 300, hi = s.p75 ?? 370, med = s.mediana ?? 340;
+  const o = baseOpc(compacto);
+  o.scales.x.ticks.display = false;
+  o.scales.y.ticks.color = '#232222';
+  o.plugins.legend.display = true;
+  o.plugins.legend.labels.filter = it => it.datasetIndex > 0;
+  o.plugins.tooltip.callbacks = {title: () => 'Empresa', label: c => c.datasetIndex === 0 ? ' ' + fmt$(c.raw) : ' ' + c.dataset.label};
+  const enBanda = v => v >= lo && v <= hi;
+  return {type: 'bar', data: {labels: filas.map(() => 'Empresa'), datasets: [
+    {type: 'bar', order: 2, data: filas.map(f => f.v), backgroundColor: filas.map(f => enBanda(f.v) ? '#2778B1' : '#C9D6E2'), borderRadius: 3},
+    {type: 'line', order: 1, label: 'Mediana ' + fmt$(med), data: filas.map(() => med), borderColor: '#232222', borderWidth: 2, pointRadius: 0, pointHitRadius: 8},
+  ]}, options: o};
+}
+function configEscalera(M, compacto) {
+  const labels = ['Inicial', 'Intermedio bajo', 'Intermedio alto', 'Máximo'];
+  const s = sintesisMeta().salario || {};
+  const lv = q => [0, 1, 2, 3].map(i => cuantil(M.map(e => e.sal[i]), q));
+  const p25 = lv(.25), p75 = lv(.75);
+  const med = (s.escalera && s.escalera.length >= 4) ? s.escalera.slice(0, 4) : lv(.5);
+  p25[0] = s.p25 ?? 300; p75[0] = s.p75 ?? 370;
+  p25[3] = 442; p75[3] = 742;
+  const eje = {family: 'Nunito Sans', size: compacto ? 11 : 13, weight: '700'};
+  const o = baseOpc(compacto);
+  o.plugins.legend.display = true;
+  o.plugins.legend.labels.color = '#232222';
+  o.scales.x.border = {display: true, color: '#232222'};
+  o.scales.x.ticks.color = '#232222';
+  o.scales.x.title = {display: true, text: 'Nivel', color: '#232222', font: eje};
+  o.scales.y.min = 200;
+  o.scales.y.max = 820;
+  o.scales.y.border = {display: true, color: '#232222'};
+  o.scales.y.ticks.color = '#232222';
+  o.scales.y.ticks.callback = v => '$' + Math.round(v);
+  o.scales.y.title = {display: true, text: 'Pesos diarios', color: '#232222', font: eje};
+  o.plugins.tooltip.callbacks = {label: x => ' ' + x.dataset.label + ': ' + fmt$(x.raw)};
+  const punto = {pointRadius: compacto ? 4 : 6, pointHoverRadius: 8, pointHitRadius: 16, borderWidth: 2, tension: 0};
+  return {type: 'line', data: {labels, datasets: [
+    {label: 'Techo del 50%', data: p75, borderColor: '#2778B1', backgroundColor: 'rgba(39,120,177,.18)', fill: '+1', ...punto},
+    {label: 'Piso del 50%', data: p25, borderColor: '#38AECB', backgroundColor: '#38AECB', ...punto},
+    {label: 'Mediana', data: med, borderColor: '#232222', backgroundColor: '#232222', pointRadius: compacto ? 5 : 7, pointHoverRadius: 9, pointHitRadius: 16, borderWidth: 2.5, tension: 0},
+  ]}, options: o};
+}
+function configMovioBeneficios(compacto) {
+  const filas = [
+    {l: 'No movió ningún beneficio', v: 0.33, color: '#8AA0B2'},
+    {l: 'Subió vales de despensa', v: 0.45, color: '#2778B1'},
+    {l: 'Subió fondo de ahorro', v: 0.40, color: '#1B4F7A'},
+  ];
+  const o = baseOpc(compacto, {indexAxis: 'y'});
+  o.scales.x.max = 0.7;
+  o.scales.x.ticks = Object.assign({}, o.scales.x.ticks, pctEje, {color: '#232222'});
+  o.scales.y.ticks.color = '#232222';
+  o.layout = {padding: {right: 48}};
+  o.plugins.legend.display = false;
+  o.plugins.tooltip.callbacks = {label: c => ' ' + fmtP(c.raw, 0)};
+  return {type: 'bar', data: {labels: filas.map(f => f.l), datasets: [{label: 'Mercado', data: filas.map(f => f.v), backgroundColor: filas.map(f => f.color), borderRadius: 6, barPercentage: 0.7}]}, options: o, plugins: [etiquetasNegras(v => fmtP(v, 0))]};
+}
+function configPaquete(compacto) {
+  const filas = [
+    {l: 'Vales de despensa', v: 0.10, t: '10%'},
+    {l: 'Fondo de ahorro', v: 0.083, t: '8.3%'},
+    {l: 'Prima vacacional', v: 0.50, t: '50%'},
+    {l: 'Aguinaldo', v: 0.20, t: '20 días'},
+    {l: 'Comedor', v: 0.60, t: '60%'},
+  ];
+  const colores = ['#1B4F7A', '#2778B1', '#38AECB', '#E07A5F', '#2A9D8F'];
+  const o = baseOpc(compacto, {indexAxis: 'y'});
+  o.scales.x.max = 0.85;
+  o.scales.x.ticks.display = false;
+  o.scales.y.ticks.color = '#232222';
+  o.layout = {padding: {right: 72}};
+  o.plugins.legend.display = false;
+  o.plugins.tooltip.callbacks = {label: c => ' ' + (filas[c.dataIndex]?.t || '')};
+  return {type: 'bar', data: {labels: filas.map(f => f.l), datasets: [{label: 'Mercado', data: filas.map(f => f.v), backgroundColor: colores, borderRadius: 6, barPercentage: 0.72}]}, options: o, plugins: [etiquetasNegras((raw, i) => filas[i].t)]};
+}
 function puntosSalRot(M) { return M.filter(e => e.sal[0] != null && e.rot[ULT] != null).map(e => ({id: e.id, x: e.sal[0], y: e.rot[ULT]})); }
 function puntosBubble(M) { return M.filter(e => e.rot[ULT] != null).map(e => { const head = (e.op || 0) + (e.adm || 0) + (e.otro || 0); return {id: e.id, x: head, y: e.rot[ULT], r: Math.max(6, Math.sqrt(head) * 1.2 + (e.aus[ULT] || 0) * 120)}; }); }
 function percentilEnMuestra(lista, v, invertir) { const a = vals(lista); if (v == null || !a.length) return 0; const p = rango(a, v) * 100; return invertir ? 100 - p : p; }
@@ -1050,18 +1310,19 @@ function matrizRotTierTam(M) {
 }
 function celdaRotMax(M) { const m = matrizRotTierTam(M); if (!m.celdas.length) return {tier: '—', tamano: '—', v: 0}; return m.celdas.reduce((a, b) => b.v > a.v ? b : a); }
 function configPie(filas, compacto) {
-  const o = baseOpc(compacto); delete o.scales; o.plugins.legend = {display: true, position: compacto ? 'bottom' : 'right', labels: {color: col('--suave'), usePointStyle: true, boxWidth: 8}};
-  o.plugins.tooltip.callbacks = {label: c => ' ' + c.label + ': ' + fmtP(c.raw, 0)};
-  return {type: 'pie', data: {labels: filas.map(x => x.label), datasets: [{data: filas.map(x => x.v), backgroundColor: filas.map(x => x.marcar ? col('--ambar') : col('--cyan')), borderWidth: 0}]}, options: o};
+  const paleta = ['#1B4F7A', '#2778B1', '#38AECB', '#2A9D8F', '#E07A5F'];
+  const o = baseOpc(compacto); delete o.scales; o.plugins.legend = {display: true, position: compacto ? 'bottom' : 'right', labels: {color: '#232222', usePointStyle: true, pointStyle: 'circle', boxWidth: 10, font: {family: 'Nunito Sans', size: compacto ? 11 : 13, weight: '700'}}};
+  o.plugins.tooltip.callbacks = {label: c => { const n = filas[c.dataIndex]?.n; return n != null ? ' ' + c.label + ': ' + n + ' empresas' : ' ' + c.label + ': ' + fmtP(c.raw, 0); }};
+  return {type: 'pie', data: {labels: filas.map(x => x.label), datasets: [{data: filas.map(x => x.v), backgroundColor: filas.map((x, i) => x.color || paleta[i % paleta.length]), borderColor: '#FFFFFF', borderWidth: 2}]}, options: o};
 }
 function configScatter(puntos, compacto, fmtX, fmtY) {
   const o = baseOpc(compacto); o.plugins.legend.display = true;
   o.scales.x = {type: 'linear', border: {display: false}, grid: {color: col('--borde')}, ticks: {color: col('--suave'), callback: v => fmtX(v)}};
   o.scales.y = {type: 'linear', border: {display: false}, grid: {color: col('--borde')}, ticks: Object.assign({color: col('--suave')}, pctEje)};
-  o.plugins.tooltip.callbacks = {label: c => { const p = c.raw; return ` ${p.id === CLIENTE ? tuya : 'Otra empresa'}: ${fmtX(p.x)} · ${fmtY(p.y, 2)}`; }};
-  const otros = puntos.filter(p => p.id !== CLIENTE).map(p => ({x: p.x, y: p.y, id: p.id}));
-  const tuyaPt = puntos.filter(p => p.id === CLIENTE).map(p => ({x: p.x, y: p.y, id: p.id}));
-  return {type: 'scatter', data: {datasets: [{label: 'Otras empresas', data: otros, backgroundColor: col('--cyan'), pointRadius: compacto ? 4 : 5}, {label: tuya, data: tuyaPt, backgroundColor: col('--ambar'), pointRadius: compacto ? 6 : 8}]}, options: o};
+  o.plugins.tooltip.callbacks = {label: c => { const p = c.raw; return ` Empresa: ${fmtX(p.x)} · ${fmtY(p.y, 2)}`; }};
+  o.plugins.legend.display = false;
+  const data = puntos.map(p => ({x: p.x, y: p.y}));
+  return {type: 'scatter', data: {datasets: [{label: 'Empresas', data, backgroundColor: '#2778B1', pointRadius: compacto ? 4 : 5}]}, options: o};
 }
 function configBubble(puntos, compacto) {
   const o = baseOpc(compacto); o.plugins.legend.display = true;
@@ -1091,8 +1352,8 @@ function configRadar(r, compacto) {
 // ======================= cifra principal, apoyo y origen de cada gráfico =======================
 const posicion = (lista, v) => { const a = vals(lista).sort((x, y) => y - x); return a.indexOf(v) + 1; };
 const DETALLE = {
-  plantilla: {grande: M => ({v: fmtN(M.reduce((s, e) => s + (e.op || 0) + (e.adm || 0) + (e.otro || 0), 0)), l: 'empleados en la muestra'}),
-    stats: M => [{v: M.length, l: 'empresas'}, {v: fmtP(M.reduce((s, e) => s + (e.op || 0), 0) / M.reduce((s, e) => s + (e.op || 0) + (e.adm || 0) + (e.otro || 0), 0), 0), l: 'personal operativo'}, {v: fmtN(CLI.op + CLI.adm + (CLI.otro || 0)), l: 'su empresa', t: 1}],
+  plantilla: {grande: M => { const sx = sintesisMeta(); return {v: String(sx.empresas ?? 40), l: 'empresas · ' + fmtN(sx.empleados ?? 35128) + ' empleados'}; },
+    stats: M => { const sx = sintesisMeta(); const c = sx.composicion || {}; return [{v: fmtP(c.op ?? 0.70, 0), l: 'es personal operativo'}, {v: fmtP(sx.mujeres?.pct ?? 0.386, 1), l: 'de la plantilla son mujeres'}, {v: fmtN(sx.empleados ?? 35128), l: 'empleados en la muestra'}]; },
     origen: 'Número de empleados actual: personal operativo, administrativo y otro', calculo: 'Suma de las empresas que participan'},
   procesos: {grande: M => { const f = conteoProcesos(M); return {v: fmtP(f[0].v, 0), l: 'de las compañías hace ' + f[0].label.toLowerCase()}; },
     stats: M => { const f = conteoProcesos(M); return [{v: fmtP(f[1].v, 0), l: f[1].label}, {v: fmtP(f[2].v, 0), l: f[2].label}, {v: (CLI.procesos || []).map(p => PROCESO[p]).join(', '), l: 'su empresa', t: 1}]; },
@@ -1103,20 +1364,20 @@ const DETALLE = {
   edad: {grande: M => ({v: fmtP(edadMercado(M)[0], 0), l: 'del personal del mercado tiene menos de 23 años'}),
     stats: M => [{v: fmtP(CLI.edad[0], 0), l: 'en su empresa', t: 1}, {v: fmtP(edadMercado(M)[2], 0), l: 'tiene de 30 a 37 años'}],
     origen: '¿Cómo está distribuido su personal de acuerdo a su edad?', calculo: 'Proporción de cada rango, ponderada por los empleados de cada empresa'},
-  salini: {grande: M => ({v: fmt$(mediana(M.map(e => e.sal[0]))), l: 'salario diario inicial de la empresa típica'}),
-    stats: M => [{v: fmt$(CLI.sal[0]), l: 'su salario inicial', t: 1}, {v: fmtP(rango(M.map(e => e.sal[0]), CLI.sal[0]), 0), l: 'de las empresas paga menos'}, {v: `${fmt$(cuantil(M.map(e => e.sal[0]), .25))}–${fmt$(cuantil(M.map(e => e.sal[0]), .75))}`, l: 'rango central (P25–P75)'}],
+  salini: {grande: M => { const s = sintesisMeta().salario || {}; return {v: fmt$(s.mediana ?? 340), l: 'mediana diaria al ingreso'}; },
+    stats: () => { const s = sintesisMeta().salario || {}; return [{v: fmt$(s.p25 ?? 300) + '–' + fmt$(s.p75 ?? 370), l: 'paga la mitad de las empresas'}, {v: '13 de 40', l: 'bajo el mínimo 2026'}, {v: '$315', l: 'mínimo diario 2026'}]; },
     origen: 'Salario diario inicial ofrecido al personal operativo', calculo: 'Mediana de las empresas; cada barra es una empresa'},
-  escalera: {grande: M => ({v: fmtP(CLI.sal[3] / CLI.sal[0] - 1, 0), l: 'crece su salario del nivel inicial al máximo'}),
-    stats: M => [{v: fmtP(mediana(M.map(e => e.sal[3] && e.sal[0] ? e.sal[3] / e.sal[0] - 1 : null)), 0), l: 'en la empresa típica'}, {v: fmt$(CLI.sal[3]), l: 'su salario máximo', t: 1}, {v: fmt$(mediana(M.map(e => e.sal[3]))), l: 'máximo típico'}],
-    origen: 'Salario diario inicial, intermedio bajo, intermedio alto y máximo', calculo: 'Percentiles 25, 50 y 75 de cada nivel; su empresa en ámbar'},
+  escalera: {grande: M => { const s = sintesisMeta().salario || {}; return {v: fmtP(s.crecimientoPct ?? 0.65, 0), l: 'del salario inicial al máximo'}; },
+    stats: () => { const s = sintesisMeta().salario || {}; return [{v: fmt$(s.p25 ?? 300), l: 'piso del rango central'}, {v: fmt$(s.escalera?.[0] ?? 340), l: 'salario inicial'}, {v: fmt$(s.escalera?.[3] ?? 561), l: 'salario máximo'}, {v: '43%', l: 'revisa en abril'}]; },
+    origen: 'Salario diario inicial, intermedio bajo, intermedio alto y máximo', calculo: 'Mediana del mercado y percentil 25 a 75. Abril concentra el 43% de las revisiones'},
   incremento: {grande: M => ({v: fmtP(prom(M.map(e => e.inc['2025'][0])), 2), l: 'incremento salarial operativo 2025'}),
     stats: M => [{v: fmtP(prom(M.map(e => e.inc['2024'][0])), 2), l: 'en 2024'}, {v: fmtP(CLI.inc['2025'][0], 2), l: 'su incremento 2025', t: 1}, {v: fmtP(prom(M.map(e => e.inc['2025'][1])), 2), l: 'administrativo 2025'}],
     origen: 'Porcentaje de incremento otorgado en salario, por tipo de personal', calculo: 'Promedio simple de compañías; último valor reportado del año'},
   mes: {grande: M => { const v = mesesMercado(M); const i = v.indexOf(Math.max(...v)); return {v: fmtP(v[i], 0), l: 'de las compañías revisa salarios en ' + ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][i]}; },
     stats: M => [{v: CLI.mes.map((x, j) => x ? MESES[j] : null).filter(Boolean).join(', ') || '—', l: 'su mes de revisión', t: 1}],
     origen: 'Mes o meses en que realizan los incrementos (puede marcar varios)', calculo: '% de compañías que respondieron'},
-  beneficios: {grande: M => { const b = beneficiosMercado(M); return {v: fmtP(b[0].v, 0), l: 'incrementa ' + b[0].label.toLowerCase()}; },
-    stats: M => { const b = beneficiosMercado(M); return [{v: fmtP(b[1].v, 0), l: b[1].label}, {v: CLI.ben.reduce((a, x) => a + x, 0), l: 'beneficios en su incremento', t: 1}]; },
+  beneficios: {grande: () => ({v: '33%', l: 'no movió ningún beneficio'}),
+    stats: () => [{v: '45%', l: 'subió vales de despensa'}, {v: '40%', l: 'subió fondo de ahorro'}, {v: '2.9%', l: 'incremento en beneficios'}],
     origen: 'Beneficios incluidos en el incremento de prestaciones (puede marcar varios)', calculo: '% de compañías que respondieron'},
   incben: {grande: M => ({v: fmtP(prom(M.map(e => e.inc['2025'][2])), 2), l: 'incremento en beneficios operativos 2025'}),
     stats: M => [{v: fmtP(prom(M.map(e => e.inc['2025'][3])), 2), l: 'administrativo'}, {v: fmtP(CLI.inc['2025'][2], 2), l: 'su incremento operativo', t: 1}],
@@ -1127,8 +1388,8 @@ const DETALLE = {
   capacitacion: {grande: M => ({v: (mediana(M.map(e => e.cap)) ?? 0).toFixed(1) + ' h', l: 'de capacitación por persona en la empresa típica'}),
     stats: M => [{v: (CLI.cap ?? 0).toFixed(1) + ' h', l: 'en su empresa', t: 1}, {v: (prom(M.map(e => e.cap)) ?? 0).toFixed(1) + ' h', l: 'promedio simple'}],
     origen: 'Total de horas de capacitación invertidas en el bimestre', calculo: 'Horas / (empleados operativos + administrativos)'},
-  rotserie: {grande: M => ({v: fmtP(serieRot(M).total[ULT]), l: 'rotación del mercado en ' + DATOS.bimestres[ULT]}),
-    stats: M => { const s = serieRot(M); return [{v: fmtP(s.total[0]), l: 'en ' + DATOS.bimestres[0]}, {v: fmtP(s.nc[ULT] / s.total[ULT], 0), l: 'es no controlada'}, {v: fmtP(CLI.rot[ULT]), l: 'su rotación', t: 1}]; },
+  rotserie: {grande: M => { const r = sintesisMeta().rotacion || {}; if (M.length !== EMP.length) { const ult = serieRot(M).total[ULT]; return {v: fmtP(ult, 1), l: 'rotación de este corte · ' + M.length + ' empresas'}; } return {v: fmtP(r.ultimo ?? 0.0813, 1), l: 'rotación del mercado en ' + DATOS.bimestres[ULT]}; },
+    stats: M => { const r = sintesisMeta().rotacion || {}; if (M.length !== EMP.length) return [{v: String(M.length), l: 'empresas en el corte'}, {v: fmtP(r.ultimo ?? 0.0813, 1), l: 'mercado completo'}]; return [{v: fmtP(r.haceUnAno ?? 0.1077, 1), l: 'hace un año'}, {v: fmtP(r.mediana ?? 0.0728, 1), l: 'mediana'}, {v: fmtP(r.voluntaria ?? 0.0559, 1), l: 'voluntaria'}]; },
     origen: 'Número de bajas del bimestre y su desglose por causa', calculo: 'Promedio simple de compañías con rotación mayor que 0; rotación = bajas / (operativos + administrativos)'},
   rotcomp: {grande: M => ({v: fmtP(CLI.rot[ULT], 2), l: 'rotación de su empresa en ' + DATOS.edicion}),
     stats: M => { const r = M.map(e => e.rot[ULT]); return [{v: fmtP(promSinCeros(r), 2), l: 'promedio del mercado'}, {v: fmtP(mediana(r.filter(v => v > 0)), 2), l: 'mediana'}, {v: posicion(r, CLI.rot[ULT]) + '.º de ' + vals(r).length, l: 'lugar de mayor a menor', t: 1}]; },
@@ -1136,27 +1397,30 @@ const DETALLE = {
   causas: {grande: M => { const c = causasMercado(M); return {v: fmtP(c[0].v, 0), l: 've «' + c[0].label.toLowerCase() + '» como causa común'}; },
     stats: M => { const c = causasMercado(M); return [{v: fmtP(c[1].v, 0), l: c[1].label}, {v: CLI.mot.filter(v => (v ?? 0) >= 3).length, l: 'causas comunes en su empresa', t: 1}]; },
     origen: 'Frecuencia de cada motivo de baja, escala de 0 (nunca) a 5 (siempre)', calculo: '% de compañías que califican la causa con 3 (común) o más'},
-  ausentismo: {grande: M => ({v: fmtP(promSinCeros(M.map(e => e.aus[ULT])), 2), l: 'ausentismo del mercado en ' + DATOS.bimestres[ULT]}),
-    stats: M => [{v: fmtP(CLI.aus[ULT], 2), l: 'su ausentismo', t: 1}, {v: fmtP(promSinCeros(M.map(e => e.aus[0])), 2), l: 'en ' + DATOS.bimestres[0]}],
+  ausentismo: {grande: M => { const ae = mercadoMeta().ausentismoEdicion || {}; return {v: fmtP(ae.total ?? promSinCeros(M.map(e => e.aus[ULT])), 2), l: 'ausentismo del mercado en ' + DATOS.bimestres[ULT]}; },
+    stats: M => { const ae = mercadoMeta().ausentismoEdicion || {}; const cap = ae.capacitacionHoras ?? mediana(M.map(e => e.cap)); return [{v: fmtP(CLI.aus[ULT], 2), l: 'su ausentismo', t: 1}, {v: (cap ?? 0).toFixed(1) + ' h', l: 'capacitación típica por persona'}, {v: (CLI.cap ?? 0).toFixed(1) + ' h', l: 'su capacitación', t: 1}]; },
     origen: 'Total de faltas del bimestre, justificadas e injustificadas', calculo: 'Faltas / (empleados × días hábiles del bimestre); promedio simple sin ceros'},
-  tamano: {grande: M => { const t = conteoTamano(M); return {v: fmtP(t[0].v, 0), l: 'de las compañías tiene ' + t[0].label.toLowerCase() + ' empleados'}; },
-    stats: M => [{v: CLI.tamano || '—', l: 'su tamaño', t: 1}],
+  cuandosevan: {grande: M => { const d = cuandosevanMeta(); return {v: fmtP(d.antesAno, 0), l: 'de las bajas antes del primer año (n=' + d.n + ' empresas)'}; },
+    stats: () => { const d = cuandosevanMeta(); const sx = sintesisMeta(); return [{v: fmtP(d.acum[0], 0), l: 'se va en el primer mes'}, {v: fmtP(sx.reposicionPct ?? 0.71, 0), l: 'de las contrataciones es reposición'}, {v: fmtP(sx.causaSueldoPct ?? 0.718, 0), l: 'mejor sueldo en otro empleo'}]; },
+    origen: 'Antigüedad de quienes se fueron en el bimestre', calculo: 'Curva acumulada del mercado (promedio de empresas que reportan)'},
+  prediccion: {grande: () => { const p = prediccionMeta(); return {v: fmtP(p.rot2026, 0), l: 'si la tendencia sigue · rango del 80% ' + fmtP(p.lo80, 0) + ' a ' + fmtP(p.hi80, 0)}; },
+    stats: () => { const p = prediccionMeta(); return [{v: fmtP(p.lo80, 0) + '–' + fmtP(p.hi80, 0), l: 'rango del 80%'}, {v: fmtP(p.siSeDetiene, 0), l: 'si se detiene'}, {v: String(p.altoRiesgo), l: 'empresas en alto riesgo'}]; },
+    origen: 'Modelo bayesiano con historia de rotación bimestral', calculo: 'Línea de historia real y pronóstico con banda del 80%. La cifra anual es 38% (33% a 44%); 41% si se detiene'},
+  tamano: {grande: () => ({v: '10', l: 'empresas tienen más de 1,000 empleados'}),
+    stats: () => [{v: '5', l: 'de 1 a 100'}, {v: '10', l: 'de 101 a 300'}, {v: '80%', l: 'tiene sindicato'}],
     origen: 'Rango de empleados de la compañía', calculo: '% de compañías en cada rango de la muestra'},
   mixcontrata: {grande: M => { const m = mixContratacion(M); return {v: fmtP(m.pCr, 0), l: 'de las contrataciones del mercado repusieron una baja'}; },
     stats: M => { const cl = mixContratacion([CLI]); return [{v: fmtP(cl.pCr, 0), l: 'reposición en su empresa', t: 1}, {v: fmtN(cl.cr), l: 'contrataciones por reposición'}]; },
     origen: 'Número de contrataciones en el bimestre (reposición y posiciones nuevas)', calculo: 'Proporción en el mercado; su empresa en el texto narrado'},
-  salrot: {grande: M => ({v: fmt$(CLI.sal[0]), l: 'salario inicial frente a rotación ' + fmtP(CLI.rot[ULT], 2)}),
-    stats: M => [{v: fmtP(rango(M.map(e => e.rot[ULT]), CLI.rot[ULT]), 0), l: 'de empresas rota menos', t: 1}, {v: fmt$(mediana(M.map(e => e.sal[0]))), l: 'mediana salarial'}],
-    origen: 'Salario diario inicial operativo y rotación del bimestre', calculo: 'Cada punto es una empresa; ejes en pesos y porcentaje'},
-  plantbubble: {grande: M => ({v: fmtN((CLI.op || 0) + (CLI.adm || 0) + (CLI.otro || 0)), l: 'empleados en su plantilla'}),
-    stats: M => [{v: fmtP(CLI.rot[ULT], 2), l: 'rotación', t: 1}, {v: fmtP(CLI.aus[ULT], 2), l: 'ausentismo'}],
-    origen: 'Empleados actuales, rotación y faltas del bimestre', calculo: 'Tamaño del punto proporcional a plantilla y ausentismo'},
-  rotmapa: {grande: M => { const h = celdaRotMax(M); return {v: fmtP(h.v, 2), l: 'rotación en ' + h.tier + ' · ' + h.tamano}; },
-    stats: M => [{v: CLI.tier + ' · ' + CLI.tamano, l: 'su segmento', t: 1}],
-    origen: 'Rotación del bimestre por nivel Tier y tamaño de plantilla', calculo: 'Promedio simple por celda con al menos 2 empresas'},
+  salrot: {grande: () => ({v: '+54%', l: 'en las odds si hay más bajas antes del año'}),
+    stats: M => { const d = sintesisMeta().drivers || {}; return [{v: '−' + fmtP(d.oddsReduccionPct ?? 0.29, 0), l: 'si el salario está sobre el mercado'}, {v: '+22%', l: 'si sube el ausentismo'}, {v: '75%', l: 'de la variación es de cada empresa'}]; },
+    origen: 'Modelo de asociaciones del mercado', calculo: 'Intervalo del 90% de cada factor. A la derecha de sin efecto sube las odds; a la izquierda las baja. No es causa'},
   perfilradar: {grande: M => { const r = perfilRadar(M); const i = r.cli.indexOf(Math.min(...r.cli)); return {v: Math.round(r.cli[i]) + 'º percentil', l: 'en ' + r.labels[i].toLowerCase()}; },
     stats: M => { const pr = perfilRadar(M); return [{v: Math.round(pr.cli[2]), l: 'percentil salarial', t: 1}, {v: Math.round(pr.cli[0]), l: 'percentil rotación (mayor = mejor)'}]; },
     origen: 'Rotación, ausentismo, salario, incremento y capacitación', calculo: 'Percentil de su empresa en cada dimensión (100 = mejor en la muestra)'},
+  paquete: {grande: () => ({v: '10%', l: 'del salario en vales de despensa'}),
+    stats: () => [{v: '8.3%', l: 'fondo de ahorro'}, {v: '50%', l: 'prima vacacional'}, {v: '20 días', l: 'aguinaldo'}, {v: '60%', l: 'da comedor'}],
+    origen: 'Prestaciones del personal operativo', calculo: 'Mediana del mercado'},
 };
 
 // ======================= pasos de la sesión =======================
@@ -1307,11 +1571,44 @@ function asegurarRuntimeCatchMonitor() {
   }
 }
 asegurarRuntimeCatchMonitor();
+// Recorrido visible: solo la actualización. El resto de gráficas queda en GRAFICOS_LEGACY.
+const GRAFICOS_VISIBLES = {
+  muestra: ['plantilla', 'tamano'],
+  salarios: ['salini', 'escalera'],
+  beneficios: ['paquete', 'beneficios'],
+  indicadores: ['rotserie', 'cuandosevan'],
+  patrones: ['prediccion', 'salrot'],
+};
+const NOMBRES_VISIBLES = {
+  muestra: ['Contexto y muestra', '¿Quiénes estamos aquí?'],
+  salarios: ['Personal y salarios', '¿Cuánto paga el mercado?'],
+  beneficios: ['Beneficios', '¿Qué se ofrece además del salario?'],
+  indicadores: ['Indicadores', '¿Cuánta gente se va, y cuándo?'],
+  patrones: ['Qué viene', '¿Qué esperar en 2026?'],
+};
+const PAQUETE_GRAFICO = {
+  id: 'paquete', titulo: 'Paquete del operativo', sub: 'Vales 10% · fondo 8.3% · prima 50% · aguinaldo 20 días · comedor 60%', glos: ['Benchmark'],
+  texto: () => 'El paquete típico: **10%** en vales, **8.3%** de fondo de ahorro, **50%** de prima vacacional y **20 días** de aguinaldo. El **60%** da comedor.',
+  nota: 'Primera lámina de Beneficios. Paquete típico del operativo: vales 10%, fondo 8.3%, prima 50%, aguinaldo 20 días y comedor 60%. El aguinaldo va en días; el resto, en porcentaje.',
+  config: (M, c) => configPaquete(c),
+};
+const GRAFICOS_LEGACY = []; // @deprecated monitor-v2: se conserva, no se muestra
+SECCIONES.forEach(s => {
+  const nombre = NOMBRES_VISIBLES[s.id];
+  if (nombre) { s.nombre = nombre[0]; s.pregunta = nombre[1]; }
+  if (s.id === 'beneficios' && !s.graficos.some(g => g.id === 'paquete')) s.graficos.unshift(PAQUETE_GRAFICO);
+  const orden = GRAFICOS_VISIBLES[s.id] || s.graficos.map(g => g.id);
+  const queda = []; const ocultos = [];
+  s.graficos.forEach(g => (orden.includes(g.id) ? queda : ocultos).push(g));
+  queda.sort((a, b) => orden.indexOf(a.id) - orden.indexOf(b.id));
+  s.graficos = queda;
+  if (ocultos.length) GRAFICOS_LEGACY.push({ seccion: s.id, graficos: ocultos });
+});
 SECCIONES.forEach((s, si) => { s.graficos.forEach((g, gi) => PASOS.push({tipo: 'explica', s: si, g: gi})); PASOS.push({tipo: 'hoja', s: si}); });
 PASOS.push({tipo: 'cierre'});
 const PRESENTATION_HANDOFF_HEADLINE = 'Presentación finalizada';
 const PRESENTATION_HANDOFF_SUBLABEL = 'Espacio de preguntas';
-const PRESENTATION_HANDOFF_NARRATIVE = 'La presentación ha finalizado. Este es el momento para resolver sus dudas con el presentador y conversar sobre los hallazgos del informe.';
+const PRESENTATION_HANDOFF_NARRATIVE = 'Sesión cerrada. Ahora cada empresa a su ritmo: 40 empresas y 35,128 empleados, mediana $340, rotación 8.1% (10.8% hace un año), 67% de las bajas antes del año, y 2026 entre 33% y 44%.';
 const tituloPaso = p => p.tipo === 'inicio' ? 'Bienvenida y agenda' : p.tipo === 'cierre' ? 'Cierre y preguntas'
   : p.tipo === 'explica' ? SECCIONES[p.s].graficos[p.g].titulo : 'Hoja completa de ' + SECCIONES[p.s].nombre;
 // Cabecera del cliente: arriba la sección (y en qué parte va), abajo el foco de la pantalla
@@ -1432,7 +1729,7 @@ function aplicarFaseSesion(fase) {
   programarRender();
 }
 function htmlBarraLoQueVeCliente() {
-  const meta = `${esc(DATOS.edicion)} · Su empresa = ${CLIENTE}`;
+  const meta = esc(DATOS.edicion);
   if (!presentadorEnRevisionPrevia()) {
     return `<div class="barra"><span>Lo que ve el cliente</span><span>${meta}</span></div>`;
   }
@@ -2857,8 +3154,14 @@ function dibujar(canvas, cfg) {
   const prev = graficos.get(canvas.id); if (prev) prev.destroy();
   const g = SECCIONES[+canvas.dataset.s].graficos[+canvas.dataset.g];
   const sinEje = ['doughnut', 'pie', 'scatter', 'bubble', 'radar', 'matrix'];
-  if (!sinEje.includes(cfg.type)) cfg.options.interaction = {mode: 'nearest', intersect: false, axis: cfg.options.indexAxis === 'y' ? 'y' : 'x'};
-  if (cfg.type === 'scatter' || cfg.type === 'bubble') cfg.options.interaction = {mode: 'nearest', intersect: true};
+  if (cfg.catchHit === 'fila') cfg.options.interaction = {mode: 'nearest', intersect: false, axis: 'y'};
+  else if (cfg.type === 'pie' || cfg.type === 'doughnut') cfg.options.interaction = {mode: 'nearest', intersect: true};
+  else if (!sinEje.includes(cfg.type)) cfg.options.interaction = {mode: 'nearest', intersect: false, axis: cfg.options.indexAxis === 'y' ? 'y' : 'x'};
+  else if (cfg.type === 'scatter' || cfg.type === 'bubble') cfg.options.interaction = {mode: 'nearest', intersect: true};
+  (cfg.data.datasets || []).forEach(ds => {
+    const tipo = ds.type || cfg.type;
+    if ((tipo === 'line' || tipo === 'scatter') && ds.pointHitRadius == null) ds.pointHitRadius = 14;
+  });
   const M = canvas.dataset.todo ? EMP : mercado().M;
   let clickTimer = null;
   cfg.options.onClick = (ev, els, chart) => {
@@ -2869,11 +3172,13 @@ function dibujar(canvas, cfg) {
       if (!el) { cerrarFuente(); return; }
       const k = claveFuenteElemento(g, el);
       if (S.fuenteClave === k && $('#fuente')?.classList.contains('abierta')) { cerrarFuente(); return; }
-      if (iaSeleccionContextualHabilitada() && !esLineaReferencia(chart.data.datasets[el.datasetIndex])) {
-        mostrarPopoverSeleccionIA(
-          { x: ev.native.clientX, y: ev.native.clientY },
-          construirSeleccionGrafica(g, chart, el, ev.native),
-        );
+      if (iaSeleccionContextualHabilitada()) {
+        try {
+          mostrarPopoverSeleccionIA(
+            { x: ev.native.clientX, y: ev.native.clientY },
+            construirSeleccionGrafica(g, chart, el, ev.native),
+          );
+        } catch { /* el dato sigue abriéndose abajo */ }
       }
       mostrarFuente(g, chart, el, M);
       marcarAperturaFuente();
@@ -3004,19 +3309,25 @@ function htmlRecorrido(p) {
   return `<div class="recorrido" aria-label="Avance de la sección">${marcas}<em>${texto}</em></div>`;
 }
 function htmlKpis(s, M) { return `<div class="kpis">${s.kpis(M).map(k => `<div class="kpi ${k.t ? 'tuya' : ''}"><b>${esc(k.v)}</b><span>${esc(k.l)}</span></div>`).join('')}</div>`; }
-function htmlFiltros(info) {
+function htmlFiltros(info, opts = {}) {
   const tiers = [...new Set(EMP.map(e => e.tier).filter(Boolean))].sort();
   const procs = Object.keys(PROCESO).filter(k => EMP.some(e => (e.procesos || []).includes(k)));
   const sel = (id, lab, opciones, nombres = o => o) => `<label>${lab}<select data-filtro="${id}"><option>Todos</option>${opciones.map(o => `<option value="${esc(o)}" ${filtros[id] === o ? 'selected' : ''}>${esc(nombres(o))}</option>`).join('')}</select></label>`;
-  return `<div class="filtros">${sel('tier', 'Tier', tiers)}${sel('tamano', 'Tamaño', TAMANOS)}${sel('proceso', 'Proceso', procs, o => PROCESO[o])}
-    <span class="leyenda-tuya"><i></i>Su empresa</span>${info.aplicado ? `<span class="leyenda-tuya">Comparando contra: ${esc(etiquetaFiltro())} (${info.M.length} empresas)</span>` : `<span class="aviso">Ese filtro deja ${info.n} empresas; se necesitan al menos ${MIN_EMPRESAS} para proteger el anonimato. Se muestra todo el mercado.</span>`}</div>`;
+  const proceso = opts.mercado ? '' : sel('proceso', 'Proceso', procs, o => PROCESO[o]);
+  const leyenda = opts.mercado ? '' : `<span class="leyenda-tuya"><i></i>Su empresa</span>`;
+  const estado = info.aplicado ? `<span>Corte: ${esc(etiquetaFiltro())} (${info.M.length} empresas)</span>` : `<span class="aviso">Ese filtro deja ${info.n} empresas; se necesitan al menos ${MIN_EMPRESAS} para proteger el anonimato. Se muestra todo el mercado.</span>`;
+  return `<div class="filtros${opts.mercado ? ' filtros--mercado' : ''}">${sel('tier', 'Tier', tiers)}${sel('tamano', 'Tamaño', TAMANOS)}${proceso}${leyenda}${estado}</div>`;
 }
 function htmlTabla(g) {   // la misma información del gráfico, en filas (las líneas de referencia van abajo)
-  const cfg = g.config(EMP, false); const cb = cfg.options?.plugins?.tooltip?.callbacks?.label;
+  const cfg = g.config(g.filtra ? mercado().M : EMP, false); const cb = cfg.options?.plugins?.tooltip?.callbacks?.label;
   const fmt = (raw, ds, label) => { if (raw == null) return '—'; const t = cb ? cb({raw, dataset: ds, label, parsed: {x: raw?.x ?? raw, y: raw?.y ?? raw}}) : String(raw); return String(t).replace(/^.*?:\s*/, '').trim(); };
   const ds = cfg.data.datasets;
+  if (cfg.catchHit === 'fila') {
+    const filas = ds.map(d => `<tr><td>${esc(d.label)}</td><td class="num">${esc(fmt(d.data.find(p => p) || d.data[0], d, d.label))}</td></tr>`).join('');
+    return `<div class="tabla-graf"><table><thead><tr><th>Factor</th><th class="num">Efecto</th></tr></thead><tbody>${filas}</tbody></table></div>`;
+  }
   if (cfg.type === 'scatter' || cfg.type === 'bubble') {
-    const filas = ds.flatMap(d => d.data.map(p => `<tr class="${p.id === CLIENTE ? 'tuya' : ''}"><td>${esc(p.id === CLIENTE ? 'Su empresa' : 'Otra empresa')}</td><td class="num">${esc(fmt(p, d, p.id))}</td></tr>`)).join('');
+    const filas = ds.flatMap(d => d.data.map(p => `<tr class="${p.id && p.id === CLIENTE ? 'tuya' : ''}"><td>${esc(p.id ? (p.id === CLIENTE ? 'Su empresa' : 'Otra empresa') : 'Empresa')}</td><td class="num">${esc(fmt(p, d, p.id))}</td></tr>`)).join('');
     return `<div class="tabla-graf"><table><thead><tr><th>Empresa</th><th class="num">Valores</th></tr></thead><tbody>${filas}</tbody></table></div>`;
   }
   if (cfg.type === 'matrix') {
@@ -3045,10 +3356,10 @@ function htmlHojaCompleta(p, pref, opts = {}) {
   const hojaClass = `hoja${compacto ? ' hoja--preview' : ''}`;
   const cab = compacto
     ? htmlRecorrido(p)
-    : `<div class="copia"><p class="kicker">${esc(s.nombre)} · Hoja completa</p><h2 class="titular">Todos los gráficos de la sección</h2><p class="lede">Cada gráfico en tamaño resumido. Pulse «Ver más detalles» para la explicación completa${conFiltros ? ' o use los filtros' : ''}.</p></div>`;
+    : `<div class="copia"><p class="kicker">${esc(s.nombre)}${s.pregunta ? ' · ' + esc(s.pregunta) : ''}</p><h2 class="titular">Todos los gráficos, juntos</h2><p class="lede">La misma sección, en una sola vista. «Ver más detalles» abre la explicación de cada gráfica.</p></div>`;
   const filtros = conFiltros ? htmlFiltros(info) : '';
   const todoAttr = conFiltros ? '' : ' data-todo="1"';
-  const celdas = s.graficos.map((g, gi) => `<div class="celda celda--hoja" data-tocar="${esc(g.titulo)}"><h2>${esc(g.titulo)}</h2><p class="sub">${esc(g.sub)}</p><div class="lienzo lienzo--hoja"><canvas id="${pref}-h${gi}" data-s="${p.s}" data-g="${gi}"${todoAttr}></canvas></div>${botonVerDetalle(p.s, gi)}</div>`).join('');
+  const celdas = s.graficos.map((g, gi) => `<div class="celda celda--hoja" data-tocar="${esc(g.titulo)}"><h2>${esc(g.titulo)}</h2><p class="sub">${esc(g.sub)}</p>${g.html ? `<div class="lienzo lienzo--hoja">${g.html()}</div>` : `<div class="lienzo lienzo--hoja"><canvas id="${pref}-h${gi}" data-s="${p.s}" data-g="${gi}"${todoAttr}></canvas></div>`}${botonVerDetalle(p.s, gi)}</div>`).join('');
   return `${cab}${filtros}${htmlKpis(s, info.M)}<div class="${hojaClass}">${celdas}</div>`;
 }
 function abrirDetalleDesdeHoja(si, gi, destino) {
@@ -3062,21 +3373,24 @@ function abrirDetalleDesdeHoja(si, gi, destino) {
   return true;
 }
 function contenidoPaso(p, pref, compacto, explorando, detalleDesdeHoja) {
-  if (p.tipo === 'inicio') return `<div class="portada"><p class="nota-anon">Monitor de Mercado Laboral · edición ${esc(DATOS.edicion)}</p><h2 class="grande">Cómo está su empresa frente al mercado</h2>
-    <p class="lede">Cuatro temas. En cada uno explicamos los gráficos uno por uno y, al llegar a la hoja completa, confirmamos si el contenido quedó claro antes de seguir.</p>
-    <div class="agenda">${SECCIONES.map(s => `<div><b>${esc(s.nombre)}</b><span>${s.graficos.map(g => esc(g.titulo)).join(', ')}</span></div>`).join('')}</div>
+  if (p.tipo === 'inicio') return `<div class="portada portada--numero"><p class="kicker">Bienvenida · ${esc(DATOS.edicion)}</p><h2 class="titular">El mercado completo, en una sola lectura</h2><p class="grande" data-contar="40">40</p><p class="grande-lab">empresas · 35,128 empleados</p>
+    <p class="lede">Hoy vemos el mercado completo. Nadie ve los datos de otra empresa: al terminar, cada una entra con su usuario y recibe su propia lectura frente al mercado, con Frida para resolver dudas.</p>
+    <div class="agenda">${SECCIONES.map(s => `<div><b>${esc(s.nombre)}</b><span>${esc(s.pregunta || '')}</span></div>`).join('')}</div>
     </div>`;
   if (p.tipo === 'cierre') return htmlCierre();
   const s = SECCIONES[p.s];
   if (p.tipo === 'explica') {
-    const g = s.graficos[p.g]; const d = DETALLE[g.id]; const gr = d.grande(EMP);
+    const g = s.graficos[p.g]; const d = DETALLE[g.id];
     const info = mercado();
-    const filtrosHtml = (explorando || detalleDesdeHoja) && !compacto ? htmlFiltros(info) : '';
-    return `${compacto ? htmlRecorrido(p) : ''}${filtrosHtml}<div class="explica"><div class="copia"><p class="kicker">${esc(s.nombre)} · Gráfico ${p.g + 1} de ${s.graficos.length}</p>${compacto ? '' : `<h2 class="titular">${esc(g.titulo)}</h2>`}
+    const Mvista = g.filtra ? info.M : EMP;
+    const gr = d.grande(Mvista);
+    const filtrosHtml = g.filtra ? htmlFiltros(info, {mercado: true}) : ((explorando || detalleDesdeHoja) && !compacto ? htmlFiltros(info) : '');
+    const todoAttr = g.filtra ? '' : ' data-todo="1"';
+    return `${compacto ? htmlRecorrido(p) : ''}${filtrosHtml}<div class="explica"><div class="copia"><p class="kicker">${esc(s.nombre)}${s.pregunta ? ' · ' + esc(s.pregunta) : ''}</p><h2 class="titular">${esc(g.titulo)}</h2>
       <p class="grande" data-contar="${esc(gr.v)}">${esc(gr.v)}</p><p class="grande-lab">${esc(gr.l)}</p>
-      <p class="lede">${esc(g.texto(EMP))}</p>${htmlStats(d.stats(EMP))}
+      <p class="lede">${rico(g.texto(Mvista))}</p>${htmlStats(d.stats(Mvista))}
       <div class="chips">${g.glos.map(t => `<button class="chip" data-glos="${esc(t)}">${esc(t)}</button>`).join('')}</div></div>
-      <div class="grafico">${compacto ? '' : `<div class="seg-graf" role="group" aria-label="Cómo ver los datos"><button data-modo-graf="grafico" aria-pressed="${S.modoGraf !== 'tabla'}">Gráfico</button><button data-modo-graf="tabla" aria-pressed="${S.modoGraf === 'tabla'}">Tabla</button></div>`}<p class="tit"><b>${esc(g.sub)}</b><span class="toca">${S.modoGraf === 'tabla' && !compacto ? '' : 'Un clic: detalle del dato · otro clic en el mismo dato o fuera: cerrar' + (S.rol === 'moderador' ? ' · doble clic: resaltar para todos (repite para quitar)' : '')}</span></p>${S.modoGraf === 'tabla' && !compacto ? htmlTabla(g) : `<div class="lienzo"><canvas id="${pref}-g" data-s="${p.s}" data-g="${p.g}" data-todo="1"></canvas></div>`}</div></div>`;
+      <div class="grafico">${g.html || compacto ? '' : `<div class="seg-graf" role="group" aria-label="Cómo ver los datos"><button data-modo-graf="grafico" aria-pressed="${S.modoGraf !== 'tabla'}">Gráfico</button><button data-modo-graf="tabla" aria-pressed="${S.modoGraf === 'tabla'}">Tabla</button></div>`}<p class="tit"><b>${esc(g.titulo)}</b></p><p class="nota-graf">${esc(g.sub)}</p>${g.html ? g.html() : (S.modoGraf === 'tabla' && !compacto ? htmlTabla(g) : `<div class="lienzo"><canvas id="${pref}-g" data-s="${p.s}" data-g="${p.g}"${todoAttr}></canvas></div>`)}<p class="toca">${g.html || (S.modoGraf === 'tabla' && !compacto) ? '' : 'Un clic: detalle del dato' + (iaSeleccionContextualHabilitada() ? ' y Preguntar a la IA' : '') + ' · otro clic en el mismo dato o fuera: cerrar' + (S.rol === 'moderador' ? ' · doble clic: resaltar para todos (repite para quitar)' : '')}</p></div></div>`;
   }
   if (p.tipo === 'hoja') return htmlHojaCompleta(p, pref, { compacto, conFiltros: explorando && !compacto });
   return '';
@@ -3181,6 +3495,11 @@ function debeMostrarNavFlotante() {
   if (S.rol === 'moderador') return presentadorEnRevisionPrevia() || (visitanteVeReunion() && presentadorDashboardListo());
   return false;
 }
+function navFlotanteElevado() {
+  if (S.rol === 'moderador') return false;
+  if (S.rol === 'movil') return true;
+  return S.rol === 'cliente' && window.innerWidth < 600;
+}
 function estadoNavFlotante() {
   if (S.rol === 'moderador') {
     const prevDis = S.pos <= 0;
@@ -3199,7 +3518,8 @@ function estadoNavFlotante() {
 function htmlNavFlotante() {
   if (!debeMostrarNavFlotante()) return '';
   const st = estadoNavFlotante();
-  return `<div class="nav-flotante-dock" id="catch-nav-flotante-dock" role="group" aria-label="Navegación de diapositivas"><button type="button" class="nav-flotante-btn" data-flecha="-1" aria-label="Paso anterior" title="Anterior (flecha izquierda)" ${st.prevDis ? 'disabled' : ''}>‹</button><button type="button" class="nav-flotante-btn" data-flecha="1" aria-label="Paso siguiente" title="Siguiente (flecha derecha)" ${st.nextDis ? 'disabled' : ''}>›</button></div>`;
+  const lift = navFlotanteElevado() ? ' nav-flotante-dock--elevated' : '';
+  return `<div class="nav-flotante-dock${lift}" id="catch-nav-flotante-dock" role="group" aria-label="Navegación de diapositivas"><button type="button" class="nav-flotante-btn" data-flecha="-1" aria-label="Paso anterior" title="Anterior (flecha izquierda)" ${st.prevDis ? 'disabled' : ''}>‹</button><button type="button" class="nav-flotante-btn" data-flecha="1" aria-label="Paso siguiente" title="Siguiente (flecha derecha)" ${st.nextDis ? 'disabled' : ''}>›</button></div>`;
 }
 function syncNavFlotanteViewport() {
   document.getElementById('catch-nav-flotante-dock')?.remove();
@@ -3234,7 +3554,7 @@ function htmlCabezaCliente(v, pos, opts = {}) {
       <button type="button" class="btn-menu" data-menu-secciones aria-expanded="false" aria-controls="nav-secciones" aria-label="Menú de secciones"><span class="btn-menu-ico" aria-hidden="true"></span></button>
       <div class="contexto">
         <strong class="titulo-monitor">Monitor de Mercado Laboral</strong>
-        <span class="edicion-monitor">Edición ${esc(DATOS.edicion)}${CLIENTE ? ` · Su empresa ${CLIENTE}` : ''}</span>
+        <span class="edicion-monitor">Edición ${esc(DATOS.edicion)}</span>
       </div>
     </div>
     <div class="cabeza-acciones">
@@ -3487,9 +3807,20 @@ function valorVisibleGrafica(g, chart, el) {
   const raw = ds.data[el.index];
   const etiqueta = raw?.id || chart.data.labels?.[el.index] || ds.label || '';
   const cb = chart.options.plugins.tooltip.callbacks?.label;
-  let valor = cb
-    ? cb({ raw, dataset: ds, label: etiqueta, parsed: { y: raw, x: raw } }).trim()
-    : String(raw ?? '');
+  let valor = '';
+  if (cb) {
+    try {
+      valor = String(cb({
+        raw,
+        dataset: ds,
+        label: etiqueta,
+        dataIndex: el.index,
+        datasetIndex: el.datasetIndex,
+        parsed: { y: raw, x: raw },
+      }) ?? '').trim();
+    } catch { valor = ''; }
+  }
+  if (!valor) valor = String(raw ?? '');
   valor = valor.replace(/^.*?:\s*/, '').trim();
   return valor;
 }
@@ -3772,7 +4103,7 @@ function renderMovil(raiz, real) {
   let cont = '';
   const peek = v.peekExplica;
   const pMostrar = peek ? { tipo: 'explica', s: peek.s, g: peek.g } : p;
-  if (p.tipo === 'inicio') cont = `<p class="lede">Bienvenido. Desde aquí sigue la presentación, hace preguntas anónimas y consulta al asistente.</p>`;
+  if (p.tipo === 'inicio') cont = contenidoPaso(p, 'mv', true, false, false);
   else if (p.tipo === 'cierre') cont = `${htmlPresentationHandoffBanner()}${listaRespuestas()}${htmlCierreDescargasCliente()}`;
   else cont = (peek ? `<div class="hoja-detalle-nav"><button type="button" class="btn prim" data-volver-hoja>← Volver a hoja completa</button></div>` : '') + contenidoPaso(pMostrar, 'mv', !explorando && !peek, explorando, !!peek);
   const movilCtxLabel = p.tipo === 'cierre' ? PRESENTATION_HANDOFF_SUBLABEL : 'Contexto de la sección';
@@ -3966,7 +4297,7 @@ function renderModeradorActivo(raiz) {
   let lista = '', grupo = null;
   PASOS.forEach((q, i) => {
     const g = q.s !== undefined ? SECCIONES[q.s].nombre : q.tipo === 'inicio' ? 'Inicio' : 'Cierre';
-    if (g !== grupo) { lista += `<li class="grupo">${esc(g)}</li>`; grupo = g; }
+    if (g !== grupo) { const preg = q.s !== undefined ? SECCIONES[q.s].pregunta : ''; lista += `<li class="grupo">${esc(g)}${preg ? `<small>${esc(preg)}</small>` : ''}</li>`; grupo = g; }
     lista += `<li><button data-saltar="${i}" aria-current="${i === S.pos}">${q.tipo === 'explica' ? (q.g + 1) + '.' : q.tipo === 'hoja' ? '▦' : '•'} ${esc(q.tipo === 'explica' ? SECCIONES[q.s].graficos[q.g].titulo : q.tipo === 'hoja' ? 'Hoja completa' : tituloPaso(q))}${q.tipo === 'hoja' && S.claridad[q.s] ? '<span class="ok">✓</span>' : ''}</button></li>`;
   });
   const g = p.tipo === 'explica' ? SECCIONES[p.s].graficos[p.g] : null;
@@ -4037,12 +4368,23 @@ function fmtHoraRoster(iso) {
   if (Number.isNaN(d.getTime())) return '—';
   return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
+function programarSiguienteRoster() {
+  if (S.visitorRosterTimer) return;
+  const espera = Math.max(800, 5000 - (Date.now() - (S.visitorRosterAt || 0)));
+  S.visitorRosterTimer = setTimeout(() => {
+    S.visitorRosterTimer = null;
+    if (S.rol === 'moderador' && S.tabMod === 'participantes') cargarRosterVisitantes();
+  }, espera);
+}
 function cargarRosterVisitantes() {
   const cfg = window.__CATCH_MONITOR_SYNC__;
   if (!cfg?.meetingId || !cfg.presenterToken) return;
   const now = Date.now();
   if (S.visitorRosterLoading) return;
-  if (S.visitorRosterAt && now - S.visitorRosterAt < 4500) return;
+  if (S.visitorRosterAt && now - S.visitorRosterAt < 4500) {
+    programarSiguienteRoster();
+    return;
+  }
   S.visitorRosterLoading = true;
   fetch('/api/meeting/' + encodeURIComponent(cfg.meetingId) + '/analytics/participants', {
     headers: { 'x-presenter-token': cfg.presenterToken },
@@ -4056,10 +4398,13 @@ function cargarRosterVisitantes() {
       S.visitorRosterError = '';
       S.visitorRoster = data.visitors || [];
     }
-    if (S.tabMod === 'participantes') programarRender();
+    if (S.tabMod === 'participantes') actualizarPanelModeradorParcial();
+    programarSiguienteRoster();
   }).catch(() => {
     S.visitorRosterLoading = false;
+    S.visitorRosterAt = Date.now();
     S.visitorRosterError = 'Error de conexión al cargar participantes';
+    programarSiguienteRoster();
   });
 }
 function mostrarHistorialParticipacion() {
@@ -4120,14 +4465,14 @@ function listaRespuestas() {
 function htmlCierreDescargasCliente() {
   return `<div class="fila cierre-pdf" style="flex-direction:column;align-items:flex-start;gap:10px;margin-top:18px">
     <p class="sub" style="margin:0">Resumen de la sesión para su archivo.</p>
-    <button type="button" class="btn prim" data-exportar-cliente>Descargar PDF para el cliente</button>
+    <button type="button" class="btn prim" data-exportar-cliente>Descargar informe de sesión (PDF)</button>
   </div>`;
 }
 function htmlCierreDescargasModerador() {
   return `<div class="fila cierre-pdf" style="flex-direction:column;align-items:flex-start;gap:10px;margin-top:12px">
     <p class="sub" style="margin:0">Informes al cierre. Contenido de demostración donde aún no hay integración definitiva con datos de reunión.</p>
     <button type="button" class="btn" data-exportar-catch>Descargar PDF de feedback de Catch</button>
-    <button type="button" class="btn prim" data-exportar-cliente>Descargar PDF para el cliente</button>
+    <button type="button" class="btn prim" data-exportar-cliente>Descargar informe de sesión (PDF)</button>
   </div>`;
 }
 function htmlCierre() {
@@ -4135,7 +4480,7 @@ function htmlCierre() {
   const roster = mostrarHistorialParticipacion() && (S.visitorRoster || []).length
     ? `<h3 style="margin-top:28px">Participación</h3>${panelParticipantes()}`
     : '';
-  return `${htmlPresentationHandoffBanner()}<div class="portada"><h2 class="grande">Gracias. Así quedó la sesión</h2><div class="agenda">${filas}</div>${roster}<h3 style="margin-top:32px">Preguntas de la sala</h3>${listaRespuestas()}
+  return `${htmlPresentationHandoffBanner()}<div class="portada portada--numero"><p class="kicker">Cierre</p><h2 class="titular">Ahora, cada empresa a su ritmo</h2><p class="grande">Su lectura</p><p class="grande-lab">rotación, salario y 2026 del mercado completo</p><p class="lede">40 empresas · mediana $340 · rotación 8.1% en ${esc(DATOS.edicion)} (10.8% hace un año). 67% de las bajas antes del primer año. 2026: 38% central, con 80% de probabilidad entre 33% y 44%. Son asociaciones, no certezas.</p><div class="agenda">${filas}</div>${roster}<h3 style="margin-top:32px">Preguntas de la sala</h3>${listaRespuestas()}
     ${htmlCierreDescargasCliente()}</div>`;
 }
 
@@ -5191,7 +5536,16 @@ async function descargarPdfFeedbackCatch() {
   const blob = doc.output('blob');
   await guardarPdfBlob(blob, `Catch_Feedback_Interno_${DATOS.edicion.replace(/\s+/g, '_')}.pdf`);
 }
+const INFORME_SESION_MERCADO_PDF = '/monitor-v3/informes/Informe_sesion_mercado_JulAgo2025.pdf';
+const INFORME_SESION_MERCADO_NOMBRE = 'Informe_sesion_mercado_JulAgo2025.pdf';
 async function descargarPdfParaCliente() {
+  try {
+    const res = await fetch(INFORME_SESION_MERCADO_PDF);
+    if (res.ok) {
+      await guardarPdfBlob(await res.blob(), INFORME_SESION_MERCADO_NOMBRE);
+      return;
+    }
+  } catch (_) { /* generación local de respaldo */ }
   const doc = asegurarJsPdf();
   if (!doc) return avisoPdf('No se pudo cargar el generador de PDF. Revise la conexión y vuelva a intentarlo.');
   const W = 210; const X = 16;
@@ -5340,6 +5694,55 @@ function leerIdentidadVisitante() {
   } catch { /* ignore */ }
   return null;
 }
+const PRESENTER_ACCESS_STORAGE_KEY = 'catch:presenter-access:v1';
+const PRESENTER_ACCESS_PASSWORD = '12345';
+function presentadorAccesoConcedido() {
+  try { return sessionStorage.getItem(PRESENTER_ACCESS_STORAGE_KEY) === '1'; } catch { return false; }
+}
+function concederPresentadorAcceso() {
+  try { sessionStorage.setItem(PRESENTER_ACCESS_STORAGE_KEY, '1'); } catch { /* ignore */ }
+}
+function presentadorAccesoRequerido() {
+  return S.rol === 'moderador' && !presentadorAccesoConcedido();
+}
+function verificarPresentadorAccesoPassword(input) {
+  return String(input ?? '').trim() === PRESENTER_ACCESS_PASSWORD;
+}
+function htmlPantallaAccesoPresentador() {
+  const volver = window.__CATCH_MONITOR_SYNC__?.embed
+    ? ''
+    : `<p class="visitor-join-meta" style="margin-top:14px"><button type="button" class="btn texto" data-volver-cliente>Volver a vista de cliente</button></p>`;
+  return `<div class="visitor-join-shell"><div class="visitor-join-card">
+    <p class="visitor-join-eyebrow">Capital Humano Live</p>
+    <h1 class="visitor-join-title">Vista de presentador</h1>
+    <p class="visitor-join-lead">Ingrese la contraseña para abrir el panel de moderador</p>
+    <label class="visitor-join-field"><span>Contraseña</span>
+      <input type="password" id="presentadorAccessPassword" autocomplete="off" inputmode="numeric" placeholder="Contraseña" maxlength="32"></label>
+    <p class="visitor-join-error" id="presentadorAccessError" hidden role="alert"></p>
+    <button type="button" class="visitor-join-submit" data-presentador-access>Continuar</button>
+    <p class="visitor-join-meta">Acceso local en este navegador (sin registro)</p>${volver}
+  </div></div>`;
+}
+function enlazarAccesoPresentador(root) {
+  const btn = root.querySelector('[data-presentador-access]');
+  const input = root.querySelector('#presentadorAccessPassword');
+  const err = root.querySelector('#presentadorAccessError');
+  const volver = root.querySelector('[data-volver-cliente]');
+  if (!btn || !input) return;
+  const submit = () => {
+    if (!verificarPresentadorAccesoPassword(input.value)) {
+      if (err) { err.hidden = false; err.textContent = 'Contraseña incorrecta. Intente de nuevo.'; }
+      return;
+    }
+    if (err) err.hidden = true;
+    concederPresentadorAcceso();
+    render({ force: true });
+  };
+  btn.addEventListener('click', submit);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+  volver?.addEventListener('click', () => { S.rol = 'cliente'; history.replaceState(null, '', '#cliente'); render({ force: true }); });
+  input.focus();
+}
 function visitanteRequiereIngreso() {
   return (S.rol === 'cliente' || S.rol === 'movil') && !leerIdentidadVisitante();
 }
@@ -5402,6 +5805,12 @@ function render(opts) {
   }
   sincronizarEsperaNarracion();
   const app = $('#app');
+  if (presentadorAccesoRequerido()) {
+    document.getElementById('catch-nav-flotante-dock')?.remove();
+    app.innerHTML = htmlPantallaAccesoPresentador();
+    enlazarAccesoPresentador(app);
+    return;
+  }
   if (visitanteRequiereIngreso()) {
     document.getElementById('catch-nav-flotante-dock')?.remove();
     app.innerHTML = htmlPantallaIngresoVisitante();
@@ -5850,12 +6259,18 @@ window.addEventListener('popstate', e => {
 Chart.defaults.font.family = 'Urbanist, "Segoe UI", system-ui, sans-serif';
 hidratarRespuestasClaridad();
 window.addEventListener('catch-monitor-api-ready', () => {
+  if (presentadorAccesoRequerido()) {
+    const app = $('#app');
+    if (app && app.querySelector('[data-presentador-access]')) enlazarAccesoPresentador(app);
+    return;
+  }
   if (!visitanteRequiereIngreso()) programarRender();
   else {
     const app = $('#app');
     if (app && app.querySelector('[data-visitor-join]')) enlazarIngresoVisitante(app);
   }
 });
+window.addEventListener('resize', () => syncNavFlotanteViewport());
 S.rol = vistaDesdeHash(); render(); pintarSync(); conectarSala();
 sincronizarHistoriaPrep();
 

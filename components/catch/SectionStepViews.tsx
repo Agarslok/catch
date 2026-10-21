@@ -416,7 +416,7 @@ export function ClosingView({
           className="clarity-btn clarity-btn--ok"
           onClick={onDownloadClient}
         >
-          Descargar PDF para el cliente
+          Descargar informe de sesión (PDF)
           <small>Resumen profesional para compartir con el cliente</small>
         </button>
       </div>

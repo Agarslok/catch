@@ -3,6 +3,10 @@ import {
   buildAvatarDemoScript,
   type AvatarScriptBlock,
 } from "@/lib/meeting/avatar-demo-script";
+import {
+  fetchOfficialMarketSessionPdf,
+  MARKET_SESSION_PDF_FILENAME,
+} from "@/lib/meeting/market-session-pdf";
 import type { SessionScript } from "@/lib/meeting/script-types";
 
 export type PdfSessionMeta = {
@@ -112,7 +116,7 @@ export function buildClientSessionPdf(
     titulo(sec.name, 15);
     parrafo(sec.summary || "Resumen de la sección presentada en la sesión.");
     parrafo(
-      "Hallazgos clave (ejemplo): su empresa se ubica en el contexto del mercado analizado; los detalles gráficos se revisaron en la sesión en vivo.",
+      "Hallazgos clave: cifras del mercado de referencia presentadas en la sesión; los gráficos se revisaron en vivo con el monitor Jul–Ago 2025.",
       9,
     );
   }
@@ -133,7 +137,15 @@ export function downloadCatchFeedbackPdf(meta: PdfSessionMeta) {
   downloadBlob(blob, `Catch_Feedback_Interno_${safe}.pdf`);
 }
 
-export function downloadClientSessionPdf(script: SessionScript, meta: PdfSessionMeta) {
+export async function downloadClientSessionPdf(
+  script: SessionScript,
+  meta: PdfSessionMeta,
+) {
+  const official = await fetchOfficialMarketSessionPdf();
+  if (official) {
+    downloadBlob(official, MARKET_SESSION_PDF_FILENAME);
+    return;
+  }
   const blob = buildClientSessionPdf(script, meta);
   const safe = meta.editionLabel.replace(/\s+/g, "_");
   downloadBlob(blob, `Monitor_Catch_Cliente_${safe}.pdf`);

@@ -87,7 +87,7 @@ describe("resolveDirectModeratorInstruction", () => {
 
 describe("named destinations (Fase 7.3)", () => {
   const salarios = findPasoIndexForChart("salini");
-  const ausentismo = findPasoIndexForChart("ausentismo");
+  const cuando = findPasoIndexForChart("cuandosevan");
 
   it("sección existente y única", async () => {
     const r = await runMonitorAiInterpret({
@@ -106,27 +106,43 @@ describe("named destinations (Fase 7.3)", () => {
     assert.equal(applied.pos, salarios);
   });
 
-  it("gráfica existente y única (ausentismo)", async () => {
-    assert.equal(matchInstructionTargets("Ve a la sección de ausentismo").kind, "chart");
+  it("gráfica existente y única (cuándo se van)", async () => {
+    assert.equal(matchInstructionTargets("Ve a la sección de cuándo se van").kind, "chart");
     const r = await runMonitorAiInterpret({
       meetingId: "demo",
-      instruction: "Ve a la sección de ausentismo",
+      instruction: "Ve a la sección de cuándo se van",
       snapshot: defaultControllerSnapshot({ stepIndex: 0 }),
     });
     assert.equal(r.ok, true);
     if (!r.ok) return;
     const action = r.body.actions[0];
-    assert.equal(action?.type, "go_to_section");
-    if (action?.type === "go_to_section") assert.equal(action.chartId, "ausentismo");
+    if (action?.type === "go_to_section") assert.equal(action.chartId, "cuandosevan");
     const nav = r.body.effects.find((e) => e.kind === "navigate");
     assert.ok(nav && nav.kind === "navigate");
-    assert.equal(nav.targetStep, ausentismo);
+    assert.equal(nav.targetStep, cuando);
     assert.notEqual(nav.targetStep, salarios);
   });
 
   it("gráfica de salarios es ambigua entre varias gráficas", () => {
     const m = matchInstructionTargets("Muéstrame la gráfica de salarios");
     assert.equal(m.kind, "ambiguous");
+  });
+
+  it("una pregunta que ya trae la diapositiva no pide aclarar sección o gráfica", () => {
+    const q =
+      "En la diapositiva actual (paso 2, sección «Contexto y muestra») («Empleados por tipo de personal»), en la gráfica «Empleados por tipo de personal» (plantilla), seleccioné barra «Operativo». ¿Qué representa y cómo debe interpretarse según los datos de esta visualización?";
+    assert.equal(matchInstructionTargets(q).kind, "none");
+    assert.equal(resolveDirectModeratorInstruction(q), null);
+  });
+
+  it("si la sección y la gráfica ya son la diapositiva actual, no pide elegir", () => {
+    const q = "En la sección Contexto y muestra, la gráfica Empleados por tipo de personal, ¿qué representa el operativo?";
+    const plantilla = findPasoIndexForChart("plantilla");
+    assert.equal(matchInstructionTargets(q).kind, "ambiguous");
+    assert.equal(
+      resolveDirectModeratorInstruction(q, defaultControllerSnapshot({ stepIndex: plantilla })),
+      null,
+    );
   });
 
   it("destino inexistente", async () => {
@@ -155,7 +171,7 @@ describe("named destinations (Fase 7.3)", () => {
   });
 
   it("regresa a la sección anterior desde indicadores", async () => {
-    const indicadores = findPasoIndexForChart("rotcomp");
+    const indicadores = findPasoIndexForChart("rotserie");
     const r = await runMonitorAiInterpret({
       meetingId: "demo",
       instruction: "Regresa a la sección anterior",
@@ -165,7 +181,7 @@ describe("named destinations (Fase 7.3)", () => {
     if (!r.ok) return;
     const nav = r.body.effects.find((e) => e.kind === "navigate");
     assert.ok(nav && nav.kind === "navigate");
-    assert.equal(nav.targetStep, findPasoIndexForChart("beneficios"));
+    assert.equal(nav.targetStep, findPasoIndexForChart("paquete"));
   });
 
   it("no navega dos veces al mismo destino", async () => {
@@ -186,7 +202,7 @@ describe("named destinations (Fase 7.3)", () => {
 describe("runMonitorAiInterpret direct paths", () => {
   const pasos = buildMonitorPasos();
   const hoja = pasos.findIndex((p) => p.tipo === "hoja");
-  const rotcomp = findPasoIndexForChart("rotcomp");
+  const rotcomp = findPasoIndexForChart("rotserie");
 
   it("continúa sección en hoja cuando el gate lo permite", async () => {
     const r = await runMonitorAiInterpret({

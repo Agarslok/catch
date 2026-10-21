@@ -13,7 +13,7 @@ import {
 describe("monitor narration step enter (Fase 6.1)", () => {
   const pasos = buildMonitorPasos();
   const plantilla = findPasoIndexForChart("plantilla");
-  const rotcomp = findPasoIndexForChart("rotcomp");
+  const salini = findPasoIndexForChart("salini");
   const hoja = pasos.findIndex((p) => p.tipo === "hoja");
 
   it("paso explica: speakText y highlightRef del mismo punto", () => {
@@ -32,19 +32,19 @@ describe("monitor narration step enter (Fase 6.1)", () => {
     assert.equal(d.runtimeStatus, "speaking");
   });
 
-  it("rotcomp resalta la empresa demo (dato real)", () => {
-    const plan = planMonitorNarration(rotcomp);
-    const d = decideStepEnter({ stepIndex: rotcomp, plan, generation: 2 });
+  it("salini resalta la empresa demo (dato real)", () => {
+    const plan = planMonitorNarration(salini);
+    const d = decideStepEnter({ stepIndex: salini, plan, generation: 2 });
     assert.equal(d.skip, false);
     if (d.highlightAction?.type === "highlight") {
-      assert.equal(d.highlightAction.target.chartId, "rotcomp");
+      assert.equal(d.highlightAction.target.chartId, "salini");
       assert.equal(d.highlightAction.target.category, getDemoClientId());
     }
   });
 
   it("plan de otro paso no se aplica", () => {
     const plan = planMonitorNarration(plantilla);
-    const d = decideStepEnter({ stepIndex: rotcomp, plan, generation: 1 });
+    const d = decideStepEnter({ stepIndex: salini, plan, generation: 1 });
     assert.equal(d.skip, true);
     assert.equal(d.reason, "plan_mismatch");
     assert.equal(d.speak, false);
@@ -73,8 +73,8 @@ describe("monitor narration step enter (Fase 6.1)", () => {
       now: 1000,
     });
     const b = decideStepEnter({
-      stepIndex: rotcomp,
-      plan: planMonitorNarration(rotcomp),
+      stepIndex: salini,
+      plan: planMonitorNarration(salini),
       generation: 2,
       now: 1001,
       lastApplied: { stepIndex: plantilla, generation: 1 },

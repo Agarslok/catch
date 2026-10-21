@@ -1,97 +1,88 @@
 import type { MonitorSectionKey } from "@/lib/monitor-ai/types";
 import { fmt$, fmtN, fmtP } from "./format";
-import { mediana, prom, promSinCeros } from "./stats";
+import { mediana, promSinCeros } from "./stats";
 import type { Empresa, KpiRow } from "./types";
 import { getMonitorDataset } from "./dataset";
-import { beneficiosMercado, mixContratacion, perfilRadar } from "./domain";
+import { mixContratacion } from "./domain";
 
 const SECTION_NAMES: Record<MonitorSectionKey, string> = {
-  muestra: "Contexto y Muestra",
-  salarios: "Personal y Salarios",
+  muestra: "Contexto y muestra",
+  salarios: "Personal y salarios",
   beneficios: "Beneficios",
   indicadores: "Indicadores",
-  patrones: "Patrones y relaciones",
+  patrones: "Qué viene",
 };
 
-export function sectionKpis(sectionKey: MonitorSectionKey, M: Empresa[], cli: Empresa): KpiRow[] {
+export function sectionKpis(sectionKey: MonitorSectionKey, M: Empresa[], _cli: Empresa): KpiRow[] {
   const datos = getMonitorDataset();
   const ULT = datos.bimestres.length - 1;
 
   switch (sectionKey) {
     case "muestra": {
-      const tot = M.reduce((s, e) => s + (e.op || 0) + (e.adm || 0) + (e.otro || 0), 0);
-      const mujNum = M.filter((e) => e.muj != null).reduce(
-        (s, e) => s + (e.op || 0) + (e.adm || 0) + (e.otro || 0),
-        0,
-      );
-      const muj =
-        mujNum > 0
-          ? M.reduce(
-              (s, e) =>
-                s + (e.muj ?? 0) * ((e.op || 0) + (e.adm || 0) + (e.otro || 0)),
-              0,
-            ) / mujNum
-          : null;
+      const sx = datos.mercado?.sintesis;
+      const completo = M.length === datos.empresas.length;
+      if (!completo) {
+        return [
+          { v: M.length, l: "Empresas en este corte" },
+          { v: fmtN(sx?.empleados ?? 35128), l: "Empleados del mercado completo" },
+        ];
+      }
       return [
-        { v: M.length, l: "Empresas en la muestra" },
-        { v: fmtN(tot), l: "Empleados" },
-        { v: fmtP(muj, 0), l: "Mujeres (ponderado por empleados)" },
-        {
-          v: fmtN((cli.op || 0) + (cli.adm || 0) + (cli.otro || 0)),
-          l: "Empleados de su empresa",
-          t: true,
-        },
+        { v: sx?.empresas ?? 40, l: "Empresas" },
+        { v: fmtN(sx?.empleados ?? 35128), l: "Empleados" },
+        { v: fmtP(sx?.composicion?.op ?? 0.7, 0), l: "Personal operativo" },
+        { v: fmtP(sx?.mujeres?.pct ?? 0.386, 1), l: "Mujeres en la plantilla" },
       ];
     }
-    case "salarios":
+    case "salarios": {
+      const s = datos.mercado?.sintesis?.salario;
       return [
-        { v: fmt$(mediana(M.map((e) => e.sal[0]))), l: "Salario diario inicial (mediana)" },
-        { v: fmt$(cli.sal[0]), l: "Su salario diario inicial", t: true },
-        {
-          v: fmtP(prom(M.map((e) => e.inc["2025"][0])), 2),
-          l: "Incremento operativo 2025 (promedio)",
-        },
-        { v: fmtP(cli.inc["2025"][0], 2), l: "Su incremento operativo 2025", t: true },
-      ];
-    case "beneficios": {
-      const b = beneficiosMercado(M);
-      const top = b[0];
-      return [
-        {
-          v: top?.label ?? "—",
-          l: top ? `Beneficio más común (${fmtP(top.v, 0)})` : "Beneficio más común",
-        },
-        { v: cli.ben.reduce((s, x) => s + x, 0), l: "Beneficios incluidos por su empresa", t: true },
-        {
-          v: (mediana(M.map((e) => e.cap)) ?? 0).toFixed(1) + " h",
-          l: "Capacitación por persona (mediana)",
-        },
-        { v: (cli.cap ?? 0).toFixed(1) + " h", l: "Su capacitación por persona", t: true },
+        { v: fmt$(s?.mediana ?? mediana(M.map((e) => e.sal[0]))), l: "Mediana al ingreso" },
+        { v: `${fmt$(s?.p25 ?? 300)}–${fmt$(s?.p75 ?? 370)}`, l: "Mitad de las empresas" },
+        { v: fmtP(s?.crecimientoPct ?? 0.65, 0), l: "Del inicial al máximo" },
+        { v: "13 de 40", l: "Pagan bajo el mínimo 2026" },
       ];
     }
-    case "indicadores":
+    case "beneficios":
       return [
-        {
-          v: fmtP(promSinCeros(M.map((e) => e.rot[ULT])), 2),
-          l: "Rotación del mercado (promedio simple sin ceros)",
-        },
-        { v: fmtP(cli.rot[ULT], 2), l: "Su rotación", t: true },
-        {
-          v: fmtP(mediana(M.map((e) => e.rot[ULT]).filter((v) => (v ?? 0) > 0)), 2),
-          l: "Rotación mediana",
-        },
-        {
-          v: fmtP(promSinCeros(M.map((e) => e.aus[ULT])), 2),
-          l: "Ausentismo del mercado",
-        },
+        { v: "33%", l: "No movió ningún beneficio" },
+        { v: "45%", l: "Subió vales de despensa" },
+        { v: "40%", l: "Subió fondo de ahorro" },
+        { v: "2.9%", l: "Incremento en beneficios" },
       ];
+    case "indicadores": {
+      const mk = mixContratacion(M, ULT);
+      const merc = datos.mercado;
+      const antesAno = merc?.cuandosevan?.antesPrimerAno;
+      const rotMerc = merc?.rotacionEdicion?.mercado ?? promSinCeros(M.map((e) => e.rot[ULT]));
+      const ausMerc =
+        merc?.ausentismoEdicion?.total ?? promSinCeros(M.map((e) => e.aus[ULT]));
+      return [
+        { v: fmtP(rotMerc, 1), l: "Rotación del mercado (Jul–Ago 2025)" },
+        {
+          v: antesAno != null ? fmtP(antesAno, 0) : "—",
+          l: "Bajas antes del primer año (prom. empresas)",
+        },
+        { v: fmtP(ausMerc, 2), l: "Ausentismo del mercado" },
+        { v: fmtP(mk.pCr, 0), l: "Contrataciones por reposición" },
+      ];
+    }
     case "patrones": {
-      const pr = perfilRadar(M, cli);
+      const p = datos.mercado?.prediccion;
       return [
-        { v: fmtP(mixContratacion(M, ULT).pCr, 0), l: "Contrataciones por reposición (mercado)" },
-        { v: fmtP(cli.rot[ULT], 2), l: "Su rotación", t: true },
-        { v: fmt$(cli.sal[0]), l: "Su salario inicial" },
-        { v: fmtP(pr.cli[0], 0), l: "Percentil en rotación (menor es mejor)" },
+        {
+          v: p?.rot2026 != null ? fmtP(p.rot2026, 0) : "—",
+          l: "Rotación anual esperada 2026",
+        },
+        {
+          v:
+            p?.lo80 != null && p?.hi80 != null
+              ? `${fmtP(p.lo80, 0)}–${fmtP(p.hi80, 0)}`
+              : "—",
+          l: "Banda 80% de incertidumbre",
+        },
+        { v: fmtP(p?.siSeDetiene ?? 0.41, 0), l: "Si se detiene" },
+        { v: String(datos.mercado?.sintesis?.segmentos?.altoRiesgo ?? 10), l: "Empresas en alto riesgo" },
       ];
     }
     default:

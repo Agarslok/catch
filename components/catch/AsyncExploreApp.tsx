@@ -15,7 +15,9 @@ import { AsyncCatchTeamQuestionModal } from "@/components/catch/AsyncCatchTeamQu
 import { AsyncExploreHeaderTools } from "@/components/catch/AsyncExploreHeaderTools";
 import { ContextualIaAskPopover } from "@/components/catch/ContextualIaAskPopover";
 import { AvatarDockVideo } from "@/components/catch/AvatarDockVideo";
-import { IaMicButton } from "@/components/catch/IaMicButton";
+import { AsyncExploreLeftRail } from "@/components/catch/AsyncExploreLeftRail";
+import { AsyncIaSideRail } from "@/components/catch/AsyncIaSideRail";
+import { PresenterAvatarWidget } from "@/components/catch/PresenterAvatarWidget";
 import { PresentationFloatingNav } from "@/components/catch/PresentationFloatingNav";
 import { SectionContextTicker } from "@/components/catch/SectionContextTicker";
 import {
@@ -71,6 +73,7 @@ export function AsyncExploreApp() {
   const [munFilter, setMunFilter] = useState<MunFilter>("total");
   const [chartKind, setChartKind] = useState<ChartKind>("bar");
   const [sectionNavOpen, setSectionNavOpen] = useState(false);
+  const [leftRailOpen, setLeftRailOpen] = useState(true);
   const [question, setQuestion] = useState("");
   const [thread, setThread] = useState<ChatLine[]>([]);
   const [askStatus, setAskStatus] = useState("");
@@ -351,104 +354,112 @@ export function AsyncExploreApp() {
   );
 
   const topBar = (
-    <header className="top">
+    <header className={`top${showCompactNav ? " top--async-mobile" : ""}`}>
       <div className="cabeza-principal">
         {showCompactNav ? (
-          <button
-            type="button"
-            className="btn-menu"
-            aria-expanded={sectionNavOpen}
-            aria-controls="nav-secciones"
-            aria-label="Menú de secciones"
-            onClick={() => setSectionNavOpen((open) => !open)}
-          >
-            <span className="btn-menu-ico" aria-hidden="true" />
-          </button>
-        ) : null}
-        <div className="brand">
-          <Link href="/" aria-label="Inicio">
-            <Image src="/favicon.png" alt="Catch Consulting" width={40} height={40} />
-          </Link>
-          <span className="sep" aria-hidden="true" />
-          <span className="edition">
-            Monitor de Mercado Laboral · Guanajuato · Ene–Feb 2026
+          <>
+            <button
+              type="button"
+              className="btn-menu"
+              aria-expanded={sectionNavOpen}
+              aria-controls="nav-secciones"
+              aria-label="Menú de secciones"
+              onClick={() => setSectionNavOpen((open) => !open)}
+            >
+              <span className="btn-menu-ico" aria-hidden="true" />
+            </button>
+            <div className="async-mobile-head-actions">
+              <button
+                type="button"
+                className="btn-small btn-small--head"
+                onClick={() => setCatchTeamAskOpen(true)}
+              >
+                Preguntar
+              </button>
+              <button
+                type="button"
+                className="btn-small btn-small--head"
+                onClick={() => setReviewOpen(true)}
+              >
+                Repasar
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="brand">
+            <Link href="/" aria-label="Inicio">
+              <Image src="/favicon.png" alt="Catch Consulting" width={40} height={40} />
+            </Link>
+            <span className="sep" aria-hidden="true" />
+            <span className="edition">
+              Monitor de Mercado Laboral · Guanajuato · Ene–Feb 2026
+            </span>
+          </div>
+        )}
+      </div>
+      {!showCompactNav ? (
+        <div className="cabeza-acciones">
+          <AsyncExploreHeaderTools
+            onAskCatchTeam={() => setCatchTeamAskOpen(true)}
+            onReviewConcepts={() => setReviewOpen(true)}
+          />
+          <span className="pill">
+            <span className="dot" style={{ background: "var(--cyan)" }} />
+            Modo asincrónico
+          </span>
+          <span className="step-label">
+            Paso {asyncStep} de {asyncStepTotal}
           </span>
         </div>
-      </div>
-      <div className="cabeza-acciones">
-        <AsyncExploreHeaderTools
-          onAskCatchTeam={() => setCatchTeamAskOpen(true)}
-          onReviewConcepts={() => setReviewOpen(true)}
-        />
-        <span className="pill">
-          <span className="dot" style={{ background: "var(--cyan)" }} />
-          Modo asincrónico
-        </span>
-        <span className="step-label">
-          Paso {asyncStep} de {asyncStepTotal}
-        </span>
-      </div>
+      ) : null}
     </header>
   );
 
+  const iaChatProps = {
+    thread,
+    question,
+    asking,
+    askStatus,
+    onQuestionChange: setQuestion,
+    onSubmit: submitQuestion,
+    voiceSupported: voice.supported,
+    voiceListening: voice.listening,
+    onVoiceToggle: voice.toggle,
+  };
+
+  const desktopIaRail = (
+    <AsyncIaSideRail variant="rail" avatarSlot={avatarDock} {...iaChatProps} />
+  );
+
+  const mobileIaChat = showCompactNav ? (
+    <AsyncIaSideRail variant="inline" {...iaChatProps} />
+  ) : null;
+
+  const mobileFloatingAvatar = showCompactNav ? (
+    <PresenterAvatarWidget
+      mobileMode
+      tavusUi="dock"
+      showRaiseHand
+      raiseHandActive={handRaised}
+      onRaiseHand={handleRaiseHand}
+      onMicToggle={voice.toggle}
+      micListening={voice.listening}
+      micSupported={voice.supported}
+    />
+  ) : null;
+
   const mainPanel = (
     <main ref={mainZoneRef} className="main catch-rail-scroll catch-rail-scroll--light">
-            <SectionContextTicker
-              label={
-                section
-                  ? `Capítulo ${(section.order ?? chapterIndex) + 1} · ${section.name}`
-                  : "Contexto de la sección"
-              }
-              text={caption}
-              className="async-selectable-copy"
-            />
-            {stage}
-            {aiReply ? <p className="ai-inline">{aiReply}</p> : null}
-            <form className="ask" onSubmit={(e) => void submitQuestion(e)} id="session-chat">
-              <div className="ask-head">
-                <h2 className="headline ask-chat-title">Chatear con la IA</h2>
-                <p className="ask-chart-hint">
-                  Toque una barra o columna para ver el detalle y «Preguntar a la IA», o seleccione
-                  texto en la diapositiva. Para el equipo humano use «Preguntar al equipo Catch» arriba.
-                </p>
-              </div>
-              {thread.length > 0 ? (
-                <div className="ask-thread" aria-live="polite">
-                  {thread.map((m, i) => (
-                    <div
-                      key={`${m.role}-${i}`}
-                      className={m.role === "user" ? "ask-thread__user" : "ask-thread__ai"}
-                    >
-                      {m.text}
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-              <div className="ask-row">
-                <input
-                  id="q"
-                  className="ask-input--dark"
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
-                  placeholder="¿Qué significa rotación no controlada?"
-                  aria-label="Chatear con la IA"
-                  autoComplete="off"
-                  disabled={asking}
-                />
-                {voice.supported ? (
-                  <IaMicButton
-                    variant="chat"
-                    listening={voice.listening}
-                    disabled={asking}
-                    onClick={voice.toggle}
-                  />
-                ) : null}
-                <button type="submit" className="send" disabled={asking}>
-                  {asking ? "…" : "Enviar"}
-                </button>
-              </div>
-              <span className="ask-ok">{askStatus}</span>
-            </form>
+      <SectionContextTicker
+        label={
+          section
+            ? `Capítulo ${(section.order ?? chapterIndex) + 1} · ${section.name}`
+            : "Contexto de la sección"
+        }
+        text={caption}
+        className="async-selectable-copy"
+      />
+      {stage}
     </main>
   );
 
@@ -458,6 +469,7 @@ export function AsyncExploreApp() {
       onNext={next}
       prevDisabled={prevDisabled}
       nextDisabled={nextDisabled}
+      elevated
     />
   );
 
@@ -474,7 +486,7 @@ export function AsyncExploreApp() {
           id="nav-secciones"
           className="section-nav-drawer"
           role="dialog"
-          aria-label="Secciones y avatar"
+          aria-label="Secciones"
         >
           <div className="rail-cabeza-movil">
             <span>Recorrido</span>
@@ -484,7 +496,6 @@ export function AsyncExploreApp() {
           </div>
           <aside className="rail">
             {storyRail}
-            {avatarDock}
           </aside>
         </div>
       </>
@@ -511,23 +522,31 @@ export function AsyncExploreApp() {
       <div
         className={`app-shell cliente app-shell--async${
           showCompactNav ? " app-shell--async-compact" : " app-shell--async-split"
-        }${sectionNavOpen ? " menu-secciones-abierto" : ""}`}
+        }${sectionNavOpen ? " menu-secciones-abierto" : ""}${
+          !showCompactNav && !leftRailOpen ? " app-shell--async-left-collapsed" : ""
+        }`}
       >
         {showCompactNav ? (
           <>
             {topBar}
-            <div className="body">
+            <div className="body body--async-compact">
               {mobileDrawer}
-              {mainPanel}
+              <div className="async-mobile-stage">{mainPanel}</div>
+              {mobileIaChat ? (
+                <div className="async-mobile-chat-dock">{mobileIaChat}</div>
+              ) : null}
             </div>
             {slideNav}
+            {mobileFloatingAvatar}
           </>
         ) : (
           <>
-            <aside className="rail" aria-label="Recorrido e avatar">
+            <AsyncExploreLeftRail
+              open={leftRailOpen}
+              onToggle={() => setLeftRailOpen((open) => !open)}
+            >
               {storyRail}
-              {avatarDock}
-            </aside>
+            </AsyncExploreLeftRail>
             <div className="async-workspace">
               {topBar}
               <div className="body body--async-single">
@@ -535,6 +554,7 @@ export function AsyncExploreApp() {
               </div>
               {slideNav}
             </div>
+            {desktopIaRail}
           </>
         )}
       </div>

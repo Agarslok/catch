@@ -133,7 +133,7 @@ h1,h2,h3{font-family:var(--display); letter-spacing:-.01em}
 .fuente dd{margin:0}
 
 /* avatar desplegable */
-.avatar-w{position:fixed; right:24px; bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:45; display:flex; flex-direction:column; align-items:flex-end; gap:12px}
+.avatar-w{position:fixed; right:24px; bottom:calc(55px + env(safe-area-inset-bottom,0px)); z-index:45; display:flex; flex-direction:column; align-items:flex-end; gap:12px}
 .fab{min-height:56px; padding:0 22px 0 16px; border-radius:999px; border:0; color:#fff; font-weight:700; font-size:15px; display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,var(--azul),var(--cyan)); box-shadow:0 8px 24px rgba(39,120,177,.3); transition:transform .2s, box-shadow .2s}
 .fab:hover{transform:translateY(-2px); box-shadow:0 12px 28px rgba(39,120,177,.4)}
 .fab .pulso{position:relative; width:12px; height:12px; border-radius:50%; background:#fff}
@@ -815,7 +815,8 @@ function renderModerador(raiz) {
   });
   const g = p.tipo === 'explica' ? SECCIONES[p.s].graficos[p.g] : null;
   raiz.innerHTML = `<div class="moderador">
-   <aside class="mod-col"><h3>Guion de la sesión</h3><ul class="pasos">${lista}</ul></aside>
+   <aside class="mod-col"><h3>Guion de la sesión</h3><ul class="pasos" style="
+    padding-bottom: 80px;>${lista}</ul></aside>
    <section class="mod-centro"><div class="titulo"><h2>${esc(tituloPaso(p))}</h2><span class="leyenda-tuya">Paso ${S.pos + 1} de ${PASOS.length} · avance con ← →</span>
       <span style="margin-left:auto"></span><button class="btn" data-exportar>${''}Exportar PDF</button></div>
     <div class="pantalla"><div class="barra"><span>Lo que ve el cliente</span><span>${esc(DATOS.edicion)} · Su empresa = ${CLIENTE}</span></div><div class="dentro" id="mod-preview"></div></div>

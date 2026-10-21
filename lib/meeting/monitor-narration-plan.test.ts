@@ -28,7 +28,7 @@ describe("monitor narration plan", () => {
     const plan = planMonitorNarration(idx);
     assert.equal(plan.stepKind, "hoja");
     assert.equal(plan.blockAdvance, true);
-    assert.match(plan.speakText ?? "", /resumen de la sección/i);
+    assert.match(plan.speakText ?? "", /Quedó claro|muestra/i);
   });
 
   it("paso cierre", () => {
@@ -38,7 +38,7 @@ describe("monitor narration plan", () => {
     const plan = planMonitorNarration(idx);
     assert.equal(plan.stepKind, "cierre");
     assert.equal(plan.blockAdvance, false);
-    assert.match(plan.speakText ?? "", /presentación ha finalizado/i);
+    assert.match(plan.speakText ?? "", /Sesión cerrada|Monitor DAEL/i);
   });
 
   it("índice inválido sin texto ni resaltado", () => {
@@ -50,12 +50,12 @@ describe("monitor narration plan", () => {
   });
 
   it("referencia de resaltado válida en paso explica", () => {
-    const idx = findPasoIndexForChart("rotcomp");
+    const idx = findPasoIndexForChart("salini");
     const plan = planMonitorNarration(idx, {
-      highlight: { chartId: "rotcomp", category: getDemoClientId() },
+      highlight: { chartId: "salini", category: getDemoClientId() },
     });
     assert.ok(plan.highlightRef);
-    assert.equal(plan.highlightRef!.chartId, "rotcomp");
+    assert.equal(plan.highlightRef!.chartId, "salini");
     assert.equal(plan.highlightRef!.category, getDemoClientId());
   });
 

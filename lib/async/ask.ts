@@ -6,6 +6,7 @@ import {
 import { geminiGenerate } from "@/lib/monitor-ai/providers/gemini-tools";
 import type { MonitorAiErrorCode } from "@/lib/monitor-ai/types";
 import { sanitizeAssistantMessage } from "@/lib/monitor-ai/validate-response";
+import { buildGeminiReferenceBlock } from "@/lib/monitor-content/dael-reference";
 import {
   datasetContextForModel,
   resolveDatasetKeyFromChartFocus,
@@ -63,6 +64,7 @@ export function buildAsyncReportContext(input: AsyncAskInput): Record<string, un
       : null,
     dataset: datasetKey ? datasetContextForModel(datasetKey) : null,
     series: seriesForChart(focus),
+    monitorDaelReference: buildGeminiReferenceBlock(),
   };
 }
 

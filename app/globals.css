@@ -1467,6 +1467,10 @@ a {
   box-shadow: 0 4px 20px rgba(15, 47, 72, 0.12);
 }
 
+.nav-flotante-dock--elevated {
+  bottom: calc(max(20px, env(safe-area-inset-bottom, 0px)) + 40px);
+}
+
 .nav-flotante-btn {
   pointer-events: auto;
   width: 44px;
@@ -2554,9 +2558,9 @@ a {
   gap: 0;
 }
 
-.app-shell--async-split > .rail {
-  flex: 0 0 280px;
-  width: 280px;
+.app-shell--async-split > .rail--async-nav {
+  flex: 0 0 220px;
+  width: 220px;
   height: 100dvh;
   max-height: 100dvh;
   min-height: 100dvh;
@@ -2565,18 +2569,302 @@ a {
   border: 0;
   border-right: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: none;
-  padding-bottom: clamp(28px, 5vh, 44px);
-  gap: 12px;
+  padding: 12px 10px 16px;
+  gap: 8px;
+  transition:
+    width 0.22s ease,
+    flex-basis 0.22s ease,
+    padding 0.22s ease,
+    opacity 0.18s ease;
 }
 
-/* Avatar más arriba: el recorrido no empuja el dock al borde inferior */
-.app-shell--async .rail .story-rail {
-  flex: 0 1 auto;
-  max-height: min(58vh, calc(100dvh - 272px));
+.app-shell--async-left-collapsed > .rail--async-nav.rail--async-collapsed {
+  flex: 0 0 0;
+  width: 0;
+  min-width: 0;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+  border-right-width: 0;
+  overflow: hidden;
 }
 
-.app-shell--async .rail .ai-dock {
-  margin-top: 12px;
+.rail-async-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 6px 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #bfe3f0;
+  flex-shrink: 0;
+}
+
+.rail-async-toggle {
+  border: 0;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.rail-async-toggle:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.async-left-rail-fab {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 55;
+  border: 0;
+  border-radius: 0 12px 12px 0;
+  padding: 12px 10px 12px 8px;
+  background: var(--deep);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: 4px 0 16px rgba(15, 47, 72, 0.25);
+  cursor: pointer;
+}
+
+.app-shell--async .rail--async-nav .story-rail {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+}
+
+.app-shell--async-split > .async-ai-rail {
+  flex: 0 0 min(380px, 32vw);
+  width: min(380px, 32vw);
+  height: 100dvh;
+  max-height: 100dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  color: var(--ink);
+  border-left: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.async-ai-rail__head {
+  flex-shrink: 0;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+}
+
+.async-ai-rail__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.async-ai-rail__avatar {
+  flex-shrink: 0;
+  padding: 10px 12px 0;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+}
+
+.async-ai-rail__avatar .ai-dock {
+  margin: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(39, 120, 177, 0.18);
+}
+
+.async-ai-rail__avatar .ai-dock-head {
+  display: none;
+}
+
+.async-ai-rail__chat.ask--async-rail {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  padding: 10px 12px 14px;
+  gap: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ask--async-rail::before {
+  display: none;
+}
+
+.async-ai-rail__thread.ask-thread--async-rail {
+  flex: 1 1 auto;
+  min-height: 100px;
+  max-height: none;
+  margin: 0;
+  padding: 6px 2px 8px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.async-ai-rail__thread-empty {
+  margin: auto 0 0;
+  padding: 12px 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+  text-align: left;
+}
+
+.async-ai-rail__hint {
+  flex-shrink: 0;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: left;
+  flex: 0 0 auto;
+  max-width: none;
+}
+
+.ask--async-rail .ask-row {
+  flex-shrink: 0;
+  margin-top: 0;
+  flex-wrap: nowrap;
+}
+
+.ask--async-rail .ask-row input {
+  min-height: 44px;
+  font-size: 14px;
+}
+
+.ask--async-rail .ask-ok {
+  flex-shrink: 0;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.body--async-compact {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: 0;
+}
+
+.body--async-compact > .main {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.app-shell--async-compact .top--async-mobile {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-shell--async-compact .top--async-mobile .cabeza-principal {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.async-mobile-head-actions {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.async-mobile-head-actions .btn-small--head {
+  min-height: 40px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.async-mobile-stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.async-mobile-stage > .main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.async-mobile-chat-dock {
+  flex: 0 0 auto;
+  border-top: 1px solid var(--line);
+  background: #fff;
+  padding: 10px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -6px 24px rgba(15, 47, 72, 0.08);
+  max-height: min(46vh, 360px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.async-mobile-chat-dock .ask--async-inline {
+  margin: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.async-mobile-chat-dock .ask--async-inline::before {
+  display: none;
+}
+
+.async-mobile-chat-dock .ask-head {
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+
+.async-mobile-chat-dock .ask--async-inline .ask-chat-title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.async-mobile-chat-dock .ask--async-inline .ask-chart-hint {
+  display: none;
+}
+
+.async-mobile-chat-dock .ask-thread {
+  flex: 1 1 auto;
+  min-height: 48px;
+  max-height: min(18vh, 140px);
+  overflow-y: auto;
+  margin-top: 0;
+}
+
+.async-mobile-chat-dock .ask-row {
+  flex-shrink: 0;
+}
+
+.async-mobile-chat-dock .ask-ok {
+  flex-shrink: 0;
 }
 
 .app-shell--async-split > .async-workspace {
@@ -2633,9 +2921,14 @@ a {
     --async-pad-inline: 18px;
   }
 
-  .app-shell--async-split > .rail {
-    flex: 0 0 min(248px, 34vw);
-    width: min(248px, 34vw);
+  .app-shell--async-split > .rail--async-nav {
+    flex: 0 0 min(200px, 30vw);
+    width: min(200px, 30vw);
+  }
+
+  .app-shell--async-split > .async-ai-rail {
+    flex: 0 0 min(320px, 38vw);
+    width: min(320px, 38vw);
   }
 
   .app-shell--async-split .btn-menu {

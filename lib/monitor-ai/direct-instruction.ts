@@ -10,7 +10,7 @@ import {
   isMonitorChartId,
   sectionKeyForIndex,
 } from "./catalog";
-import { extractHighlightHint, matchInstructionTargets } from "./interpret-context";
+import { extractHighlightHint, resolveInstructionMatch } from "./interpret-context";
 import { resolveModeratorNavInstruction } from "./nav-instruction";
 import { buildMonitorPasos } from "@/lib/meeting/monitor-pasos";
 import { planMonitorNarration } from "@/lib/meeting/monitor-narration-plan";
@@ -171,8 +171,15 @@ function chartIdForDirectHighlight(
   return null;
 }
 
-function namedDestination(instruction: string): DirectInstructionResolution | null {
-  const match = matchInstructionTargets(instruction);
+function namedDestination(
+  instruction: string,
+  snapshot?: PresentationControllerSnapshot,
+): DirectInstructionResolution | null {
+  const paso = snapshot ? buildMonitorPasos()[snapshot.stepIndex] : undefined;
+  const match = resolveInstructionMatch(instruction, {
+    sectionKey: paso && (paso.tipo === "explica" || paso.tipo === "hoja") ? sectionKeyForIndex(paso.sectionIndex) : null,
+    chartId: paso?.tipo === "explica" ? paso.chartId : null,
+  });
   if (match.kind === "ambiguous") {
     const labels = match.options.map((o) => `${o.type === "section" ? "sección" : "gráfica"} «${o.label}»`).join("; ");
     return {
@@ -409,7 +416,7 @@ export function resolveDirectModeratorInstruction(
     };
   }
 
-  const named = namedDestination(instruction);
+  const named = namedDestination(instruction, snapshot);
   if (named) return named;
 
   return null;

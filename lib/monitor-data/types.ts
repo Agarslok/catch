@@ -12,12 +12,78 @@ export type MarketSlice = {
   filterSubsetCount: number;
 };
 
+export type MonitorMercadoMeta = {
+  sintesis?: {
+    empresas?: number;
+    empleados?: number;
+    composicion?: { op?: number; adm?: number; otro?: number };
+    mujeres?: { pct?: number; n?: number };
+    tier?: { t1?: number; t2?: number; n?: number };
+    procesoTopPct?: number;
+    salario?: {
+      mediana?: number;
+      p25?: number;
+      p75?: number;
+      escalera?: number[];
+      crecimientoPct?: number;
+    };
+    incrementoOp?: { "2024"?: number; "2025"?: number };
+    sinRevision?: number;
+    paqueteTipico?: { valesPct?: number; aguinaldoDias?: number };
+    rotacion?: {
+      ultimo?: number;
+      haceUnAno?: number;
+      voluntaria?: number;
+      involuntaria?: number;
+      mediana?: number;
+      promedio?: number;
+    };
+    causaSueldoPct?: number;
+    reposicionPct?: number;
+    tiempoExtraPct?: number;
+    drivers?: { orSalario?: number; oddsReduccionPct?: number };
+    segmentos?: {
+      referentes?: number;
+      estables?: number;
+      altoRiesgo?: number;
+      casiSeguras?: number;
+    };
+  };
+  cuandosevan?: {
+    nEmpresas?: number;
+    antesPrimerAno?: number;
+    labels?: string[];
+    acumulado?: number[];
+  };
+  ausentismoEdicion?: {
+    total?: number;
+    justificado?: number;
+    injustificado?: number;
+    capacitacionHoras?: number;
+    nAus?: number;
+    nCap?: number;
+  };
+  prediccion?: {
+    rot2026?: number;
+    lo80?: number;
+    hi80?: number;
+    siSeDetiene?: number;
+  };
+  rotacionEdicion?: {
+    mercado?: number;
+    mediana?: number;
+    voluntaria?: number;
+    involuntaria?: number;
+  };
+};
+
 export type DatosCapitalHumano = {
   bimestres: string[];
   edicion: string;
   beneficios: string[];
   motivos: string[];
   empresas: Empresa[];
+  mercado?: MonitorMercadoMeta;
 };
 
 export type Empresa = {

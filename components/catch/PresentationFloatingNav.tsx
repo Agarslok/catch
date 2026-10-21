@@ -5,6 +5,8 @@ type Props = {
   onNext: () => void;
   prevDisabled?: boolean;
   nextDisabled?: boolean;
+  /** +40px sobre el borde inferior (marca web / UI inferior en móvil o async). */
+  elevated?: boolean;
 };
 
 export function PresentationFloatingNav({
@@ -12,9 +14,14 @@ export function PresentationFloatingNav({
   onNext,
   prevDisabled = false,
   nextDisabled = false,
+  elevated = false,
 }: Props) {
   return (
-    <div className="nav-flotante-dock" role="group" aria-label="Navegación de diapositivas">
+    <div
+      className={`nav-flotante-dock${elevated ? " nav-flotante-dock--elevated" : ""}`}
+      role="group"
+      aria-label="Navegación de diapositivas"
+    >
       <button
         type="button"
         className="nav-flotante-btn"

@@ -432,7 +432,7 @@ export function LiveMeetingApp({
   const pdfMeta = useMemo(
     () => ({
       editionLabel: script.title || "Monitor de Mercado Laboral",
-      clientLabel: "Su empresa",
+      clientLabel: "Mercado laboral Jul–Ago 2025",
       meetingId,
       sectionNames: script.sections.map((s) => s.name),
     }),
@@ -1216,6 +1216,7 @@ export function LiveMeetingApp({
         onNext={next}
         prevDisabled={slideNavPrevDisabled}
         nextDisabled={slideNavNextDisabled}
+        elevated={!isPresenter && isMobile}
       />
     ) : null;
   const avatarCaptionText =

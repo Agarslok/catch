@@ -10,76 +10,76 @@ export const MONITOR_CHART_UI: Record<
 > = {
   plantilla: {
     title: "Empleados por tipo de personal",
-    subtitle: "Suma de la muestra",
+    subtitle: "70% operativo · 28% administrativo · 2% otro",
   },
   procesos: { title: "Principales procesos", subtitle: "% de compañías que realizan cada proceso" },
   tier: { title: "Nivel en la cadena automotriz", subtitle: "% de compañías por Tier" },
-  tamano: { title: "Tamaño de las compañías", subtitle: "% de la muestra en cada rango de empleados" },
+  tamano: { title: "Empresas de todos los tamaños", subtitle: "10 tienen más de 1,000 empleados" },
   edad: { title: "Edad del personal", subtitle: "Mercado ponderado por empleados contra su empresa" },
   salini: {
-    title: "Salario diario inicial del personal operativo",
-    subtitle: "Cada barra es una empresa; la suya en ámbar",
+    title: "Salario diario inicial",
+    subtitle: "Mediana $340 · la mitad paga entre $300 y $370",
   },
   escalera: {
-    title: "Escalera salarial operativa",
-    subtitle: "Percentiles del mercado y su empresa, salario diario",
+    title: "Escalera salarial",
+    subtitle: "$340 al inicio · $561 al máximo · +65%",
   },
   incremento: {
-    title: "Incremento salarial otorgado",
-    subtitle: "Promedio simple de compañías contra su empresa",
+    title: "Incremento 2025",
+    subtitle: "7.5% al operativo · 2.9% en beneficios",
   },
   mes: {
-    title: "Mes de revisión salarial",
-    subtitle: "% de compañías que incrementan en cada mes",
-  },
-  beneficios: {
-    title: "Beneficios incluidos en el incremento",
-    subtitle: "% de compañías que respondieron",
-  },
-  incben: {
-    title: "Incremento en beneficios 2025",
-    subtitle: "Promedio simple de compañías contra su empresa",
+    title: "Mes de revisión",
+    subtitle: "Abril concentra el 43% de las empresas",
   },
   negociacion: {
     title: "Estatus del contrato colectivo",
     subtitle: "Compañías por etapa de la revisión",
   },
-  capacitacion: {
-    title: "Horas de capacitación por persona",
-    subtitle: "En el bimestre; cada barra es una empresa",
+  paquete: {
+    title: "Paquete del operativo",
+    subtitle: "Mediana del mercado · personal operativo",
+  },
+  beneficios: {
+    title: "Qué se movió además del salario",
+    subtitle: "33% solo subió el salario · vales 45% · fondo 40%",
+  },
+  incben: {
+    title: "Incremento en beneficios",
+    subtitle: "2.9% al operativo en 2025",
   },
   rotserie: {
-    title: "Rotación bimestral por tipo",
-    subtitle: "Mercado (promedio simple sin ceros) y su empresa",
-  },
-  mixcontrata: {
-    title: "Contrataciones del bimestre",
-    subtitle: "Reposición de bajas frente a posiciones nuevas (mercado)",
+    title: "Rotación del mercado",
+    subtitle: "8.1% en Jul–Ago 2025 · 10.8% hace un año",
   },
   rotcomp: {
-    title: "Rotación por compañía",
-    subtitle: "Cada barra es una empresa; la suya en ámbar",
+    title: "Cada empresa, sin nombre",
+    subtitle: "Mediana 7.3% · promedio 8.1% · la suya en ámbar",
   },
-  causas: { title: "Causas de rotación", subtitle: "% de compañías que califican la causa como común o más" },
+  cuandosevan: {
+    title: "Cuándo se van",
+    subtitle: "67% antes del primer año · 20% en el primer mes",
+  },
+  causas: { title: "La causa número uno", subtitle: "Mejor sueldo en otro empleo · 72%" },
   ausentismo: {
-    title: "Ausentismo bimestral",
-    subtitle: "Mercado (promedio simple sin ceros) y su empresa",
+    title: "Ausentismo",
+    subtitle: "2.25% del mercado en Jul–Ago 2025 · su empresa en ámbar",
+  },
+  mixcontrata: {
+    title: "Contrataciones por bimestre",
+    subtitle: "Reposición de bajas frente a posiciones nuevas (mercado)",
+  },
+  prediccion: {
+    title: "Rotación esperada 2026",
+    subtitle: "38% si la tendencia sigue · 80% entre 33% y 44%",
   },
   salrot: {
-    title: "Salario inicial y rotación",
-    subtitle: "Cada punto es una empresa; la suya en ámbar",
-  },
-  plantbubble: {
-    title: "Plantilla, rotación y ausentismo",
-    subtitle: "Eje X: empleados · Y: rotación · tamaño del punto: ausentismo",
-  },
-  rotmapa: {
-    title: "Rotación por Tier y tamaño",
-    subtitle: "Intensidad del color = rotación promedio del segmento",
+    title: "Qué mueve la rotación",
+    subtitle: "Asociación, no causa · su empresa en ámbar",
   },
   perfilradar: {
-    title: "Perfil relativo de su empresa",
-    subtitle: "Percentil en cada dimensión (100 = mejor posición en la muestra)",
+    title: "Su empresa frente al mercado",
+    subtitle: "100 = mejor posición de la muestra en esa dimensión",
   },
 };
 

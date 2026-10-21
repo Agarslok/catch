@@ -163,9 +163,21 @@ function matchingCharts(text: string): CatalogChartRef[] {
 const NAV_HINT =
   /\b(ve|ir|vamos|abre|salta|mostrar|muestrame|ensena|ensenar|regresa|regresar|vuelve|volver|seccion|secciones|grafica|grafico|chart)\b/i;
 
+/** La pregunta ya trae la diapositiva, la sección y la gráfica. No es un destino de navegación. */
+export function isAnchoredContentQuestion(instruction: string): boolean {
+  const f = fold(instruction);
+  const anchored = /\b(diapositiva actual|seleccione)\b/.test(f);
+  if (!anchored) return false;
+  return (
+    /\b(que representa|que significa|como se interpreta|como debe interpretarse|que datos|en este contexto|que muestra)\b/.test(f) ||
+    /\?/.test(instruction)
+  );
+}
+
 export function matchInstructionTargets(instruction: string): InstructionMatch {
   const text = instruction.trim();
   if (!text) return { kind: "none" };
+  if (isAnchoredContentQuestion(text)) return { kind: "none" };
   const f = fold(text);
   const wantsSection = /\bseccion(es)?\b/.test(f);
   const wantsChart = /\b(grafica|grafico|chart|visualizacion)\b/.test(f);
@@ -240,6 +252,19 @@ export function matchInstructionTargets(instruction: string): InstructionMatch {
   return { kind: "none" };
 }
 
+/** Si las coincidencias son solo la sección y la gráfica que ya están en pantalla, no hay que preguntar cuál. */
+export function resolveInstructionMatch(
+  instruction: string,
+  current?: { sectionKey?: string | null; chartId?: string | null },
+): InstructionMatch {
+  const match = matchInstructionTargets(instruction);
+  if (match.kind !== "ambiguous" || !current?.sectionKey) return match;
+  const onThisSlide = match.options.every((o) =>
+    o.type === "section" ? o.id === current.sectionKey : o.id === current.chartId,
+  );
+  return onThisSlide ? { kind: "none" } : match;
+}
+
 const HIGHLIGHT_HINT = /resalt\w*\s+(?:el\s+|la\s+|los\s+|las\s+)?["«]?([^"».:,]{2,40})/i;
 
 export function extractHighlightHint(instruction: string): string | undefined {
@@ -293,10 +318,13 @@ export function buildInterpretModelContext(input: {
   const pendingActions = (Object.keys(PRESENTATION_ACTION_CATALOG) as PresentationActionType[]).filter(
     (t) => PRESENTATION_ACTION_CATALOG[t].availability === "pending",
   );
-  const instructionMatch = matchInstructionTargets(input.instruction);
-  const highlightHint = extractHighlightHint(input.instruction);
   const chartId = currentChartId(input.snapshot.stepIndex);
   const sectionKey = currentSectionKey(input.snapshot.stepIndex);
+  const instructionMatch = resolveInstructionMatch(input.instruction, {
+    sectionKey,
+    chartId,
+  });
+  const highlightHint = extractHighlightHint(input.instruction);
 
   const analytics: InterpretAnalyticsSlice[] = [];
   if (sectionKey) {

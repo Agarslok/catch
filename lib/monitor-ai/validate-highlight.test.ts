@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { getDemoClientId } from "@/lib/monitor-data/dataset";
+import { getDemoClientId, getMonitorDataset } from "@/lib/monitor-data/dataset";
 import { MONITOR_CHART_IDS } from "./catalog";
 import {
   chartHasHighlightCatalog,
@@ -34,19 +34,24 @@ describe("highlight catalog", () => {
     assert.equal(ref!.category, getDemoClientId());
   });
 
-  it("resalta segmento existente en mixcontrata (pie)", () => {
+  it("resalta segmento existente en mixcontrata (barras apiladas)", () => {
+    const datos = getMonitorDataset();
+    const ult = datos.bimestres[datos.bimestres.length - 1];
     const ref = resolveMonitorHighlightTarget("mixcontrata", {
-      category: "Reposición de bajas",
+      category: ult,
+      seriesKey: "Reposición de bajas",
     });
     assert.ok(ref);
-    assert.equal(ref!.index, 0);
+    assert.equal(ref!.datasetIndex, 0);
   });
 
-  it("resalta punto existente en salrot (scatter)", () => {
-    const ref = resolveMonitorHighlightTarget("salrot", { category: getDemoClientId() });
+  it("resalta un factor del diagrama de bosque", () => {
+    const ref = resolveMonitorHighlightTarget("salrot", {
+      category: "Salario inicial sobre el mercado",
+    });
     assert.ok(ref);
     assert.equal(ref!.datasetIndex, 1);
-    assert.equal(ref!.seriesKey, "Su empresa");
+    assert.equal(ref!.seriesKey, "Salario inicial sobre el mercado");
   });
 
   it("cada chartId del monitor tiene catálogo de resaltado", () => {
@@ -150,9 +155,11 @@ describe("highlight validation", () => {
       chartId: "rotcomp",
       category: getDemoClientId(),
     });
+    const ult = getMonitorDataset().bimestres.at(-1)!;
     const second = buildHighlightActionFromProposal({
       chartId: "mixcontrata",
-      category: "Posiciones nuevas",
+      category: ult,
+      seriesKey: "Posiciones nuevas",
     });
     assert.equal(first.ok, true);
     assert.equal(second.ok, true);

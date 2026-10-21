@@ -4,12 +4,13 @@ import type { MonitorChartId, MonitorSectionIndex } from "@/lib/monitor-ai/types
  * Orden de gráficas por sección, alineado con SECCIONES[].graficos en monitor-en-vivo-catch.html
  * y con MONITOR_CHARTS_BY_SECTION / CHART_TO_SECTION en lib/monitor-ai/catalog.ts.
  */
+/** Recorrido visible. El resto de chartId sigue en el tipo, pero no entra al guion. */
 export const MONITOR_CHARTS_BY_SECTION: readonly MonitorChartId[][] = [
-  ["plantilla", "procesos", "tier", "tamano", "edad"],
-  ["salini", "escalera", "incremento", "mes"],
-  ["beneficios", "incben", "negociacion", "capacitacion"],
-  ["rotserie", "mixcontrata", "rotcomp", "causas", "ausentismo"],
-  ["salrot", "plantbubble", "rotmapa", "perfilradar"],
+  ["plantilla", "tamano"],
+  ["salini", "escalera"],
+  ["paquete", "beneficios"],
+  ["rotserie", "cuandosevan"],
+  ["prediccion", "salrot"],
 ];
 
 export type MonitorPasoTipo = "inicio" | "explica" | "hoja" | "cierre";
