@@ -242,7 +242,7 @@ export function PresenterAvatarWidget({
 
   return (
     <div
-      className={`ai-widget${open ? " open" : ""}${mobileMode ? " mobile-mode" : ""}`}
+      className={`ai-widget${open ? " open" : " avatar-collapsed"}${mobileMode ? " mobile-mode" : ""}`}
       ref={widgetRef}
       onMouseEnter={() => {
         if (mobileMode || dragRef.current) return;
@@ -285,8 +285,9 @@ export function PresenterAvatarWidget({
             )}
           </div>
           <AvatarVisual
-            active={playWhenOpen && open}
+            active={playWhenOpen ? !syncPaused : !syncPaused && open}
             syncPaused={syncPaused}
+            showAudioWhenIdle={!open}
             canControlPause={canControlPause}
             onTogglePause={onTogglePause}
             tavusUi={tavusUi}
@@ -305,7 +306,11 @@ export function PresenterAvatarWidget({
       <button
         type="button"
         className="ai-fab"
-        aria-label="Avatar IA"
+        aria-label={
+          open
+            ? "Ocultar video del avatar; el audio sigue activo"
+            : "Mostrar avatar; el audio sigue activo si la sesión está en curso"
+        }
         aria-expanded={open}
         onClick={onFabClick}
         onPointerDown={onFabPointerDown}

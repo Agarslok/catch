@@ -8,6 +8,7 @@ type Props = {
   syncPaused?: boolean;
   canControlPause?: boolean;
   onTogglePause?: () => void;
+  className?: string;
 };
 
 export function AvatarVideoControls({
@@ -18,9 +19,14 @@ export function AvatarVideoControls({
   syncPaused = false,
   canControlPause = false,
   onTogglePause,
+  className,
 }: Props) {
   return (
-    <div className="ai-audio-ctrl" role="group" aria-label="Audio del avatar">
+    <div
+      className={["ai-audio-ctrl", className].filter(Boolean).join(" ")}
+      role="group"
+      aria-label="Audio del avatar"
+    >
       {canControlPause && (
         <button
           type="button"

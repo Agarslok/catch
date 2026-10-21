@@ -169,6 +169,21 @@ h1,h2,h3{font-family:var(--display); letter-spacing:-.01em}
 .avatar-w{position:fixed; right:24px; bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:45; display:flex; flex-direction:column; align-items:flex-end; gap:12px}
 .avatar-w--left{left:24px; right:auto; align-items:flex-start}
 .avatar-w--visitante{z-index:44}
+.avatar-w--panel-open .avatar-audio-peek{display:none}
+.avatar-w:not(.avatar-w--panel-open) .panel-av .avatar-tavus-bar,
+.avatar-w:not(.avatar-w--panel-open) .panel-av .dentro,
+.avatar-w:not(.avatar-w--panel-open) .panel-av--visitante .cliente-avatar-en-vivo__cab,
+.avatar-w:not(.avatar-w--panel-open) .panel-av .video .avatar-video-media,
+.avatar-w:not(.avatar-w--panel-open) .panel-av .video .panel-av__dock{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.avatar-w:not(.avatar-w--panel-open) .panel-av{width:auto;max-width:min(320px,calc(100vw - 32px));background:var(--superficie);border:1px solid var(--borde);border-radius:16px;box-shadow:0 8px 24px rgba(39,120,177,.12);margin-bottom:10px;overflow:visible}
+.avatar-w:not(.avatar-w--panel-open) .panel-av .video{aspect-ratio:auto;height:auto;min-height:0;background:transparent}
+.avatar-w:not(.avatar-w--panel-open) .avatar-audio-peek,
+.avatar-w:not(.avatar-w--panel-open) .panel-av__dock--solo-audio{display:flex}
+.avatar-audio-peek{display:none;align-items:center;gap:10px;padding:9px 12px;border-top:1px solid var(--borde);background:var(--superficie)}
+.avatar-rail:not(.avatar-rail--open) .avatar-tavus-bar,
+.avatar-rail:not(.avatar-rail--open) .avatar-video-media{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+.avatar-rail:not(.avatar-rail--open) .video .audio-ctrl{display:flex}
+.avatar-rail:not(.avatar-rail--open) .video{aspect-ratio:auto;min-height:0}
 .fab{min-height:56px; padding:0 22px 0 16px; border-radius:999px; border:0; color:#fff; font-weight:700; font-size:15px; display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,var(--azul),var(--cyan)); box-shadow:0 8px 24px rgba(39,120,177,.3); transition:transform .2s, box-shadow .2s}
 .fab:hover{transform:translateY(-2px); box-shadow:0 12px 28px rgba(39,120,177,.4)}
 .fab .pulso{position:relative; width:12px; height:12px; border-radius:50%; background:#fff}
@@ -3447,24 +3462,49 @@ function htmlAvatarVideoBlock(withPause, opts) {
     <video class="avatar-video avatar-tavus-video" data-tavus-remote-video playsinline hidden></video>
     <audio data-tavus-remote-audio autoplay playsinline hidden></audio></div>${audioCtrl}</div>`;
 }
+function etiquetaFabAvatar() {
+  if (esVisitanteAvatarEnVivo()) return S.avatar ? 'Ocultar avatar' : 'Avatar en vivo';
+  return S.avatar ? 'Ocultar avatar' : 'Avatar Catch';
+}
+function claseAvatarWAbierto() {
+  return S.avatar ? ' avatar-w--panel-open' : '';
+}
+function sincronizarPanelAvatar() {
+  const open = !!S.avatar;
+  const ariaFab = open
+    ? 'Ocultar video del avatar; el audio sigue activo'
+    : 'Mostrar avatar; el audio sigue si la sesión está activa';
+  document.querySelectorAll('.avatar-w').forEach(w => {
+    w.classList.toggle('avatar-w--panel-open', open);
+    const panel = w.querySelector('.panel-av');
+    if (panel) panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+  });
+  document.querySelectorAll('.avatar-rail').forEach(r => r.classList.toggle('avatar-rail--open', open));
+  document.querySelectorAll('[data-avatar-fab-label]').forEach(el => { el.textContent = etiquetaFabAvatar(); });
+  document.querySelectorAll('.avatar-w [data-avatar].fab').forEach(fab => {
+    fab.setAttribute('aria-expanded', String(open));
+    fab.setAttribute('aria-label', ariaFab);
+  });
+}
 function htmlAvatar(p) {
   const texto = textoNarracion(p);
   const withPause = S.rol === 'moderador';
-  return `<div class="avatar-w avatar-w--left">${S.avatar ? `<div class="panel-av" role="dialog" aria-label="Avatar Catch">${htmlAvatarTavusToolbar()}<div class="video">${htmlAvatarVideoBlock(withPause, { inlineAudio: false })}${htmlAvatarDockPresentador()}</div>
-    <div class="dentro"><p>${esc(texto)}</p>${htmlOpcionesGeminiModerador()}</div></div>` : ''}
-    <button type="button" class="fab" data-avatar aria-expanded="${!!S.avatar}"><span class="pulso"></span>${S.avatar ? 'Ocultar avatar' : 'Avatar Catch'}</button></div>`;
+  return `<div class="avatar-w avatar-w--left${claseAvatarWAbierto()}"><div class="panel-av" role="dialog" aria-label="Avatar Catch" aria-hidden="${S.avatar ? 'false' : 'true'}">${htmlAvatarTavusToolbar()}<div class="video">${htmlAvatarVideoBlock(withPause, { inlineAudio: false })}${htmlAvatarDockPresentador()}</div>
+    <div class="avatar-audio-peek" role="group" aria-label="Audio del avatar">${htmlAvatarAudioCtrl(withPause)}</div>
+    <div class="dentro"><p>${esc(texto)}</p>${htmlOpcionesGeminiModerador()}</div></div>
+    <button type="button" class="fab" data-avatar aria-expanded="${!!S.avatar}" aria-label="${S.avatar ? 'Ocultar video del avatar; el audio sigue activo' : 'Mostrar avatar; el audio sigue si la sesión está activa'}"><span class="pulso"></span><span data-avatar-fab-label>${etiquetaFabAvatar()}</span></button></div>`;
 }
 function esVisitanteAvatarEnVivo() {
   return S.rol === 'cliente' || S.rol === 'movil';
 }
 function htmlAvatarClienteFlotante() {
   if (!esVisitanteAvatarEnVivo()) return '';
-  return `<div class="avatar-w avatar-w--left avatar-w--visitante">${S.avatar ? `<div class="panel-av panel-av--visitante cliente-avatar-en-vivo" role="region" aria-label="Avatar en vivo del presentador">
+  return `<div class="avatar-w avatar-w--left avatar-w--visitante${claseAvatarWAbierto()}"><div class="panel-av panel-av--visitante cliente-avatar-en-vivo" role="region" aria-label="Avatar en vivo del presentador" aria-hidden="${S.avatar ? 'false' : 'true'}">
     <div class="cliente-avatar-en-vivo__cab"><span class="punto vivo"></span><strong>Avatar en vivo</strong><span data-tavus-status>Esperando al presentador…</span></div>
     <div class="video">${htmlAvatarVideoBlock(false, { inlineAudio: false })}</div>
     <div class="panel-av__dock panel-av__dock--solo-audio" role="group" aria-label="Audio del avatar">${htmlAvatarAudioCtrlVisitante()}</div>
-  </div>` : ''}
-    <button type="button" class="fab" data-avatar aria-expanded="${!!S.avatar}"><span class="pulso"></span>${S.avatar ? 'Ocultar avatar' : 'Avatar en vivo'}</button></div>`;
+  </div>
+    <button type="button" class="fab" data-avatar aria-expanded="${!!S.avatar}" aria-label="${S.avatar ? 'Ocultar video del avatar; el audio sigue activo' : 'Mostrar avatar; el audio sigue si la sesión está activa'}"><span class="pulso"></span><span data-avatar-fab-label>${etiquetaFabAvatar()}</span></button></div>`;
 }
 function insertAvatarFlotanteVisitante(raiz) {
   if (!esVisitanteAvatarEnVivo()) return;
@@ -3473,8 +3513,8 @@ function insertAvatarFlotanteVisitante(raiz) {
 }
 function htmlAvatarRail() {   // avatar en rail solo para vista previa del moderador si se reutiliza
   if (esVisitanteAvatarEnVivo()) return '';
-  return `<div class="avatar-rail"><button class="cab-av" data-avatar aria-expanded="${!!S.avatar}">Avatar IA <span class="pulso"></span></button>
-    ${S.avatar ? `${htmlAvatarTavusToolbar()}<div class="video">${htmlAvatarVideoBlock(false)}</div>` : ''}</div>`;
+  return `<div class="avatar-rail${S.avatar ? ' avatar-rail--open' : ''}"><button class="cab-av" data-avatar aria-expanded="${!!S.avatar}">Avatar IA <span class="pulso"></span></button>
+    ${htmlAvatarTavusToolbar()}<div class="video">${htmlAvatarVideoBlock(false)}</div></div>`;
 }
 function setMenuSecciones(open) {
   const root = document.querySelector('.cliente');
@@ -5611,16 +5651,17 @@ function enlazarAudioAvatar(raiz) {
   if (!avatarMp4Enabled()) {
     root.querySelectorAll('[data-tavus-local-video]').forEach(v => { v.pause(); });
   }
-  function enlazarSlotAudioAvatar(slot) {
-    if (slot.dataset.avatarAudioBound) return;
-    const localV = slot.querySelector('[data-tavus-local-video]');
-    const remoteA = slot.querySelector('[data-tavus-remote-audio]');
-    const v = localV || slot.querySelector('.avatar-video');
-    const muteBtn = slot.querySelector('[data-avatar-mute]');
-    const slider = slot.querySelector('[data-avatar-volume]');
-    const pauseBtn = slot.querySelector('[data-avatar-pause]');
+  function enlazarSlotAudioAvatar(controlsRoot, streamRoot) {
+    const stream = streamRoot || controlsRoot;
+    if (controlsRoot.dataset.avatarAudioBound) return;
+    const localV = stream.querySelector('[data-tavus-local-video]');
+    const remoteA = stream.querySelector('[data-tavus-remote-audio]');
+    const v = localV || stream.querySelector('.avatar-video');
+    const muteBtn = controlsRoot.querySelector('[data-avatar-mute]');
+    const slider = controlsRoot.querySelector('[data-avatar-volume]');
+    const pauseBtn = controlsRoot.querySelector('[data-avatar-pause]');
     if (!muteBtn || !slider) return;
-    slot.dataset.avatarAudioBound = '1';
+    controlsRoot.dataset.avatarAudioBound = '1';
     const vol = leerVolAvatar();
     slider.value = String(vol);
     const audioTarget = remoteA || v;
@@ -5635,9 +5676,15 @@ function enlazarAudioAvatar(raiz) {
     }
     const syncMute = () => {
       const muted = remoteA ? remoteA.muted : (v?.muted ?? true);
-      muteBtn.setAttribute('aria-pressed', String(muted));
-      muteBtn.textContent = muted ? '🔇' : '🔊';
-      muteBtn.setAttribute('aria-label', muted ? 'Activar sonido' : 'Silenciar');
+      const panel = controlsRoot.closest('.panel-av') || controlsRoot.closest('.avatar-rail');
+      const muteBtns = panel
+        ? panel.querySelectorAll('[data-avatar-mute]')
+        : [muteBtn];
+      muteBtns.forEach(btn => {
+        btn.setAttribute('aria-pressed', String(muted));
+        btn.textContent = muted ? '🔇' : '🔊';
+        btn.setAttribute('aria-label', muted ? 'Activar sonido' : 'Silenciar');
+      });
     };
     syncMute();
     if (v && localV && !S.avatarVideoPaused) v.play().catch(() => {});
@@ -5671,11 +5718,17 @@ function enlazarAudioAvatar(raiz) {
       });
     }
   }
-  root.querySelectorAll('.panel-av--visitante').forEach(panel => enlazarSlotAudioAvatar(panel));
-  root.querySelectorAll('.avatar-video-slot, .avatar-rail .video').forEach(slot => {
-    if (slot.closest('.panel-av--visitante')) return;
+  function enlazarPanelAudio(panel) {
+    const slot = panel.querySelector('.avatar-video-slot');
+    if (!slot) return;
     enlazarSlotAudioAvatar(slot);
-  });
+    const peek = panel.querySelector('.avatar-audio-peek');
+    if (peek) enlazarSlotAudioAvatar(peek, slot);
+    const solo = panel.querySelector('.panel-av__dock--solo-audio');
+    if (solo) enlazarSlotAudioAvatar(solo, slot);
+  }
+  root.querySelectorAll('.panel-av').forEach(panel => enlazarPanelAudio(panel));
+  root.querySelectorAll('.avatar-rail .video').forEach(slot => enlazarSlotAudioAvatar(slot));
   sincronizarPausaAvatarVideo();
 }
 function leerIdentidadVisitante() {
@@ -6010,7 +6063,12 @@ document.addEventListener('click', e => {
   if (d.escuchar) { const [s, g] = d.escuchar.split('|').map(Number); return hablar(SECCIONES[s].graficos[g].texto(EMP)); }
   if (d.exportarCatch !== undefined) { if (S.rol !== 'moderador') return; return void descargarPdfFeedbackCatch(); }
   if (d.exportarCliente !== undefined) return void descargarPdfParaCliente();
-  if (d.avatar !== undefined) { S.avatar = !S.avatar; if (S.avatar) registrar('avatar', 'Abrió el avatar'); return render(); }
+  if (d.avatar !== undefined) {
+    S.avatar = !S.avatar;
+    if (S.avatar) registrar('avatar', 'Abrió el avatar');
+    sincronizarPanelAvatar();
+    return;
+  }
   if (d.escucharTexto !== undefined) return hablar(textoNarracion(PASOS[posVista(S.rol)]));
   if (d.cerrarFuente !== undefined) return cerrarFuente();
   if (d.responder) return abrirRespuesta(d.responder);

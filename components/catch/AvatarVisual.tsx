@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { AvatarVideoControls } from "@/components/catch/AvatarVideoControls";
 import { IaHandButton } from "@/components/catch/IaHandButton";
 import { IaMicButton } from "@/components/catch/IaMicButton";
@@ -25,7 +25,21 @@ type Props = {
   showRaiseHand?: boolean;
   raiseHandActive?: boolean;
   onRaiseHand?: (result: TavusRaiseHandResult) => void;
+  /** Muestra controles de audio aunque el panel del avatar esté colapsado. */
+  showAudioWhenIdle?: boolean;
 };
+
+const AVATAR_VOLUME_KEY = "catch-avatar-volume";
+
+function readStoredAvatarVolume(): number {
+  try {
+    const n = parseFloat(localStorage.getItem(AVATAR_VOLUME_KEY) ?? "1");
+    if (!Number.isFinite(n)) return 1;
+    return Math.min(1, Math.max(0, n));
+  } catch {
+    return 1;
+  }
+}
 
 function statusLabel(status: TavusCviStatus, error: string | null): string {
   switch (status) {
@@ -56,6 +70,7 @@ export function AvatarVisual({
   showRaiseHand = false,
   raiseHandActive = false,
   onRaiseHand,
+  showAudioWhenIdle = false,
 }: Props) {
   const tavus = useTavusCvi();
   const tavusSessionOpen =
@@ -71,7 +86,47 @@ export function AvatarVisual({
   const { ref: localVideoRef, play, muted, volume, toggleMute, onVolumeChange } =
     useAvatarVideoPlayback(localActive, syncPaused);
 
+  const [tavusVolume, setTavusVolume] = useState(readStoredAvatarVolume);
+  const [tavusMuted, setTavusMuted] = useState(false);
+
   const tavusOpts = { meetingId: tavus.meetingId, presenterToken: tavus.presenterToken };
+
+  useEffect(() => {
+    const a = tavus.audioRef.current;
+    if (!a || !showTavusStream) return;
+    a.volume = tavusVolume;
+    a.muted = tavusMuted;
+  }, [showTavusStream, tavusVolume, tavusMuted, tavus.status, tavus.audioRef]);
+
+  const toggleTavusMute = useCallback(async () => {
+    const a = tavus.audioRef.current;
+    if (!a) return;
+    if (a.muted || tavusMuted) {
+      a.muted = false;
+      setTavusMuted(false);
+      try {
+        await a.play();
+      } catch {
+        a.muted = true;
+        setTavusMuted(true);
+      }
+    } else {
+      a.muted = true;
+      setTavusMuted(true);
+    }
+  }, [tavus.audioRef, tavusMuted]);
+
+  const onTavusVolumeChange = useCallback((next: number) => {
+    const clamped = Math.min(1, Math.max(0, next));
+    setTavusVolume(clamped);
+    try {
+      localStorage.setItem(AVATAR_VOLUME_KEY, String(clamped));
+    } catch {
+      /* ignore */
+    }
+    const a = tavus.audioRef.current;
+    if (a) a.volume = clamped;
+  }, [tavus.audioRef]);
 
   useEffect(() => {
     onTavusSessionChange?.(tavus.tavusActive);
@@ -206,14 +261,15 @@ export function AvatarVisual({
             )}
           </>
         )}
-        {showLocalVideo && (
+        {(showLocalVideo || showTavusStream) && (
           <AvatarVideoControls
-            muted={muted}
-            volume={volume}
-            onToggleMute={toggleMute}
-            onVolumeChange={onVolumeChange}
+            className={showAudioWhenIdle ? "ai-audio-ctrl--peek" : undefined}
+            muted={showTavusStream ? tavusMuted : muted}
+            volume={showTavusStream ? tavusVolume : volume}
+            onToggleMute={showTavusStream ? () => void toggleTavusMute() : toggleMute}
+            onVolumeChange={showTavusStream ? onTavusVolumeChange : onVolumeChange}
             syncPaused={syncPaused}
-            canControlPause={canControlPause}
+            canControlPause={canControlPause && showLocalVideo}
             onTogglePause={onTogglePause}
           />
         )}
