@@ -25,8 +25,6 @@ type Props = {
   showRaiseHand?: boolean;
   raiseHandActive?: boolean;
   onRaiseHand?: (result: TavusRaiseHandResult) => void;
-  /** Muestra controles de audio aunque el panel del avatar esté colapsado. */
-  showAudioWhenIdle?: boolean;
 };
 
 const AVATAR_VOLUME_KEY = "catch-avatar-volume";
@@ -70,7 +68,6 @@ export function AvatarVisual({
   showRaiseHand = false,
   raiseHandActive = false,
   onRaiseHand,
-  showAudioWhenIdle = false,
 }: Props) {
   const tavus = useTavusCvi();
   const tavusSessionOpen =
@@ -263,7 +260,6 @@ export function AvatarVisual({
         )}
         {(showLocalVideo || showTavusStream) && (
           <AvatarVideoControls
-            className={showAudioWhenIdle ? "ai-audio-ctrl--peek" : undefined}
             muted={showTavusStream ? tavusMuted : muted}
             volume={showTavusStream ? tavusVolume : volume}
             onToggleMute={showTavusStream ? () => void toggleTavusMute() : toggleMute}

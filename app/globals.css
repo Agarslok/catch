@@ -1223,31 +1223,11 @@ a {
   transform: none;
 }
 
-/* Panel colapsado: el video se oculta pero Tavus/MP4 y el audio siguen activos. */
+/* Panel colapsado: sin barra de audio ni video visible; Tavus/MP4 siguen en el DOM. */
 .ai-widget.avatar-collapsed .ai-pwrap {
-  pointer-events: auto;
-}
-
-.ai-widget.avatar-collapsed .ai-panel {
-  opacity: 1;
-  visibility: visible;
-  transform: none;
-  width: auto;
-  min-width: 0;
-  background: var(--surface, #fff);
-  color: var(--ink, #10243f);
-  border: 1px solid var(--border, #d8e6f2);
-  box-shadow: 0 8px 24px rgba(39, 120, 177, 0.14);
-}
-
-.ai-widget.avatar-collapsed .ai-head,
-.ai-widget.avatar-collapsed .ai-tavus-bar,
-.ai-widget.avatar-collapsed .ai-dock-controls,
-.ai-widget.avatar-collapsed .ai-tap-hint,
-.ai-widget.avatar-collapsed .ai-media > video,
-.ai-widget.avatar-collapsed .ai-media > .ai-avatar-idle,
-.ai-widget.avatar-collapsed .ai-media > .ai-avatar-mp4-reserve {
-  position: absolute;
+  position: fixed;
+  left: 0;
+  bottom: 0;
   width: 1px;
   height: 1px;
   margin: -1px;
@@ -1255,21 +1235,13 @@ a {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
-  border: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.ai-widget.avatar-collapsed .ai-media {
-  position: static;
-  aspect-ratio: auto;
-  min-height: 0;
-  background: transparent;
-}
-
-.ai-widget.avatar-collapsed .ai-audio-ctrl--peek {
-  display: flex;
-  position: relative;
-  border-top: 0;
-  background: transparent;
+.ai-widget.avatar-collapsed .ai-panel {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .ai-head {

@@ -287,7 +287,6 @@ export function PresenterAvatarWidget({
           <AvatarVisual
             active={playWhenOpen ? !syncPaused : !syncPaused && open}
             syncPaused={syncPaused}
-            showAudioWhenIdle={!open}
             canControlPause={canControlPause}
             onTogglePause={onTogglePause}
             tavusUi={tavusUi}

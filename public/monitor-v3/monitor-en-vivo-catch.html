@@ -169,21 +169,10 @@ h1,h2,h3{font-family:var(--display); letter-spacing:-.01em}
 .avatar-w{position:fixed; right:24px; bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:45; display:flex; flex-direction:column; align-items:flex-end; gap:12px}
 .avatar-w--left{left:24px; right:auto; align-items:flex-start}
 .avatar-w--visitante{z-index:44}
-.avatar-w--panel-open .avatar-audio-peek{display:none}
-.avatar-w:not(.avatar-w--panel-open) .panel-av .avatar-tavus-bar,
-.avatar-w:not(.avatar-w--panel-open) .panel-av .dentro,
-.avatar-w:not(.avatar-w--panel-open) .panel-av--visitante .cliente-avatar-en-vivo__cab,
-.avatar-w:not(.avatar-w--panel-open) .panel-av .video .avatar-video-media,
-.avatar-w:not(.avatar-w--panel-open) .panel-av .video .panel-av__dock{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-.avatar-w:not(.avatar-w--panel-open) .panel-av{width:auto;max-width:min(320px,calc(100vw - 32px));background:var(--superficie);border:1px solid var(--borde);border-radius:16px;box-shadow:0 8px 24px rgba(39,120,177,.12);margin-bottom:10px;overflow:visible}
-.avatar-w:not(.avatar-w--panel-open) .panel-av .video{aspect-ratio:auto;height:auto;min-height:0;background:transparent}
-.avatar-w:not(.avatar-w--panel-open) .avatar-audio-peek,
-.avatar-w:not(.avatar-w--panel-open) .panel-av__dock--solo-audio{display:flex}
-.avatar-audio-peek{display:none;align-items:center;gap:10px;padding:9px 12px;border-top:1px solid var(--borde);background:var(--superficie)}
-.avatar-rail:not(.avatar-rail--open) .avatar-tavus-bar,
-.avatar-rail:not(.avatar-rail--open) .avatar-video-media{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
-.avatar-rail:not(.avatar-rail--open) .video .audio-ctrl{display:flex}
-.avatar-rail:not(.avatar-rail--open) .video{aspect-ratio:auto;min-height:0}
+/* Panel colapsado: sin UI visible (ni barra de audio); el stream sigue en el DOM. */
+.avatar-w:not(.avatar-w--panel-open) .panel-av{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;box-shadow:none;background:transparent;pointer-events:none}
+.avatar-rail:not(.avatar-rail--open) .video{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;pointer-events:none}
+.avatar-rail:not(.avatar-rail--open) .avatar-tavus-bar{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
 .fab{min-height:56px; padding:0 22px 0 16px; border-radius:999px; border:0; color:#fff; font-weight:700; font-size:15px; display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,var(--azul),var(--cyan)); box-shadow:0 8px 24px rgba(39,120,177,.3); transition:transform .2s, box-shadow .2s}
 .fab:hover{transform:translateY(-2px); box-shadow:0 12px 28px rgba(39,120,177,.4)}
 .fab .pulso{position:relative; width:12px; height:12px; border-radius:50%; background:#fff}
@@ -3490,7 +3479,6 @@ function htmlAvatar(p) {
   const texto = textoNarracion(p);
   const withPause = S.rol === 'moderador';
   return `<div class="avatar-w avatar-w--left${claseAvatarWAbierto()}"><div class="panel-av" role="dialog" aria-label="Avatar Catch" aria-hidden="${S.avatar ? 'false' : 'true'}">${htmlAvatarTavusToolbar()}<div class="video">${htmlAvatarVideoBlock(withPause, { inlineAudio: false })}${htmlAvatarDockPresentador()}</div>
-    <div class="avatar-audio-peek" role="group" aria-label="Audio del avatar">${htmlAvatarAudioCtrl(withPause)}</div>
     <div class="dentro"><p>${esc(texto)}</p>${htmlOpcionesGeminiModerador()}</div></div>
     <button type="button" class="fab" data-avatar aria-expanded="${!!S.avatar}" aria-label="${S.avatar ? 'Ocultar video del avatar; el audio sigue activo' : 'Mostrar avatar; el audio sigue si la sesión está activa'}"><span class="pulso"></span><span data-avatar-fab-label>${etiquetaFabAvatar()}</span></button></div>`;
 }
@@ -5722,8 +5710,6 @@ function enlazarAudioAvatar(raiz) {
     const slot = panel.querySelector('.avatar-video-slot');
     if (!slot) return;
     enlazarSlotAudioAvatar(slot);
-    const peek = panel.querySelector('.avatar-audio-peek');
-    if (peek) enlazarSlotAudioAvatar(peek, slot);
     const solo = panel.querySelector('.panel-av__dock--solo-audio');
     if (solo) enlazarSlotAudioAvatar(solo, slot);
   }
