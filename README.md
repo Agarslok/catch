@@ -1,4 +1,4 @@
-# catchdos
+# catch
 
 **Capital Humano Live** — presentación interactiva (Catch Consulting) con Next.js, ECharts, Supabase (tiempo real + historial) y despliegue en Netlify.
 
